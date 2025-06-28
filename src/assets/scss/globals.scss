@@ -1,0 +1,10 @@
+@use '_mixins' as *;
+@use '_general' as *;
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
+@import url('https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('//cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+@tailwind components;
+@tailwind utilities;
