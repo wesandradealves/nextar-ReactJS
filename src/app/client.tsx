@@ -3,6 +3,7 @@
 import { ThemeProvider } from 'styled-components';
 import { LoaderProvider, useLoader } from '@/context/spinner';
 import { AuthProvider } from '@/context/auth';
+import { EntitiesProvider } from '@/context/entities';
 import Spinner from '@/components/spinner/spinner';
 import StyledJsxRegistry from './registry';
 import { App, GlobalStyle } from '@/app/style';
@@ -42,30 +43,32 @@ export default function ClientProviders({ children }: { children: React.ReactNod
       <LoaderProvider>
         <LoaderSetup />
         <AuthProvider>
-          <Suspense fallback={<div>Loading...</div>}>
-            <StyledJsxRegistry>
-              <AnimatePresence
-                mode="wait"
-                initial={true}
-                onExitComplete={() => window.scrollTo(0, 0)}
-              >
-                <App id="primary">
-                  <motion.div
-                    className="min-h-screen flex flex-start flex-col"
-                    initial={{ x: 0, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: 0, opacity: 0 }}
-                    // ref={scrollRef}
-                  >
-                    {/* <Header scrollPosition={scrollPosition} /> */}
-                    {children}
-                    {/* <Footer /> */}
-                  </motion.div>
-                  <Spinner />
-                </App>
-              </AnimatePresence>
-            </StyledJsxRegistry>
-          </Suspense>
+          <EntitiesProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <StyledJsxRegistry>
+                <AnimatePresence
+                  mode="wait"
+                  initial={true}
+                  onExitComplete={() => window.scrollTo(0, 0)}
+                >
+                  <App id="primary">
+                    <motion.div
+                      className="min-h-screen flex flex-start flex-col"
+                      initial={{ x: 0, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: 0, opacity: 0 }}
+                      // ref={scrollRef}
+                    >
+                      {/* <Header scrollPosition={scrollPosition} /> */}
+                      {children}
+                      {/* <Footer /> */}
+                    </motion.div>
+                    <Spinner />
+                  </App>
+                </AnimatePresence>
+              </StyledJsxRegistry>
+            </Suspense>
+          </EntitiesProvider>
         </AuthProvider>
       </LoaderProvider>
       <GlobalStyle />

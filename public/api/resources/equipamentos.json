@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1",
+    "nome": "Microscópio Eletrônico",
+    "codigo": "BIO001A",
+    "modelo": "Zeiss Sigma 300",
+    "setorId": "1",
+    "proximaManutencao": "2025-08-15T00:00:00.000Z",
+    "observacoes": "Equipamento de alta precisão para análise celular"
+  },
+  {
+    "id": "2",
+    "nome": "Anemômetro Digital",
+    "codigo": "MET002B",
+    "modelo": "Davis Vantage Pro2",
+    "setorId": "2",
+    "proximaManutencao": "2025-07-20T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "nome": "Rádio HF",
+    "codigo": "COM003C",
+    "modelo": "Icom IC-7300",
+    "setorId": "3",
+    "proximaManutencao": "2025-09-10T00:00:00.000Z",
+    "observacoes": "Principal meio de comunicação com o continente"
+  },
+  {
+    "id": "4",
+    "nome": "Perfurador de Gelo",
+    "codigo": "GLA004D",
+    "modelo": "Kovacs Mark II",
+    "setorId": "4",
+    "proximaManutencao": "2025-07-05T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "nome": "Desfibrilador",
+    "codigo": "MED005E",
+    "modelo": "Philips HeartStart MRx",
+    "setorId": "5",
+    "proximaManutencao": "2025-12-01T00:00:00.000Z",
+    "observacoes": "Equipamento crítico para emergências médicas"
+  }
+]

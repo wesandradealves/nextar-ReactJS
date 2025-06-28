@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "nome": "Dr. Ana Silva",
+    "email": "ana.silva@antartica.br",
+    "perfil": "gestao"
+  },
+  {
+    "id": "2",
+    "nome": "Carlos Oliveira",
+    "email": "carlos.oliveira@antartica.br",
+    "perfil": "agente"
+  },
+  {
+    "id": "3",
+    "nome": "Maria Santos",
+    "email": "maria.santos@antartica.br",
+    "perfil": "pesquisador"
+  },
+  {
+    "id": "4",
+    "nome": "João Costa",
+    "email": "joao.costa@antartica.br",
+    "perfil": "agente"
+  },
+  {
+    "id": "5",
+    "nome": "Prof. Pedro Lima",
+    "email": "pedro.lima@antartica.br",
+    "perfil": "pesquisador"
+  }
+]

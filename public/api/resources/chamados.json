@@ -1,0 +1,64 @@
+[
+  {
+    "id": "1",
+    "tipo": "corretiva",
+    "status": "aberto",
+    "prioridade": "alta",
+    "descricao": "Microscópio eletrônico apresentando falha na objetiva. Não está focalizando adequadamente.",
+    "setorId": "1",
+    "solicitanteId": "3",
+    "equipamentoId": "1",
+    "dataAbertura": "2025-06-28T08:30:00.000Z"
+  },
+  {
+    "id": "2",
+    "tipo": "preventiva",
+    "status": "em_progresso",
+    "prioridade": "media",
+    "descricao": "Manutenção programada do anemômetro digital conforme cronograma.",
+    "setorId": "2",
+    "solicitanteId": "1",
+    "agenteId": "2",
+    "equipamentoId": "2",
+    "dataAbertura": "2025-06-27T14:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "tipo": "corretiva",
+    "status": "concluido",
+    "prioridade": "alta",
+    "descricao": "Rádio HF com problemas de transmissão. Comunicação interrompida.",
+    "setorId": "3",
+    "solicitanteId": "5",
+    "agenteId": "4",
+    "equipamentoId": "3",
+    "dataAbertura": "2025-06-25T10:15:00.000Z",
+    "dataExecucao": "2025-06-26T16:30:00.000Z",
+    "observacoesFinalizacao": "Substituído cabo coaxial danificado e realizado teste de transmissão.",
+    "pecasUtilizadas": [
+      { "nome": "Cabo Coaxial RG-213", "quantidade": 1 },
+      { "nome": "Conector PL-259", "quantidade": 2 }
+    ]
+  },
+  {
+    "id": "4",
+    "tipo": "preventiva",
+    "status": "aberto",
+    "prioridade": "baixa",
+    "descricao": "Verificação e calibração do perfurador de gelo antes da temporada de campo.",
+    "setorId": "4",
+    "solicitanteId": "1",
+    "equipamentoId": "4",
+    "dataAbertura": "2025-06-28T09:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "tipo": "corretiva",
+    "status": "aberto",
+    "prioridade": "media",
+    "descricao": "Sistema de aquecimento do laboratório não está funcionando adequadamente.",
+    "setorId": "1",
+    "solicitanteId": "3",
+    "dataAbertura": "2025-06-28T11:20:00.000Z"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "nome": "Laboratório de Biologia Marinha",
+    "categoria": "Biologia"
+  },
+  {
+    "id": "2",
+    "nome": "Estação Meteorológica",
+    "categoria": "Meteorologia"
+  },
+  {
+    "id": "3",
+    "nome": "Centro de Comunicações",
+    "categoria": "Comunicações"
+  },
+  {
+    "id": "4",
+    "nome": "Laboratório de Glaciologia",
+    "categoria": "Glaciologia"
+  },
+  {
+    "id": "5",
+    "nome": "Setor Médico",
+    "categoria": "Medicina"
+  }
+]

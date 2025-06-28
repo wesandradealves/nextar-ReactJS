@@ -1,46 +1,61 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Login } from '@/services/userService';
+import { User, Permission } from '@/types';
+import { PERMISSIONS } from '@/utils/enums';
+import { resources } from '@/services/resources';
 
 interface AuthContextProps {
-  token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
-  login: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = async () => {
+  useEffect(() => {
+    // Recuperar usuário do localStorage
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const login = async (email: string, password: string) => {
     try {
-      const storedToken = localStorage.getItem('token');
-
-      if (storedToken) {
-        setToken(storedToken);
-        setIsAuthenticated(true);
-        return;
-      }
-
-      const data = await Login(process.env.NEXT_PUBLIC_API_USERNAME || '', process.env.NEXT_PUBLIC_API_PWD || '');
-
-      localStorage.setItem('token', data.token);
-      setToken(data.token);
-      setIsAuthenticated(true);
-      console.info(`✅ Você está logado como ${data.user_display_name} (${data.user_email})`);
-    } catch (error: unknown) {
-      console.error('❌ Login Error:', error);
-      setIsAuthenticated(false);
+      const response = await resources.login(email, password);
+      setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    } catch (error) {
+      console.error('Erro no login:', error);
+      throw error;
     }
   };
 
-  useEffect(() => {
-    login();
-  }, []);
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    
+    const userPermissions = PERMISSIONS[user.perfil];
+    return userPermissions.includes(permission as Permission) || 
+           userPermissions.includes('all');
+  };
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated, login }}>
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout,
+      hasPermission
+    }}>
       {children}
     </AuthContext.Provider>
   );

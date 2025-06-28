@@ -7,7 +7,7 @@ interface LoaderContextProps {
 
 const LoaderContext = createContext<LoaderContextProps | undefined>(undefined);
 
-export const LoaderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LoaderProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const setLoading = (loading: boolean) => {
