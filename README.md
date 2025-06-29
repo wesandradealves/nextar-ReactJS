@@ -1347,8 +1347,9 @@ Response: { user: User }
 PUT    /api/users/[id]
 Body: { nome?, email?, senha?, perfil?, telefone?, setor?, observacoes?, ativo? }
 Response: { user: User }
-Note: Suporte a atualizações parciais. Apenas campos fornecidos são validados/atualizados.
-Exemplo: { "ativo": false } - Atualiza apenas o status do usuário
+Note: Suporte completo a atualizações parciais. Apenas campos fornecidos são validados/atualizados.
+      Validações condicionais aplicadas apenas aos campos presentes no body.
+      Ideal para operações específicas como toggle de status: { "ativo": false }
 
 DELETE /api/users/[id]
 Response: { message: string }
