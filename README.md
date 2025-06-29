@@ -865,14 +865,6 @@ export const config = {
 5. **Tente acessar `/dashboard` sem login**
    - Deve redirecionar para `/login`
 
-### ✨ **Próximos Passos do Sistema:**
-
-- [ ] Implementar páginas CRUD (users, chamados, etc.)
-- [ ] Adicionar proteção por perfil de usuário
-- [ ] Implementar refresh token
-- [ ] Adicionar timeout de sessão
-- [ ] Logs de auditoria de acesso
-
 ---
 
 ## 🌐 API Endpoints

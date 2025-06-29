@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useMetadata } from '@/hooks/useMetadata';
 import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
-import { LoginFormData } from '@/types';
-import { Logo, Button } from '@/components/atoms';
-import { FormField } from '@/components/molecules';
+import { Logo } from '@/components/atoms';
+import { FormContainer, FormFieldConfig } from '@/components/molecules';
 import {
   LoginContainer,
   LoginCard,
@@ -22,46 +20,57 @@ import {
 
 /**
  * Componente de página de login
- * Utiliza React Hook Form para gerenciamento do formulário
+ * Utiliza FormContainer para gerenciamento do formulário com validação
  * Integrado com o contexto de autenticação e loading
  */
 export default function Login() {
   const { login } = useAuth();
   const { setLoading } = useLoader();
   const [loginError, setLoginError] = useState<string>('');
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   useMetadata({
     title: `Nextar - Login`,
     ogTitle: `Nextar - Login`
   });
 
-  // Configuração do React Hook Form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset
-  } = useForm<LoginFormData>({
-    defaultValues: {
-      email: '',
-      password: '',
-      rememberMe: false
+  // Configuração dos campos do formulário
+  const loginFields: FormFieldConfig[] = [
+    {
+      id: 'email',
+      label: 'Email',
+      type: 'email',
+      placeholder: 'Digite seu email',
+      required: true,
+      validation: {
+        pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+      }
+    },
+    {
+      id: 'password',
+      label: 'Senha',
+      type: 'password',
+      placeholder: 'Digite sua senha',
+      required: true,
+      helpText: 'Mínimo 3 caracteres',
+      validation: {
+        minLength: 3
+      }
     }
-  });
+  ];
 
   /**
    * Função para processar o envio do formulário
    */
-  const onSubmit = async (data: LoginFormData) => {
+  const handleSubmit = async (data: Record<string, string>) => {
     try {
       setLoginError('');
       setLoading(true);
       
-      await login(data.email, data.password, data.rememberMe);
+      await login(data.email, data.password, rememberMe);
     } catch (error) {
       console.error('❌ Erro no login do formulário:', error);
       setLoginError('Credenciais inválidas. Verifique seu email e senha.');
-      reset({ password: '' });
     } finally {
       setLoading(false);
     }
@@ -73,45 +82,19 @@ export default function Login() {
         <Logo variant="login" size="large" />
 
         <FormSection>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormField
-              id="email"
-              label="Email"
-              type="email"
-              placeholder="Digite seu email"
-              {...register('email', {
-                required: 'Email é obrigatório',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Email inválido'
-                }
-              })}
-              error={errors.email?.message}
-              required
-            />
-
-            <FormField
-              id="password"
-              label="Senha"
-              type="password"
-              placeholder="Digite sua senha"
-              {...register('password', {
-                required: 'Senha é obrigatória',
-                minLength: {
-                  value: 3,
-                  message: 'Senha deve ter pelo menos 3 caracteres'
-                }
-              })}
-              error={errors.password?.message}
-              required
-              helpText="Mínimo 3 caracteres"
-            />
-
+          <FormContainer
+            fields={loginFields}
+            onSubmit={handleSubmit}
+            submitText="Entrar"
+            validateOnBlur
+            validateOnChange={false}
+          >
             <CheckboxGroup>
               <Checkbox
                 id="rememberMe"
                 type="checkbox"
-                {...register('rememberMe')}
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
               />
               <CheckboxLabel htmlFor="rememberMe">
                 Lembrar de mim <small>(manter logado por 30 dias)</small>
@@ -121,18 +104,7 @@ export default function Login() {
             {loginError && (
               <ErrorMessage $isGlobal>{loginError}</ErrorMessage>
             )}
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="large"
-              fullWidth
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Entrando...' : 'Entrar'}
-            </Button>
-          </form>
+          </FormContainer>
 
           <HelpSection>
             <HelpText>

@@ -1,6 +1,8 @@
 "use client";
 
 import React from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import { PerfilUsuario } from '@/utils/enums';
 import {
   UserCardContainer,
@@ -101,7 +103,17 @@ export const UserCard = ({
     >
       <Avatar $size={size}>
         {avatar ? (
-          <img src={avatar} alt={name} />
+          <LazyLoadImage
+            src={avatar}
+            alt={name}
+            effect="blur"
+            width="100%"
+            height="100%"
+            style={{ 
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
+          />
         ) : (
           getInitials(name)
         )}
