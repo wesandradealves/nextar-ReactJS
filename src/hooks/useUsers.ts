@@ -367,6 +367,75 @@ export const useUsers = () => {
   }, [data, cache, cacheKey]);
 
   /**
+   * Alterar própria senha do usuário
+   */
+  const changePassword = useCallback(async (
+    userId: string, 
+    currentPassword: string, 
+    newPassword: string
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/users/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          currentPassword,
+          newPassword
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao alterar senha');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error);
+      setError(error instanceof Error ? error.message : 'Erro ao alterar senha');
+      return false;
+    }
+  }, []);
+
+  /**
+   * Alterar senha de outro usuário (apenas para administradores)
+   */
+  const changeUserPasswordAsAdmin = useCallback(async (
+    targetUserId: string,
+    adminUserId: string,
+    newPassword: string
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/users/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: targetUserId,
+          adminUserId,
+          newPassword,
+          isAdminChange: true
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao alterar senha do usuário');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Erro ao alterar senha do usuário:', error);
+      setError(error instanceof Error ? error.message : 'Erro ao alterar senha do usuário');
+      return false;
+    }
+  }, []);
+
+  /**
    * Utilitários para filtros rápidos
    */
   const filterByProfile = useCallback((perfil: PerfilUsuario) => {
@@ -411,6 +480,10 @@ export const useUsers = () => {
     createUser,
     updateUser,
     deleteUser,
+    
+    // Alteração de senhas
+    changePassword,
+    changeUserPasswordAsAdmin,
     
     // Utilitários
     refresh,

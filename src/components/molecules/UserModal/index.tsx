@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Modal from '../Modal';
 import FormContainer from '../FormContainer';
 import { Button } from '../../atoms';
+import { useAuth } from '@/context/auth';
 import type { CreateUserData, UpdateUserData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import type { FormFieldConfig } from '../FormContainer/types';
@@ -34,6 +35,7 @@ export default function UserModal({
   user,
   isLoading = false
 }: UserModalProps) {
+  const { user: currentUser } = useAuth();
   const [selectedProfile, setSelectedProfile] = useState<PerfilUsuario>(
     user?.perfil || PerfilUsuario.PESQUISADOR
   );
@@ -93,17 +95,20 @@ export default function UserModal({
       },
       helpText: 'Usado para fazer login no sistema'
     },
-    ...(!isEditing ? [{
+    // Campo senha: obrigatório na criação, opcional na edição para gestores
+    ...(!isEditing || (isEditing && currentUser?.perfil === PerfilUsuario.GESTAO) ? [{
       id: 'senha',
-      label: 'Senha',
+      label: isEditing ? 'Nova Senha (opcional)' : 'Senha',
       type: 'password' as const,
-      placeholder: 'Mínimo 6 caracteres',
-      required: true,
+      placeholder: isEditing ? 'Deixe vazio para manter senha atual' : 'Mínimo 6 caracteres',
+      required: !isEditing, // Obrigatório apenas na criação
       validation: {
         minLength: 6,
         maxLength: 100,
       },
-      helpText: 'Senha deve ter pelo menos 6 caracteres'
+      helpText: isEditing 
+        ? 'Como gestor, você pode alterar a senha deste usuário. Deixe vazio para manter a senha atual.' 
+        : 'Senha deve ter pelo menos 6 caracteres'
     }] : []),
     {
       id: 'setor',

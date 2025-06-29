@@ -5,6 +5,30 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.5.0] - 2025-06-29
+
+### Adicionado
+- **Gestão Avançada de Senhas por Administradores**
+  - Usuários com perfil GESTAO podem agora alterar senhas de outros usuários
+  - Campo de senha opcional no modal de edição de usuários (apenas para gestores)
+  - Endpoint `/api/users/change-password` expandido para suportar alterações administrativas
+  - Nova função `changeUserPasswordAsAdmin` no hook `useUsers`
+  - Validação de permissões para operações administrativas
+  - Interface intuitiva com placeholder explicativo para gestores
+
+### Melhorado
+- **UserModal**: Campo de senha agora aparece na edição quando usuário é gestor
+- **API de alteração de senha**: Suporte tanto para alteração própria quanto administrativa
+- **Hook useUsers**: Funções específicas para diferentes tipos de alteração de senha
+- **Segurança**: Validação rigorosa de permissões em operações administrativas
+- **UX**: Textos explicativos e placeholders mais claros para gestores
+
+### Técnico
+- Remoção do componente `Counter` não utilizado no projeto
+- Limpeza de exports desnecessários no índice dos atoms
+- Melhoria na organização do código e redução do bundle size
+- Testes de build e lint passando com sucesso
+
 ## [1.4.3] - 2025-06-29
 
 ### Refatorado
