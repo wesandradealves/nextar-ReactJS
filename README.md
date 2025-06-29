@@ -559,6 +559,10 @@ Combinação de atoms que formam componentes mais complexos.
 - **FormField**: Label + Input + ErrorMessage + HelpText
 - **SearchBox**: Input + Button + Icons (busca e limpar)
 - **UserCard**: Avatar + Nome + Perfil + Status online
+- **DataTable**: Tabela reutilizável com paginação, ordenação e filtros
+- **Modal**: Modal base com portal, backdrop e animações
+- **UserModal**: Modal específico para CRUD de usuários
+- **FormContainer**: Container de formulário com validação integrada
 
 ```tsx
 // Exemplo de uso das molecules
@@ -587,6 +591,41 @@ import { FormField, SearchBox, UserCard } from '@/components/molecules';
   isOnline={true}
   clickable
   onClick={handleUserClick}
+/>
+
+<DataTable
+  data={users}
+  columns={userColumns}
+  pagination={{
+    page: 1,
+    limit: 10,
+    total: 50,
+    totalPages: 5
+  }}
+  onPageChange={handlePageChange}
+  onSort={handleSort}
+  selectedRows={selectedUsers}
+  onSelectionChange={setSelectedUsers}
+  actions={[
+    { label: 'Editar', onClick: handleEdit },
+    { label: 'Excluir', onClick: handleDelete, variant: 'danger' }
+  ]}
+/>
+
+<Modal 
+  isOpen={isModalOpen} 
+  onClose={closeModal}
+  title="Confirmar Exclusão"
+>
+  <p>Tem certeza que deseja excluir este item?</p>
+</Modal>
+
+<UserModal
+  isOpen={isUserModalOpen}
+  onClose={closeUserModal}
+  user={selectedUser}
+  onSubmit={handleUserSubmit}
+  mode="edit"
 />
 ```
 
@@ -937,9 +976,17 @@ export const Interactive: Story = {
 - **UX otimizada** - Mensagens de sucesso/erro e reset de formulário
 
 ### **👥 Gestão de Usuários**
-- CRUD completo
-- Perfis com permissões específicas
-- Validação de dados
+- **Página `/dashboard/usuarios`** - Interface completa para gestão de usuários
+- **CRUD Completo** - Criar, listar, editar e excluir usuários
+- **Permissões** - Acesso restrito ao perfil GESTÃO
+- **DataTable Avançado** - Paginação (10/25/50/100), ordenação e filtros
+- **Busca em Tempo Real** - Por nome, email, perfil e status
+- **Modais Modernos** - Interface com FormContainer para criação/edição
+- **Validação Robusta** - Email único, campos obrigatórios e formatos
+- **Cache Otimizado** - TTL de 5 minutos com invalidação inteligente
+- **Seleção Múltipla** - Ações em lote (ativar/desativar)
+- **Estatísticas** - Contadores por perfil em tempo real
+- **Proteções** - Não pode excluir a si mesmo ou último GESTÃO
 
 ### **🏢 Gestão de Setores**
 - Cadastro por categoria científica
@@ -963,6 +1010,73 @@ export const Interactive: Story = {
 - Métricas por agente
 - Visualizações gráficas com animações (react-countup)
 - Sistema de cache multicamadas para performance
+
+---
+
+## 🧩 Componentes Avançados
+
+### **📊 DataTable Reutilizável**
+Componente molecule altamente configurável para listagem de dados:
+
+**Funcionalidades:**
+- **Paginação dinâmica** - 10, 25, 50, 100 itens por página
+- **Ordenação** - Clique nos headers para ordenar crescente/decrescente
+- **Filtros integrados** - Busca em tempo real por qualquer campo
+- **Seleção múltipla** - Checkboxes para ações em lote
+- **Ações por linha** - Botões de editar, excluir, visualizar
+- **Responsivo** - Adapta colunas para mobile
+- **Loading states** - Skeleton e spinners integrados
+- **Cache inteligente** - Otimização automática de performance
+
+**Exemplo de uso:**
+```tsx
+<DataTable
+  data={users}
+  columns={[
+    { key: 'nome', label: 'Nome', sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'perfil', label: 'Perfil', filterable: true }
+  ]}
+  pagination={{ page: 1, limit: 10, total: 50, totalPages: 5 }}
+  onPageChange={handlePageChange}
+  onSort={handleSort}
+  selectedRows={selectedItems}
+  onSelectionChange={setSelectedItems}
+  actions={[
+    { label: 'Editar', onClick: handleEdit, icon: '✏️' },
+    { label: 'Excluir', onClick: handleDelete, variant: 'danger' }
+  ]}
+/>
+```
+
+### **🎭 Sistema de Modais**
+Sistema de modais moderno com portal e animações:
+
+**Componentes:**
+- **Modal** - Componente base reutilizável
+- **UserModal** - Modal específico para CRUD de usuários
+- **ConfirmModal** - Modal de confirmação para ações críticas
+
+**Funcionalidades:**
+- **Portal rendering** - Renderização fora da árvore DOM
+- **Backdrop blur** - Fundo desfocado com transparência
+- **Animações CSS** - Transições suaves de entrada/saída
+- **Escape key** - Fechamento com tecla ESC
+- **Click outside** - Fechamento ao clicar fora
+- **Focus trap** - Navegação por teclado restrita ao modal
+- **Scroll lock** - Previne scroll da página de fundo
+
+**Exemplo de uso:**
+```tsx
+<UserModal
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  user={selectedUser}
+  onSubmit={handleSubmit}
+  mode="create" // ou "edit"
+  title="Criar Usuário"
+/>
+```
 
 ---
 
@@ -1206,14 +1320,40 @@ Response: { user: User, token: string }
 ### **Usuários**
 ```
 GET    /api/users
-POST   /api/users
-Body: { nome: string, email: string, senha: string, perfil: PerfilUsuario }
+Query: page?, limit?, search?, perfil?, sortBy?, sortOrder?
+Response: { 
+  data: User[], 
+  pagination: { page, limit, total, totalPages },
+  sorting: { sortBy, sortOrder }
+}
 
-PUT    /api/users
-Body: { id: string, nome?: string, email?: string, senha?: string, perfil?: PerfilUsuario }
+POST   /api/users
+Body: { nome: string, email: string, senha: string, perfil: PerfilUsuario, telefone?, setor?, observacoes? }
+Response: { user: User }
+
+GET    /api/users/[id]
+Response: { user: User }
+
+PUT    /api/users/[id]
+Body: { nome?, email?, senha?, perfil?, telefone?, setor?, observacoes?, ativo? }
+Response: { user: User }
+
+DELETE /api/users/[id]
+Response: { message: string }
 
 PUT    /api/users/change-password
 Body: { userId: string, currentPassword: string, newPassword: string }
+Response: { message: string }
+```
+
+### **Perfil do Usuário**
+```
+GET    /api/profile
+Response: { user: User }
+
+PUT    /api/profile
+Body: { nome?: string, email?: string, telefone?: string, observacoes? }
+Response: { user: User }
 ```
 
 ### **Setores**
