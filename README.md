@@ -104,21 +104,43 @@ git clone <repository-url>
 cd nextar
 ```
 
-### 2. Instale as dependências
+### 2. Configure as variáveis de ambiente
+```bash
+# Copie o arquivo de exemplo
+cp .env.example .env.local
+
+# Edite as configurações conforme necessário
+```
+
+**Variáveis disponíveis:**
+```bash
+# Debug do sistema de cache (desenvolvimento)
+CACHE_DEBUG=true
+
+# Configurações de cache
+CACHE_DEFAULT_TTL=300000    # TTL padrão em ms (5 minutos)
+CACHE_MAX_ENTRIES=1000      # Máximo de entradas no cache
+
+# Informações da aplicação
+NEXT_PUBLIC_APP_NAME=Nextar
+NEXT_PUBLIC_APP_VERSION=0.1.0
+```
+
+### 3. Instale as dependências
 ```bash
 npm install
 # ou
 yarn install
 ```
 
-### 3. Execute o projeto em desenvolvimento
+### 4. Execute o projeto em desenvolvimento
 ```bash
 npm run dev
 # ou
 yarn dev
 ```
 
-### 4. Acesse a aplicação
+### 5. Acesse a aplicação
 ```
 http://localhost:3000
 ```
@@ -298,15 +320,26 @@ if (cachedResult) {
 Componente visual para monitorar cache em tempo real:
 
 ```tsx
-<CacheDebug enabled={process.env.NODE_ENV === 'development'} />
+<CacheDebug enabled={process.env.CACHE_DEBUG === 'true'} />
+```
+
+**Configuração via Variáveis de Ambiente:**
+```bash
+# Ativar/desativar debug do cache
+CACHE_DEBUG=true              # true/false
+
+# Configurações de performance
+CACHE_DEFAULT_TTL=300000      # TTL padrão (5 min)
+CACHE_MAX_ENTRIES=1000        # Máximo de entradas
 ```
 
 **Features do Debug:**
 - Estatísticas em tempo real (hits, misses, hit rate)
-- Tamanho do cache
+- Tamanho do cache e limite máximo
 - Botão para limpar cache
 - Interface minimizável
-- Oculto em produção
+- Ativação condicional via .env
+- Log de configurações no console
 
 ### **Estratégias de TTL**
 

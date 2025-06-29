@@ -18,6 +18,11 @@ module.exports = {
     compiler: {
         styledComponents: true,
     },
+    env: {
+        CACHE_DEBUG: process.env.CACHE_DEBUG,
+        CACHE_DEFAULT_TTL: process.env.CACHE_DEFAULT_TTL,
+        CACHE_MAX_ENTRIES: process.env.CACHE_MAX_ENTRIES,
+    },
     async headers() {
         return [
             {

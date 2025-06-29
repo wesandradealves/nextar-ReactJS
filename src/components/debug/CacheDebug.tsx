@@ -91,7 +91,7 @@ interface CacheDebugProps {
 }
 
 export const CacheDebug: React.FC<CacheDebugProps> = ({ 
-  enabled = process.env.NODE_ENV === 'development' 
+  enabled = process.env.NODE_ENV === 'development' && process.env.CACHE_DEBUG === 'true'
 }) => {
   const cache = useCache();
   const [collapsed, setCollapsed] = useState(false);
@@ -109,6 +109,17 @@ export const CacheDebug: React.FC<CacheDebugProps> = ({
 
     return () => clearInterval(interval);
   }, [cache, enabled]);
+
+  // Log da configuração do cache no console (apenas uma vez)
+  useEffect(() => {
+    if (enabled && process.env.NODE_ENV === 'development') {
+      console.log('🔧 Cache Debug ativado', {
+        CACHE_DEBUG: process.env.CACHE_DEBUG,
+        CACHE_DEFAULT_TTL: process.env.CACHE_DEFAULT_TTL,
+        CACHE_MAX_ENTRIES: process.env.CACHE_MAX_ENTRIES
+      });
+    }
+  }, [enabled]);
 
   if (!enabled) return null;
 

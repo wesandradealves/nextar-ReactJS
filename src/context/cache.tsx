@@ -24,11 +24,13 @@ const CacheContext = createContext<CacheContextType | null>(null);
 interface CacheProviderProps {
   children: React.ReactNode;
   defaultTTL?: number;
+  maxEntries?: number;
 }
 
 export const CacheProvider: React.FC<CacheProviderProps> = ({ 
   children, 
-  defaultTTL = 5 * 60 * 1000 // 5 minutes
+  defaultTTL = parseInt(process.env.CACHE_DEFAULT_TTL || '300000'), // 5 minutes
+  maxEntries = parseInt(process.env.CACHE_MAX_ENTRIES || '1000')
 }) => {
   const cache = useRef<Map<string, CacheEntry>>(new Map());
   const stats = useRef({ hits: 0, misses: 0 });
@@ -61,13 +63,21 @@ export const CacheProvider: React.FC<CacheProviderProps> = ({
     ttl: number = defaultTTL, 
     tags: string[] = []
   ): void => {
+    // Remove oldest entries if cache is full
+    if (cache.current.size >= maxEntries) {
+      const oldestKey = cache.current.keys().next().value;
+      if (oldestKey) {
+        cache.current.delete(oldestKey);
+      }
+    }
+
     cache.current.set(key, {
       data,
       timestamp: Date.now(),
       ttl,
       tags
     });
-  }, [defaultTTL]);
+  }, [defaultTTL, maxEntries]);
 
   const remove = useCallback((key: string): void => {
     cache.current.delete(key);
