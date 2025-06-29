@@ -80,69 +80,61 @@ export default function Dashboard() {
         </WelcomeSection>
 
         <StatsGrid>
-          <StatCard>
+          {stats.chamadosAbertos && (<StatCard>
             <StatTitle>🔧 Chamados</StatTitle>
             <StatValue>
-              {dashboardLoading ? '...' : (
-                <CountUp 
-                  end={stats.chamadosAbertos} 
-                  duration={1.2}
-                  separator="."
-                />
-              )}
+              <CountUp
+                end={stats.chamadosAbertos}
+                duration={1.2}
+                separator="."
+              />
             </StatValue>
             <StatLabel>
               <Badge variant="primary" size="small">Abertos</Badge>
             </StatLabel>
-          </StatCard>
+          </StatCard>)}
 
-          <StatCard>
+          {stats.totalEquipamentos && (<StatCard>
             <StatTitle>⚙️ Equipamentos</StatTitle>
             <StatValue>
-              {dashboardLoading ? '...' : (
-                <CountUp 
-                  end={stats.totalEquipamentos} 
-                  duration={1.5}
-                  separator="."
-                />
-              )}
+              <CountUp
+                end={stats.totalEquipamentos}
+                duration={1.5}
+                separator="."
+              />
             </StatValue>
             <StatLabel>
               <Badge variant="success" size="small">Total</Badge>
             </StatLabel>
-          </StatCard>
+          </StatCard>)}
 
-          <StatCard>
+          {stats.usuariosAtivos && (<StatCard>
             <StatTitle>👥 Usuários</StatTitle>
             <StatValue>
-              {dashboardLoading ? '...' : (
-                <CountUp 
-                  end={stats.usuariosAtivos} 
-                  duration={1.0}
-                  separator="."
-                />
-              )}
+              <CountUp
+                end={stats.usuariosAtivos}
+                duration={1.0}
+                separator="."
+              />
             </StatValue>
             <StatLabel>
               <Badge variant="success" size="small">Ativos</Badge>
             </StatLabel>
-          </StatCard>
+          </StatCard>)}
 
-          <StatCard>
+          {stats.chamadosResolvidos && (<StatCard>
             <StatTitle>✅ Resolvidos</StatTitle>
             <StatValue>
-              {dashboardLoading ? '...' : (
-                <CountUp 
-                  end={stats.chamadosResolvidos} 
-                  duration={1.8}
-                  separator="."
-                />
-              )}
+              <CountUp
+                end={stats.chamadosResolvidos}
+                duration={1.8}
+                separator="."
+              />
             </StatValue>
             <StatLabel>
               <Badge variant="primary" size="small">Este mês</Badge>
             </StatLabel>
-          </StatCard>
+          </StatCard>)}
         </StatsGrid>
 
         <QuickActions>
