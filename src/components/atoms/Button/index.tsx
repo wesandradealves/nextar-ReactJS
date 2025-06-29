@@ -27,6 +27,7 @@ export const Button = ({
   disabled = false,
   loading = false,
   type = 'button',
+  form,
   className,
   onClick,
   fullWidth = false,
@@ -42,6 +43,7 @@ export const Button = ({
   return (
     <ButtonElement
       type={type}
+      form={form}
       className={className}
       onClick={handleClick}
       disabled={disabled || loading}

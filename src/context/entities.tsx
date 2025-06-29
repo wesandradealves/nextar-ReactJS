@@ -142,8 +142,8 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
   const createUsuario = (usuario: Omit<User, 'id'>) => {
     const newUsuario: User = {
       ...usuario,
-      id: Date.now().toString(),
-    };
+      id: Date.now().toString()
+    } as User;
     setUsuarios(prev => [...prev, newUsuario]);
   };
 

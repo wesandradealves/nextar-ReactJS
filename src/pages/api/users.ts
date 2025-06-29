@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { User } from '@/types';
+import { User, PaginatedResponse, CreateUserData } from '@/types';
 import { getUsersData, saveUsersData, generateNewId } from '@/utils/storage';
 import { hashPassword } from '@/utils/crypto';
 
@@ -8,7 +8,7 @@ import { hashPassword } from '@/utils/crypto';
  * 
  * @description
  * Endpoints disponíveis:
- * - GET: Lista todos os usuários
+ * - GET: Lista usuários com suporte a paginação, busca e filtros
  * - POST: Cria um novo usuário (senha será criptografada)
  * - PUT: Atualiza um usuário existente (senha será criptografada se fornecida)
  * 
@@ -17,21 +17,9 @@ import { hashPassword } from '@/utils/crypto';
  * 
  * @example
  * ```typescript
- * // GET /api/users - Listar usuários
- * const response = await fetch('/api/users');
- * const users = await response.json();
- * 
+ * // GET /api/users?page=1&limit=10&search=joão&perfil=PESQUISADOR&sortBy=nome&sortOrder=asc
  * // POST /api/users - Criar usuário
- * const response = await fetch('/api/users', {
- *   method: 'POST',
- *   headers: { 'Content-Type': 'application/json' },
- *   body: JSON.stringify({
- *     nome: 'João Silva',
- *     email: 'joao@email.com',
- *     perfil: 'USER',
- *     setor: 'TI'
- *   })
- * });
+ * // PUT /api/users/123 - Atualizar usuário
  * ```
  */
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -40,16 +28,77 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        const users = getUsersData();
-        res.status(200).json(users);
-      } catch {
+        const {
+          page = '1',
+          limit = '10',
+          search = '',
+          perfil,
+          sortBy = 'nome',
+          sortOrder = 'asc'
+        } = req.query;
+
+        const allUsers = getUsersData();
+        let filteredUsers = [...allUsers];
+
+        // Aplicar busca por nome ou email
+        if (search && typeof search === 'string') {
+          const searchTerm = search.toLowerCase();
+          filteredUsers = filteredUsers.filter(user =>
+            user.nome.toLowerCase().includes(searchTerm) ||
+            user.email.toLowerCase().includes(searchTerm)
+          );
+        }
+
+        // Aplicar filtro por perfil
+        if (perfil && typeof perfil === 'string') {
+          filteredUsers = filteredUsers.filter(user => user.perfil === perfil);
+        }
+
+        // Aplicar ordenação
+        if (typeof sortBy === 'string') {
+          filteredUsers.sort((a, b) => {
+            const aValue = String(a[sortBy as keyof User] || '');
+            const bValue = String(b[sortBy as keyof User] || '');
+            
+            const comparison = aValue.localeCompare(bValue);
+            return sortOrder === 'desc' ? -comparison : comparison;
+          });
+        }
+
+        // Aplicar paginação
+        const pageNum = parseInt(page as string, 10);
+        const limitNum = parseInt(limit as string, 10);
+        const offset = (pageNum - 1) * limitNum;
+        const paginatedUsers = filteredUsers.slice(offset, offset + limitNum);
+
+        // Remover senhas dos dados retornados
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const safeUsers = paginatedUsers.map(({ senha: _senha, ...user }) => user);
+
+        const response: PaginatedResponse<Omit<User, 'senha'>> = {
+          data: safeUsers,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total: filteredUsers.length,
+            totalPages: Math.ceil(filteredUsers.length / limitNum)
+          },
+          sorting: {
+            sortBy: sortBy as string,
+            sortOrder: sortOrder as 'asc' | 'desc'
+          }
+        };
+
+        res.status(200).json(response);
+      } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
         res.status(500).json({ message: 'Erro ao carregar usuários' });
       }
       break;
 
     case 'POST':
       try {
-        const newUser: Omit<User, 'id'> = req.body;
+        const newUser: CreateUserData = req.body;
         
         // Validar campos obrigatórios
         if (!newUser.senha) {
@@ -66,7 +115,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const userWithId: User = { 
           ...newUser, 
           id: newId, 
-          senha: hashedPassword 
+          senha: hashedPassword,
+          ativo: true,
+          dataCriacao: new Date().toISOString()
         };
         
         users.push(userWithId);
