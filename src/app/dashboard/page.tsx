@@ -4,6 +4,7 @@ import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
 import { useDashboard } from '@/hooks/useApi';
 import { Badge } from '@/components/atoms';
+import { PerfilUsuario } from '@/utils/enums';
 import CountUp from 'react-countup';
 import { useRouter } from 'next/navigation';
 import {
@@ -45,6 +46,9 @@ export default function Dashboard() {
     chamadosResolvidos: 0,
     usuariosAtivos: 0
   };
+
+  // Verificar permissões do usuário
+  const isGestao = user?.perfil === PerfilUsuario.GESTAO;
 
   /**
    * Navega para o path especificado
@@ -126,18 +130,36 @@ export default function Dashboard() {
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
+            {/* Novo Chamado - Todos os perfis podem criar */}
             {/* <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
               📋 Novo Chamado
             </ActionButton> */}
-            <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
-              Gerenciar Usuários
+            
+            {/* Gestão de Usuários - Apenas GESTAO */}
+            {isGestao && (
+              <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
+                👥 Gerenciar Usuários
+              </ActionButton>
+            )}
+            
+            {/* Equipamentos - GESTAO e AGENTE */}
+            {/* {(isGestao || isAgente) && (
+              <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
+                🔧 Equipamentos
+              </ActionButton>
+            )} */}
+            
+            {/* Meu Perfil - Todos os perfis */}
+            <ActionButton onClick={() => handleNavigate('/dashboard/profile')}>
+              👤 Meu Perfil
             </ActionButton>
-            {/* <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
-              🔧 Equipamentos
-            </ActionButton>
-            <ActionButton onClick={() => handleNavigate('/dashboard/relatorios')}>
-              📊 Relatórios
-            </ActionButton> */}
+            
+            {/* Relatórios - GESTAO e AGENTE */}
+            {/* {(isGestao || isAgente) && (
+              <ActionButton onClick={() => handleNavigate('/dashboard/relatorios')}>
+                📊 Relatórios
+              </ActionButton>
+            )} */}
           </ActionGrid>
           <ActionNote>
             * Funcionalidades em desenvolvimento

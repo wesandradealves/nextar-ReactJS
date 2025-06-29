@@ -14,24 +14,24 @@
     "id": "3",
     "nome": "Maria Santos",
     "email": "maria.santos@antartica.br",
-    "senha": "88c96a9bdaee9e9b733751a180dcd298",
+    "senha": "90f80b22f53a5d4d72f7b126ef4b1f44",
     "perfil": "pesquisador",
     "usuario": "maria.santos",
     "setor": "TI",
-    "ativo": false,
+    "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T21:35:25.403Z"
+    "dataAtualizacao": "2025-06-29T22:19:48.692Z"
   },
   {
     "id": "4",
     "nome": "João Costa Teste",
     "email": "joao.costa@antartica.br",
-    "senha": "64c02c20fc6540b184ae152181571990",
+    "senha": "90f80b22f53a5d4d72f7b126ef4b1f44",
     "perfil": "agente",
     "usuario": "joao.silva",
     "setor": "TI",
-    "ativo": false,
+    "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T21:35:24.345Z"
+    "dataAtualizacao": "2025-06-29T22:20:10.498Z"
   }
 ]
