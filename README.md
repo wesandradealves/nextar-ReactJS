@@ -235,42 +235,90 @@ Componentes básicos e indivisíveis que não podem ser quebrados em partes meno
 
 **Implementados:**
 - **Logo**: Logotipo com variações (header, login) e tamanhos
-- **Button**: Botões com 4 variantes e estados (loading, disabled)
+- **Button**: Botões com 4 variantes e estados (loading, disabled, ícone)
 - **Spinner**: Indicador de carregamento com cores e tamanhos
-
-**Características:**
-- ✅ **Reutilizáveis** em qualquer contexto
-- ✅ **Props bem definidas** com TypeScript
-- ✅ **Styled Components** responsivos
-- ✅ **Stories completas** no Storybook
-- ✅ **Testes visuais** com múltiplas variações
+- **Input**: Campo de formulário reutilizável com validação e estados
+- **Badge**: Tags/etiquetas para status, categorias e indicadores
 
 ```tsx
 // Exemplo de uso dos atoms
-import { Logo, Button, Spinner } from '@/components/atoms';
+import { Logo, Button, Spinner, Input, Badge } from '@/components/atoms';
 
 <Logo variant="header" size="small" />
 <Button variant="primary" loading={isSubmitting}>
   Salvar
 </Button>
 <Spinner size="large" color="#ff0000" />
+<Input 
+  type="email" 
+  placeholder="seu@email.com" 
+  hasError={hasError}
+/>
+<Badge variant="success" size="small">Concluído</Badge>
 ```
 
 #### **2. Molecules (Moléculas)**
 Combinação de atoms que formam componentes mais complexos.
 
-**Planejados:**
-- **FormField**: Label + Input + ErrorMessage
-- **SearchBox**: Input + Button + Icon
-- **UserCard**: Avatar + Name + Role
+**Implementados:**
+- **FormField**: Label + Input + ErrorMessage + HelpText
+- **SearchBox**: Input + Button + Icons (busca e limpar)
+- **UserCard**: Avatar + Nome + Perfil + Status online
+
+```tsx
+// Exemplo de uso das molecules
+import { FormField, SearchBox, UserCard } from '@/components/molecules';
+
+<FormField
+  id="email"
+  label="Email"
+  type="email"
+  placeholder="seu@email.com"
+  required
+  error={errors.email}
+  helpText="Digite um email válido"
+/>
+
+<SearchBox
+  placeholder="Buscar equipamentos..."
+  onSearch={handleSearch}
+  onClear={handleClear}
+/>
+
+<UserCard
+  name="João Silva"
+  email="joao@antartica.gov.br"
+  profile={PerfilUsuario.PESQUISADOR}
+  isOnline={true}
+  clickable
+  onClick={handleUserClick}
+/>
+```
 
 #### **3. Organisms (Organismos)**
 Seções distintas da interface que combinam molecules e atoms.
 
+**Implementados:**
+- **Header**: Logo + Navigation + SearchBox + UserMenu dropdown
+
+```tsx
+// Exemplo de uso dos organisms
+import { Header } from '@/components/organisms';
+
+<Header
+  userName={user.nome}
+  userEmail={user.email}
+  userProfile={user.perfil}
+  isOnline={true}
+  onLogout={handleLogout}
+  onProfileClick={handleProfileClick}
+/>
+```
+
 **Planejados:**
-- **Header**: Logo + Navigation + UserMenu
 - **Sidebar**: Navigation + QuickActions
 - **DataTable**: SearchBox + Table + Pagination
+- **FormContainer**: Múltiplos FormFields com validação
 
 #### **4. Templates (Templates)**
 Layout de páginas sem conteúdo específico.
@@ -287,7 +335,7 @@ Instâncias específicas de templates com conteúdo real.
 - **LoginPage**: Formulário de autenticação
 - **DashboardPage**: Painel principal
 
-### 📖 **Convenções de Desenvolvimento**
+### �📖 **Convenções de Desenvolvimento**
 
 #### **Estrutura de Arquivo Padrão**
 ```
@@ -332,26 +380,244 @@ export const AllVariants: Story = {
 };
 ```
 
-### 🔄 **Vantagens da Implementação**
+## 🧩 Componentes Implementados
 
-- ✅ **Reutilização máxima** de componentes
-- ✅ **Consistência visual** em toda aplicação
-- ✅ **Manutenção facilitada** com componentes isolados
-- ✅ **Testes visuais** automatizados no Storybook
-- ✅ **Documentação viva** sempre atualizada
-- ✅ **Desenvolvimento paralelo** entre equipes
-- ✅ **Escalabilidade** para projetos grandes
+### **🔬 Atoms (Componentes Básicos)**
 
-### 🚀 **Próximos Passos**
+#### **Input**
+Campo de formulário reutilizável com múltiplos tipos e estados.
 
-1. **Molecules**: Implementar FormField, SearchBox, UserCard
-2. **Organisms**: Criar Header, Sidebar, DataTable
-3. **Templates**: Desenvolver layouts reutilizáveis
-4. **Testing**: Adicionar testes unitários para atoms
-5. **Theming**: Sistema de design tokens
-6. **Animation**: Micro-interações com Framer Motion
+```tsx
+<Input
+  type="email"
+  placeholder="seu@email.com"
+  hasError={!!error}
+  disabled={loading}
+  required
+/>
+```
 
----
+**Características:**
+- ✅ Tipos: text, email, password, number, tel, url, search
+- ✅ Estados: normal, error, disabled, readonly
+- ✅ Ícones integrados (ex: lupa para search)
+- ✅ Validação visual automática
+
+#### **Badge**
+Tags/etiquetas para status, categorias e indicadores.
+
+```tsx
+<Badge variant="success" size="small">Concluído</Badge>
+<Badge variant="warning" dot />
+<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
+```
+
+**Características:**
+- ✅ Variantes: default, primary, secondary, success, warning, danger
+- ✅ Tamanhos: small, medium, large
+- ✅ Modo dot (apenas indicador)
+- ✅ Estados clicáveis
+
+### **🧬 Molecules (Componentes Compostos)**
+
+#### **FormField**
+Combinação completa de Label + Input + validação.
+
+```tsx
+<FormField
+  id="email"
+  label="Email"
+  type="email"
+  placeholder="Digite seu email"
+  required
+  error={errors.email}
+  helpText="Será usado para notificações"
+/>
+```
+
+**Características:**
+- ✅ Label com indicador de obrigatório (*)
+- ✅ Input integrado com estados
+- ✅ Mensagens de erro estilizadas
+- ✅ Texto de ajuda opcional
+- ✅ Validação visual automática
+
+#### **SearchBox**
+Campo de busca com funcionalidades avançadas.
+
+```tsx
+<SearchBox
+  placeholder="Buscar equipamentos..."
+  onSearch={handleSearch}
+  onClear={handleClear}
+  loading={isSearching}
+/>
+```
+
+**Características:**
+- ✅ Input de busca estilizado
+- ✅ Botão de busca integrado
+- ✅ Botão de limpeza (quando tem conteúdo)
+- ✅ Estado de loading
+- ✅ Busca ao pressionar Enter
+
+#### **UserCard**
+Card de usuário com avatar, informações e status.
+
+```tsx
+<UserCard
+  name="João Silva"
+  email="joao@antartica.gov.br"
+  profile={PerfilUsuario.PESQUISADOR}
+  isOnline={true}
+  clickable
+  onClick={handleUserClick}
+/>
+```
+
+**Características:**
+- ✅ Avatar com iniciais geradas automaticamente
+- ✅ Indicador de status online/offline
+- ✅ Badge de perfil colorido
+- ✅ Tamanhos: small, medium, large
+- ✅ Estados clicáveis com hover
+
+### **🏗️ Organisms (Seções Complexas)**
+
+#### **Header**
+Cabeçalho completo com navegação e funcionalidades.
+
+```tsx
+<Header
+  userName={user.nome}
+  userProfile={user.perfil}
+  isOnline={true}
+  onLogout={handleLogout}
+  onProfileClick={handleProfileClick}
+/>
+```
+
+**Características:**
+- ✅ Logo clicável
+- ✅ Menu de navegação principal
+- ✅ SearchBox integrado
+- ✅ UserCard no menu dropdown
+- ✅ Menu mobile responsivo
+- ✅ Logout integrado
+
+### **📱 Responsividade**
+
+Todos os componentes são totalmente responsivos:
+
+```scss
+// Breakpoints integrados
+@media (max-width: 768px) {
+  // Adaptações mobile
+}
+
+@media (max-width: 1024px) {
+  // Adaptações tablet  
+}
+```
+
+**Comportamentos:**
+- ✅ Header: Menu collapse em mobile
+- ✅ SearchBox: Esconde em telas menores
+- ✅ UserCard: Adapta tamanhos automaticamente
+- ✅ FormField: Layout vertical em mobile
+
+### **🎨 Tematização**
+
+Sistema de cores consistente:
+
+```tsx
+const colors = {
+  primary: '#667eea',
+  secondary: '#6b7280', 
+  success: '#10b981',
+  warning: '#f59e0b',
+  danger: '#ef4444',
+  default: '#f3f4f6'
+};
+```
+
+**Aplicação:**
+- ✅ Badges com cores semânticas
+- ✅ Estados de erro padronizados
+- ✅ Hover states consistentes
+- ✅ Focus rings para acessibilidade
+
+### **📚 Storybook - Documentação Interativa**
+
+O projeto inclui Storybook completo com todas as variações dos componentes.
+
+#### **Executar o Storybook**
+```bash
+npm run storybook
+# Acesse: http://localhost:6006
+```
+
+#### **Stories Implementadas**
+
+**Atoms:**
+- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
+- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
+- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
+- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
+- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
+
+**Molecules:**
+- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
+- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
+- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
+
+**Organisms:**
+- ✅ **Header.stories**: 5 variações + exemplo de página completa
+
+#### **Recursos do Storybook**
+
+```tsx
+// Exemplo de story com controles
+export const Interactive: Story = {
+  args: {
+    variant: 'primary',
+    size: 'medium',
+    disabled: false,
+  },
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'danger'],
+    },
+  },
+};
+```
+
+**Funcionalidades:**
+- ✅ **Controles interativos** para todas as props
+- ✅ **Actions logger** para eventos
+- ✅ **Documentação automática** com JSDoc
+- ✅ **Testes visuais** com múltiplos cenários
+- ✅ **Responsividade** testável
+- ✅ **Casos extremos** (nomes longos, sem dados)
+
+#### **Navegação no Storybook**
+
+```
+📚 Storybook Structure
+├── 🔬 Atoms/
+│   ├── Badge
+│   ├── Button  
+│   ├── Input
+│   ├── Logo
+│   └── Spinner
+├── 🧬 Molecules/
+│   ├── FormField
+│   ├── SearchBox
+│   └── UserCard  
+└── 🏗️ Organisms/
+    └── Header
+```
 
 ## ✨ Funcionalidades
 
@@ -775,13 +1041,87 @@ test: adição de testes
 
 ---
 
-## 📄 Licença
+## �️ Roadmap - Próximos Passos
+
+### **🔬 Atoms Pendentes**
+- [ ] **Icon**: Biblioteca de ícones SVG padronizados
+- [ ] **Avatar**: Componente de foto/inicial do usuário  
+- [ ] **Tooltip**: Informações contextuais em hover
+- [ ] **Checkbox**: Campo de seleção estilizado
+- [ ] **Radio**: Seleção única estilizada
+
+### **🧬 Molecules Pendentes**
+- [ ] **StatCard**: Ícone + Valor + Label para métricas
+- [ ] **FilterBox**: Múltiplos filtros com chips removíveis  
+- [ ] **Pagination**: Navegação entre páginas de dados
+- [ ] **Breadcrumb**: Navegação hierárquica
+- [ ] **AlertBanner**: Mensagens de sistema importantes
+
+### **🏗️ Organisms Pendentes**
+- [ ] **Sidebar**: Navegação lateral com menu colapsível
+- [ ] **DataTable**: Tabela completa com busca, filtros, paginação
+- [ ] **FormContainer**: Container com múltiplos FormFields e validação
+- [ ] **Modal**: Diálogos modais reutilizáveis
+- [ ] **NavTabs**: Navegação em abas para seções
+
+### **📄 Templates Pendentes**
+- [ ] **AuthTemplate**: Layout para login/registro/recuperação
+- [ ] **DashboardTemplate**: Layout base para área logada
+- [ ] **FormTemplate**: Layout padrão para formulários CRUD
+- [ ] **ListTemplate**: Layout para listagens com filtros
+- [ ] **DetailTemplate**: Layout para visualização de detalhes
+
+### **🔧 Funcionalidades Core**
+- [ ] **Sistema CRUD**: Implementar telas completas para todas as entidades
+- [ ] **Gestão de Chamados**: Interface completa de tickets
+- [ ] **Dashboard Analytics**: Gráficos e métricas avançadas
+- [ ] **Sistema de Permissões**: ACL baseado em perfis
+- [ ] **Logs de Auditoria**: Rastreamento de ações dos usuários
+
+### **🎨 Melhorias de UX/UI**
+- [ ] **Design Tokens**: Sistema de design escalável
+- [ ] **Tema Escuro**: Alternância entre temas
+- [ ] **Animações**: Micro-interações com Framer Motion
+- [ ] **PWA**: Funcionalidades offline
+- [ ] **Acessibilidade**: WCAG 2.1 AA completo
+
+### **🧪 Qualidade & Performance**
+- [ ] **Testes Unitários**: Jest + Testing Library para todos os atoms
+- [ ] **Testes E2E**: Cypress para fluxos críticos
+- [ ] **Performance**: Lazy loading e otimizações
+- [ ] **Bundle Analysis**: Análise e otimização do bundle
+- [ ] **CI/CD**: Pipeline automatizado
+
+### **📱 Mobile & Responsividade**
+- [ ] **App Mobile**: React Native com componentes compartilhados
+- [ ] **Touch Interactions**: Gestos e interações touch
+- [ ] **Offline Support**: Sincronização quando voltar online
+- [ ] **Native Features**: Camera, GPS, notificações
+
+### **🔒 Segurança & Produção**
+- [ ] **Autenticação JWT**: Tokens seguros com refresh
+- [ ] **Rate Limiting**: Proteção contra abuso da API
+- [ ] **Validação Backend**: Sanitização e validação rigorosa
+- [ ] **Logs Centralizados**: Sistema de logging robusto
+- [ ] **Backup & Recovery**: Estratégia de backup automático
+
+### **🌐 Integração & APIs**
+- [ ] **API Real**: Substituir JSONs por banco de dados real
+- [ ] **WebSockets**: Atualizações em tempo real
+- [ ] **Integração Externa**: APIs de equipamentos IoT
+- [ ] **Relatórios**: Geração de PDFs e planilhas
+- [ ] **Notificações**: Email e push notifications
+
+---
+
+## �📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
 
-## 👨‍💻 Autor
+## 👨‍💻 Autor: Wesley Alves 
+[http://github.com/wesandradealves] http://github.com/wesandradealves
 
 **Desenvolvido para desafio técnico**
 - Sistema de manutenção científica da Antártica
