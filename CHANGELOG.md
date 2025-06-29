@@ -5,6 +5,28 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.3] - 2025-06-29
+
+### Refatorado
+- **Padronização de Componentes React**
+  - Remoção completa do uso de `React.FC` em todos os componentes
+  - Migração para padrão `export default function` para melhor consistência
+  - Atualização de todas as importações e exportações nos arquivos de índice
+  - Correção de tipagem TypeScript em componentes afetados
+  - Padronização da estrutura de declaração de componentes
+
+- **Limpeza de Código**
+  - Remoção de arquivos temporários desnecessários (.tmp)
+  - Melhoria na legibilidade e manutenibilidade do código
+  - Garantia de consistência em todo o codebase
+  - Build e lint funcionando perfeitamente após refatoração
+
+### Componentes Atualizados
+- `Counter`, `Modal`, `UserModal`, `FormContainer`
+- `CacheDebug` e todos os componentes de contexto
+- Páginas de `login`, `profile` e componentes relacionados
+- Arquivos de índice para exportações corretas
+
 ## [1.4.2] - 2025-06-29
 
 ### Corrigido
