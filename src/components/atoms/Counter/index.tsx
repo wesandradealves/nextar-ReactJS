@@ -8,11 +8,11 @@ interface CounterProps {
   loading?: boolean;
 }
 
-export const Counter: React.FC<CounterProps> = ({ 
+export default function Counter({ 
   value, 
   duration = 1500,
   loading = false 
-}) => {
+}: CounterProps) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -49,4 +49,4 @@ export const Counter: React.FC<CounterProps> = ({
   }
 
   return <>{count}</>;
-};
+}

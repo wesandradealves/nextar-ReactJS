@@ -3,7 +3,7 @@
 import { ThemeProvider } from 'styled-components';
 import { LoaderProvider, useLoader } from '@/context/spinner';
 import { AuthProvider } from '@/context/auth';
-import { CacheProvider } from '@/context/cache';
+import CacheProvider from '@/context/cache';
 import { EntitiesProvider } from '@/context/entities';
 import { CacheDebug } from '@/components/debug';
 import Spinner from '@/components/spinner/spinner';

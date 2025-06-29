@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth';
 import { useProfile } from '@/hooks/useProfile';
-import { FormContainer } from '@/components/molecules';
+import FormContainer from '@/components/molecules/FormContainer';
 import { 
   ProfileContainer, 
   ProfileHeader, 
@@ -37,8 +37,8 @@ export default function ProfilePage() {
   const [isFormReady, setIsFormReady] = useState(false);
 
   useMetadata({
-    title: `Nextar - Perfil`,
-    ogTitle: `Nextar - Perfil`
+    title: `Nextar - Meu Perfil`,
+    ogTitle: `Nextar - Meu Perfil`
   });
 
   // Aguardar os dados do usuário estarem disponíveis

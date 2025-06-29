@@ -2,11 +2,11 @@
 export { FormField } from './FormField';
 export { SearchBox } from './SearchBox';
 export { UserCard } from './UserCard';
-export { FormContainer } from './FormContainer';
+export { default as FormContainer } from './FormContainer';
 export { Navigation } from './Navigation';
 export { DataTable } from './DataTable';
-export { Modal } from './Modal';
-export { UserModal } from './UserModal';
+export { default as Modal } from './Modal';
+export { default as UserModal } from './UserModal';
 
 // Exportações dos tipos
 export type { FormFieldProps } from './FormField/types';

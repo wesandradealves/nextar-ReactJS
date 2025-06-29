@@ -1,1 +1,1 @@
-export { CacheDebug } from './CacheDebug';
+export { default as CacheDebug } from './CacheDebug';

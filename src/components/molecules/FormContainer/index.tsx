@@ -98,7 +98,7 @@ const validateField = (config: FormFieldConfig, value: string): string | undefin
  * />
  * ```
  */
-export const FormContainer: React.FC<FormContainerProps> = ({
+export default function FormContainer({
   fields,
   onSubmit,
   initialValues = {},
@@ -112,7 +112,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   onChange,
   children,
   className
-}) => {
+}: FormContainerProps) {
   // Estado do formulário
   const [formState, setFormState] = useState<FormState>(() => {
     const initialFields: Record<string, FormFieldData> = {};
@@ -363,4 +363,4 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       </StyledFormActions>
     </StyledFormContainer>
   );
-};
+}

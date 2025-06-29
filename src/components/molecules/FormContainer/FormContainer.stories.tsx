@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FormContainer } from './index';
+import FormContainer from './index';
 import { FormFieldConfig } from './types';
 
 const meta = {

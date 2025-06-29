@@ -90,9 +90,9 @@ interface CacheDebugProps {
   enabled?: boolean;
 }
 
-export const CacheDebug: React.FC<CacheDebugProps> = ({ 
+export default function CacheDebug({ 
   enabled = process.env.NODE_ENV === 'development' && process.env.CACHE_DEBUG === 'true'
-}) => {
+}: CacheDebugProps) {
   const cache = useCache();
   const [collapsed, setCollapsed] = useState(false);
   const [stats, setStats] = useState({ size: 0, hits: 0, misses: 0 });
@@ -164,4 +164,4 @@ export const CacheDebug: React.FC<CacheDebugProps> = ({
       </DebugContent>
     </DebugContainer>
   );
-};
+}

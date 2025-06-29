@@ -27,11 +27,11 @@ interface CacheProviderProps {
   maxEntries?: number;
 }
 
-export const CacheProvider: React.FC<CacheProviderProps> = ({ 
+export default function CacheProvider({ 
   children, 
   defaultTTL = parseInt(process.env.CACHE_DEFAULT_TTL || '300000'), // 5 minutes
   maxEntries = parseInt(process.env.CACHE_MAX_ENTRIES || '1000')
-}) => {
+}: CacheProviderProps) {
   const cache = useRef<Map<string, CacheEntry>>(new Map());
   const stats = useRef({ hits: 0, misses: 0 });
 
@@ -126,7 +126,7 @@ export const CacheProvider: React.FC<CacheProviderProps> = ({
       {children}
     </CacheContext.Provider>
   );
-};
+}
 
 export const useCache = (): CacheContextType => {
   const context = useContext(CacheContext);

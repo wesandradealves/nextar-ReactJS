@@ -23,7 +23,7 @@ import {
  * - Funciona com React Portal para renderização
  * - Focável e acessível
  */
-export const Modal: React.FC<ModalProps> = ({
+export default function Modal({
   isOpen,
   onClose,
   title,
@@ -34,7 +34,7 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnOverlayClick = true,
   closeOnEsc = true,
   className
-}) => {
+}: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Gerenciar scroll do body
@@ -134,6 +134,4 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Usar portal para renderizar fora da árvore de componentes
   return createPortal(modalContent, document.body);
-};
-
-export default Modal;
+}

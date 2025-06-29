@@ -5,7 +5,8 @@ import { useMetadata } from '@/hooks/useMetadata';
 import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
 import { Logo } from '@/components/atoms';
-import { FormContainer, FormFieldConfig } from '@/components/molecules';
+import FormContainer from '@/components/molecules/FormContainer';
+import type { FormFieldConfig } from '@/components/molecules/FormContainer/types';
 import {
   LoginContainer,
   LoginCard,

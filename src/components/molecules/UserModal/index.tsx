@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal } from '../Modal';
-import { FormContainer } from '../FormContainer';
+import Modal from '../Modal';
+import FormContainer from '../FormContainer';
 import { Button } from '../../atoms';
 import type { CreateUserData, UpdateUserData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
@@ -27,13 +27,13 @@ import {
  * - Seleção de perfil visual
  * - Integração com API de usuários
  */
-export const UserModal: React.FC<UserModalProps> = ({
+export default function UserModal({
   isOpen,
   onClose,
   onSubmit,
   user,
   isLoading = false
-}) => {
+}: UserModalProps) {
   const [selectedProfile, setSelectedProfile] = useState<PerfilUsuario>(
     user?.perfil || PerfilUsuario.PESQUISADOR
   );
@@ -280,6 +280,4 @@ export const UserModal: React.FC<UserModalProps> = ({
       </FormSection>
     </Modal>
   );
-};
-
-export default UserModal;
+}
