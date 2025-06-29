@@ -14,6 +14,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Sistema de Cache Multicamadas](#sistema-de-cache-multicamadas)
 - [Atomic Design Pattern](#atomic-design-pattern)
 - [Funcionalidades](#funcionalidades)
+- [Sistema de Notificações (Toasts)](#sistema-de-notificações-toasts)
 - [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
 - [Fluxo de Autenticação Implementado](#fluxo-de-autenticação-implementado)
 - [API Endpoints](#api-endpoints)
@@ -1097,6 +1098,60 @@ Sistema de modais moderno com portal e animações:
   title="Criar Usuário"
 />
 ```
+
+### **🔔 Sistema de Notificações (Toasts)**
+Sistema moderno de notificações usando **react-toastify** para feedback visual consistente:
+
+**Funcionalidades:**
+- **4 tipos de notificação** - Success, Error, Warning, Info
+- **Posicionamento otimizado** - Canto superior direito
+- **Auto-close configurável** - 5s (success/info), 6s (warning), 7s (error)
+- **Interação manual** - Click para fechar, hover para pausar
+- **Animações suaves** - Entrada/saída com transições
+- **Responsivo** - Adapta-se a diferentes tamanhos de tela
+
+**Hook personalizado `useToast`:**
+```tsx
+import { useToast } from '@/hooks/useToast';
+
+const { success, error, warning, info } = useToast();
+
+// Exemplos de uso
+success('Usuário criado com sucesso!');
+error('Erro ao processar solicitação', 'Verifique os dados informados');
+warning('Atenção: Dados podem estar desatualizados');
+info('Nova versão disponível');
+```
+
+**Integração automática:**
+- **Hook useUsers** - Feedback em todas operações CRUD
+- **Alteração de senhas** - Confirmação de sucesso/erro
+- **Ativação/Desativação** - Status de operações
+- **Formulários** - Validação e submissão
+- **APIs** - Respostas de erro padronizadas
+
+**Configuração global:**
+```tsx
+// CSS importado automaticamente no layout
+import 'react-toastify/dist/ReactToastify.css';
+
+// ToastContainer configurado no ClientProviders
+<ToastContainer
+  position="top-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  closeOnClick={true}
+  pauseOnHover={true}
+  draggable={true}
+/>
+```
+
+**Vantagens da migração:**
+- ✅ **Biblioteca estabelecida** - Manutenção e atualizações contínuas
+- ✅ **Menor bundle size** - Remoção de código customizado
+- ✅ **Melhor acessibilidade** - Suporte nativo a screen readers
+- ✅ **Performance otimizada** - Renderização e animações eficientes
+- ✅ **Documentação robusta** - Comunidade ativa e exemplos
 
 ---
 
