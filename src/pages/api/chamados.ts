@@ -2,6 +2,39 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Chamado } from '@/types';
 import { getChamadosData, saveChamadosData, generateNewId } from '@/utils/storage';
 
+/**
+ * API endpoint para gerenciar chamados
+ * 
+ * @description
+ * Endpoints disponíveis:
+ * - GET: Lista chamados com filtros opcionais (status, agenteId, tipo)
+ * - POST: Cria um novo chamado
+ * - PUT: Atualiza um chamado existente
+ * - DELETE: Remove um chamado
+ * 
+ * @param req - Request object do Next.js
+ * @param res - Response object do Next.js
+ * 
+ * @example
+ * ```typescript
+ * // GET /api/chamados?status=ABERTO - Listar chamados abertos
+ * const response = await fetch('/api/chamados?status=ABERTO');
+ * const chamados = await response.json();
+ * 
+ * // POST /api/chamados - Criar chamado
+ * const response = await fetch('/api/chamados', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/json' },
+ *   body: JSON.stringify({
+ *     titulo: 'Problema no equipamento',
+ *     descricao: 'Equipamento não liga',
+ *     solicitanteId: '1',
+ *     equipamentoId: '1',
+ *     prioridade: 'ALTA'
+ *   })
+ * });
+ * ```
+ */
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 

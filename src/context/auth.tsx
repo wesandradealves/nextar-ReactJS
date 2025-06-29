@@ -3,16 +3,43 @@ import { User, Permission } from '@/types';
 import { PERMISSIONS } from '@/utils/enums';
 import { resources } from '@/services/resources';
 
+/**
+ * Props para o contexto de autenticação
+ * @interface AuthContextProps
+ */
 interface AuthContextProps {
+  /** Usuário autenticado atual */
   user: User | null;
+  /** Status de autenticação */
   isAuthenticated: boolean;
+  /** Função para realizar login */
   login: (email: string, password: string) => Promise<void>;
+  /** Função para realizar logout */
   logout: () => void;
+  /** Função para verificar se o usuário tem uma permissão específica */
   hasPermission: (permission: string) => boolean;
 }
 
+/**
+ * Contexto para gerenciar autenticação e autorização da aplicação
+ * @default undefined
+ */
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
+/**
+ * Provider para o contexto de autenticação
+ * Gerencia estado do usuário, login, logout e verificação de permissões
+ * 
+ * @param children - Componentes filhos que terão acesso ao contexto
+ * @returns JSX.Element
+ * 
+ * @example
+ * ```tsx
+ * <AuthProvider>
+ *   <App />
+ * </AuthProvider>
+ * ```
+ */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
@@ -24,6 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  /**
+   * Função para realizar login do usuário
+   * @param email - Email do usuário
+   * @param password - Senha do usuário
+   * @throws {Error} Quando as credenciais são inválidas
+   */
   const login = async (email: string, password: string) => {
     try {
       const response = await resources.login(email, password);
@@ -35,11 +68,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /**
+   * Função para realizar logout do usuário
+   * Remove dados do usuário do estado e localStorage
+   */
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
   };
 
+  /**
+   * Verifica se o usuário atual possui uma permissão específica
+   * @param permission - Nome da permissão a ser verificada
+   * @returns {boolean} true se o usuário tem a permissão, false caso contrário
+   */
   const hasPermission = (permission: string): boolean => {
     if (!user) return false;
     
@@ -61,6 +103,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+/**
+ * Hook para acessar o contexto de autenticação
+ * Deve ser usado dentro de um AuthProvider
+ * 
+ * @returns {AuthContextProps} Objeto com user, isAuthenticated, login, logout e hasPermission
+ * @throws {Error} Quando usado fora do AuthProvider
+ * 
+ * @example
+ * ```tsx
+ * const { user, isAuthenticated, login, logout, hasPermission } = useAuth();
+ * 
+ * const handleLogin = async () => {
+ *   try {
+ *     await login(email, password);
+ *   } catch (error) {
+ *     console.error('Login failed:', error);
+ *   }
+ * };
+ * 
+ * const canEdit = hasPermission('EDIT_USERS');
+ * ```
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

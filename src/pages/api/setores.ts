@@ -2,6 +2,35 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Setor } from '@/types';
 import { getSetoresData, saveSetoresData, generateNewId } from '@/utils/storage';
 
+/**
+ * API endpoint para gerenciar setores
+ * 
+ * @description
+ * Endpoints disponíveis:
+ * - GET: Lista todos os setores
+ * - POST: Cria um novo setor
+ * 
+ * @param req - Request object do Next.js
+ * @param res - Response object do Next.js
+ * 
+ * @example
+ * ```typescript
+ * // GET /api/setores - Listar setores
+ * const response = await fetch('/api/setores');
+ * const setores = await response.json();
+ * 
+ * // POST /api/setores - Criar setor
+ * const response = await fetch('/api/setores', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/json' },
+ *   body: JSON.stringify({
+ *     nome: 'Recursos Humanos',
+ *     sigla: 'RH',
+ *     responsavel: 'Maria Silva'
+ *   })
+ * });
+ * ```
+ */
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 

@@ -1,9 +1,8 @@
 import React from 'react';
 import { useLoader } from '@/context/spinner';
-import { useTheme } from 'styled-components';
+
 const Spinner: React.FC = () => {
   const { isLoading } = useLoader();
-  const theme = useTheme();
 
   if (!isLoading) return null;
 
@@ -27,7 +26,7 @@ const Spinner: React.FC = () => {
           width: '50px',
           height: '50px',
           border: '5px solid rgba(255,255,255,.1)',
-          borderTop: `5px solid ${theme._colors.primary.bdm3}`,
+          borderTop: `5px solid black`,
           borderRadius: '50%',
           animation: 'spin 1s linear infinite',
         }}

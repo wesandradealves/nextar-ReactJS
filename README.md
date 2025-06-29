@@ -12,6 +12,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Funcionalidades](#funcionalidades)
+- [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
 - [API Endpoints](#api-endpoints)
 - [Desenvolvimento](#desenvolvimento)
 - [Deploy](#deploy)
@@ -44,6 +45,7 @@ O **NextAR** é um sistema de manutenção completo projetado para gerenciar equ
 ### **Backend**
 - [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction) - API interna
 - [Axios](https://axios-http.com/) - Cliente HTTP
+- [Crypto-JS](https://cryptojs.gitbook.io/docs/) - Criptografia MD5
 - Dados em JSON (mockados para desenvolvimento)
 
 ### **Desenvolvimento**
@@ -181,6 +183,7 @@ nextar/
 │   ├── utils/
 │   │   ├── enums.ts            # ENUMs e constantes
 │   │   ├── storage.ts          # Utilitários de dados
+│   │   ├── crypto.ts           # Criptografia MD5
 │   │   └── index.ts
 │   └── middleware.ts           # Middleware do Next.js
 ├── eslint.config.mjs           # Configuração ESLint
@@ -228,6 +231,77 @@ nextar/
 
 ---
 
+## 🔐 Sistema de Criptografia de Senhas
+
+### **Implementação MD5**
+O sistema utiliza criptografia MD5 para armazenamento seguro de senhas:
+
+- **Hash MD5** - Senhas nunca armazenadas em texto plano
+- **Verificação segura** - Comparação de hashes para autenticação
+- **Fluxos protegidos** - Login, registro e alteração de senha criptografados
+
+### **Credenciais de Teste**
+| Email | Senha | Perfil |
+|-------|-------|---------|
+| admin@nextar.com | admin123 | Gestão |
+| ana.silva@antartica.br | admin123 | Gestão |
+| carlos.oliveira@antartica.br | agente123 | Agente |
+| maria.santos@antartica.br | pesq123 | Pesquisador |
+
+### **Fluxos de Segurança**
+
+#### **Login Seguro**
+1. Usuário envia email + senha em texto plano
+2. Sistema gera hash MD5 da senha enviada
+3. Compara com hash armazenado
+4. Retorna usuário (sem senha) + token se válido
+
+#### **Criação de Usuário**
+1. Senha recebida em texto plano via API
+2. Sistema gera hash MD5 antes de salvar
+3. Usuário retornado sem campo senha
+
+#### **Alteração de Senha**
+1. Usuário fornece senha atual + nova senha
+2. Sistema verifica senha atual (hash)
+3. Nova senha é criptografada e salva
+4. Processo com validação de segurança
+
+### **Endpoints de Segurança**
+```
+POST /api/auth/login
+Body: { email: string, password: string }
+Response: { user: User (sem senha), token: string }
+
+PUT /api/users/change-password
+Body: { userId: string, currentPassword: string, newPassword: string }
+Response: { success: boolean, message: string }
+```
+
+### **Implementação Técnica**
+```typescript
+// src/utils/crypto.ts
+import CryptoJS from 'crypto-js';
+
+export function hashPassword(password: string): string {
+  return CryptoJS.MD5(password).toString();
+}
+
+export function verifyPassword(password: string, hashedPassword: string): boolean {
+  const inputHash = hashPassword(password);
+  return inputHash === hashedPassword;
+}
+```
+
+### **Arquivos de Criptografia**
+- `src/utils/crypto.ts` - Funções de hash e verificação
+- `public/api/resources/users.json` - Senhas em hash MD5
+- `src/pages/api/auth/login.ts` - Login com verificação MD5
+- `src/pages/api/users.ts` - CRUD com criptografia
+- `src/pages/api/users/change-password.ts` - Alteração segura
+
+---
+
 ## 🌐 API Endpoints
 
 ### **Autenticação**
@@ -241,7 +315,13 @@ Response: { user: User, token: string }
 ```
 GET    /api/users
 POST   /api/users
-Body: { nome: string, email: string, perfil: PerfilUsuario }
+Body: { nome: string, email: string, senha: string, perfil: PerfilUsuario }
+
+PUT    /api/users
+Body: { id: string, nome?: string, email?: string, senha?: string, perfil?: PerfilUsuario }
+
+PUT    /api/users/change-password
+Body: { userId: string, currentPassword: string, newPassword: string }
 ```
 
 ### **Setores**
