@@ -169,7 +169,3 @@ export const ActionNote = styled.p`
   margin: 0;
   font-style: italic;
 `;
-
-// Exportação default para garantir que o arquivo seja reconhecido como módulo
-const styles = {};
-export default styles;

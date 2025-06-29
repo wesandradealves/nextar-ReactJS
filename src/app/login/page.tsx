@@ -1,17 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMetadata } from '@/hooks/useMetadata';
 import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
 import { LoginFormData } from '@/types';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { Logo } from '@/components/atoms';
 import {
   LoginContainer,
   LoginCard,
-  LogoSection,
-  Logo,
   FormSection,
   FormGroup,
   Label,
@@ -83,11 +81,7 @@ export default function Login() {
   return (
     <LoginContainer>
       <LoginCard>
-        <LogoSection>
-          <Logo>
-            <LazyLoadImage src='/logo.png' />
-          </Logo>
-        </LogoSection>
+        <Logo variant="login" size="large" />
 
         <FormSection>
           <form onSubmit={handleSubmit(onSubmit)}>

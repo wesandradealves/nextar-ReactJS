@@ -1,12 +1,11 @@
 "use client";
 
-import React from 'react';
 import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
+import { Logo } from '@/components/atoms';
 import {
   DashboardContainer,
   Header,
-  Title,
   UserInfo,
   UserGreeting,
   UserProfile,
@@ -25,7 +24,7 @@ import {
   ActionGrid,
   ActionButton,
   ActionNote
-} from './style';
+} from './styles';
 
 /**
  * Página principal do dashboard após login
@@ -46,7 +45,7 @@ export default function Dashboard() {
   return (
     <DashboardContainer>
       <Header>
-        <Title>🐧 Dashboard - Sistema NextAR</Title>
+        <Logo variant="header" size="small" />
         <UserInfo>
           {!isLoggingOut && user && (
             <>

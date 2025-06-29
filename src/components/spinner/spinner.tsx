@@ -1,17 +1,22 @@
-import React from 'react';
-import { useLoader } from '@/context/spinner';
-import { SpinnerOverlay, SpinnerWheel } from './style';
+"use client";
 
-const Spinner: React.FC = () => {
+import { useLoader } from '@/context/spinner';
+import Spinner from './index';
+
+/**
+ * Componente Spinner com contexto
+ * Versão que usa o contexto de loading da aplicação
+ * Mantém compatibilidade com o código existente
+ */
+export default function SpinnerWithContext() {
   const { isLoading } = useLoader();
 
-  if (!isLoading) return null;
-
   return (
-    <SpinnerOverlay>
-      <SpinnerWheel />
-    </SpinnerOverlay>
+    <Spinner 
+      overlay
+      visible={isLoading}
+      size="large"
+      color="#ffffff"
+    />
   );
-};
-
-export default Spinner;
+}

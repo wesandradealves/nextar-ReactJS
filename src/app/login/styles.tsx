@@ -20,21 +20,11 @@ export const LoginCard = styled.div`
   overflow: hidden;
   width: 100%;
   max-width: 400px;
-`;
-
-export const LogoSection = styled.div`
-  text-align: center;
-  color: white;
-`;
-
-export const Logo = styled.h1`
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-top: 32px;
 `;
 
 export const FormSection = styled.div`
-  padding: 0 20px 20px;
+  padding: 0 32px 32px;
 `;
 
 export const FormGroup = styled.div`
