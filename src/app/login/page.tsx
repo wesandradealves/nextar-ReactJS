@@ -7,6 +7,7 @@ import { useMetadata } from '@/hooks/useMetadata';
 import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
 import { LoginFormData } from '@/types';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 /**
  * Componente de página de login
@@ -45,11 +46,14 @@ export default function Login() {
       setLoginError('');
       setLoading(true);
       
+      console.log('📝 Formulário de login enviado:', { email: data.email });
+      
       await login(data.email, data.password);
       
-      // Login bem-sucedido - o middleware cuidará do redirect
+      console.log('✅ Login concluído no formulário');
+      // Login bem-sucedido - o contexto cuidará do redirect
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('❌ Erro no login do formulário:', error);
       setLoginError('Credenciais inválidas. Verifique seu email e senha.');
       reset({ password: '' }); // Limpar apenas o campo de senha
     } finally {
@@ -61,8 +65,9 @@ export default function Login() {
     <LoginContainer>
       <LoginCard>
         <LogoSection>
-          <Logo>Nextar</Logo>
-          <Subtitle>Sistema de Manutenção</Subtitle>
+          <Logo>
+            <LazyLoadImage src='/logo.png' />
+          </Logo>
         </LogoSection>
 
         <FormSection>
@@ -177,8 +182,6 @@ const LoginCard = styled.div`
 `;
 
 const LogoSection = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px;
   text-align: center;
   color: white;
 `;
@@ -190,14 +193,8 @@ const Logo = styled.h1`
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Subtitle = styled.p`
-  margin: 0;
-  opacity: 0.9;
-  font-size: 1rem;
-`;
-
 const FormSection = styled.div`
-  padding: 40px 20px;
+  padding: 0 20px 20px;
 `;
 
 const FormGroup = styled.div`
@@ -241,6 +238,14 @@ const Checkbox = styled.input`
   margin-right: 8px;
   width: 16px;
   height: 16px;
+  border: 2px solid lightgray;
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none;
+  &:checked {
+    background-color: #667eea;
+    border-color: rgba(255, 255, 255, 0.8);
+  }
 `;
 
 const CheckboxLabel = styled.label`

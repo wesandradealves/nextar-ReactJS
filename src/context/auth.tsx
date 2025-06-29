@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { User, Permission } from '@/types';
 import { PERMISSIONS } from '@/utils/enums';
 import { resources } from '@/services/resources';
+import Cookies from 'js-cookie';
 
 /**
  * Props para o contexto de autenticação
@@ -12,6 +14,8 @@ interface AuthContextProps {
   user: User | null;
   /** Status de autenticação */
   isAuthenticated: boolean;
+  /** Status de logout em progresso */
+  isLoggingOut: boolean;
   /** Função para realizar login */
   login: (email: string, password: string) => Promise<void>;
   /** Função para realizar logout */
@@ -42,12 +46,23 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Recuperar usuário do localStorage
+    // Recuperar usuário do localStorage e verificar cookie
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    const userCookie = Cookies.get('nextar_user');
+    
+    if (savedUser && userCookie) {
       setUser(JSON.parse(savedUser));
+    } else if (savedUser && !userCookie) {
+      // Se há dados no localStorage mas não no cookie, limpar tudo
+      localStorage.removeItem('user');
+    } else if (!savedUser && userCookie) {
+      // Se há cookie mas não localStorage, usar cookie
+      setUser(JSON.parse(userCookie));
+      localStorage.setItem('user', userCookie);
     }
   }, []);
 
@@ -59,22 +74,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const login = async (email: string, password: string) => {
     try {
+      console.log('🔐 Iniciando login...', { email });
       const response = await resources.login(email, password);
       setUser(response.user);
+      
+      // Salvar no localStorage E em cookies para que o middleware detecte
       localStorage.setItem('user', JSON.stringify(response.user));
+      Cookies.set('nextar_user', JSON.stringify(response.user), { 
+        expires: 7, // 7 dias
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+      });
+      
+      // Redirecionamento manual para dashboard
+      router.push('/dashboard');
+      
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('❌ Erro no login:', error);
       throw error;
     }
   };
 
   /**
    * Função para realizar logout do usuário
-   * Remove dados do usuário do estado e localStorage
+   * Remove dados do usuário do estado, localStorage e cookies
    */
   const logout = () => {
-    setUser(null);
+    setIsLoggingOut(true);
+    
+    // Primeiro limpar os dados de armazenamento
     localStorage.removeItem('user');
+    Cookies.remove('nextar_user');
+    
+    // Redirecionamento manual para login
+    router.push('/login');
+    
+    // Limpar o estado do usuário após redirecionamento
+    setTimeout(() => {
+      setUser(null);
+      setIsLoggingOut(false);
+    }, 100);
   };
 
   /**
@@ -94,6 +133,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={{
       user,
       isAuthenticated: !!user,
+      isLoggingOut,
       login,
       logout,
       hasPermission

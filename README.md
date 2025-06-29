@@ -13,6 +13,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
+- [Fluxo de Autenticação Implementado](#fluxo-de-autenticação-implementado)
 - [API Endpoints](#api-endpoints)
 - [Desenvolvimento](#desenvolvimento)
 - [Deploy](#deploy)
@@ -40,7 +41,8 @@ O **NextAR** é um sistema de manutenção completo projetado para gerenciar equ
 - [TypeScript](https://www.typescriptlang.org/) - Tipagem estática
 - [Styled Components](https://styled-components.com/) - CSS-in-JS
 - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitário
-- [Framer Motion](https://www.framer.com/motion/) - Animações
+- [React Hook Form](https://react-hook-form.com/) - Formulários performáticos
+- [js-cookie](https://github.com/js-cookie/js-cookie) - Gestão de cookies
 
 ### **Backend**
 - [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction) - API interna
@@ -299,6 +301,154 @@ export function verifyPassword(password: string, hashedPassword: string): boolea
 - `src/pages/api/auth/login.ts` - Login com verificação MD5
 - `src/pages/api/users.ts` - CRUD com criptografia
 - `src/pages/api/users/change-password.ts` - Alteração segura
+
+---
+
+## 🔐 Fluxo de Autenticação Implementado
+
+> **📝 Documentação Centralizada**: Esta seção consolida toda a documentação do sistema de autenticação implementado, incluindo fluxos, middleware, cookies e testes.
+
+### ✅ **Sistema Completo de Login/Logout/Redirecionamento**
+
+#### **🚀 Fluxo Implementado:**
+
+##### **1. Login Bem-sucedido:**
+```
+Usuario envia email/senha 
+    ↓
+Validação MD5 no backend 
+    ↓
+Context Auth salva user em:
+    • localStorage
+    • Cookie 'nextar_user' (7 dias)
+    ↓
+Middleware detecta cookie
+    ↓
+Redirecionamento automático para /dashboard
+```
+
+##### **2. Acesso Direto a Rotas:**
+```
+Usuário acessa qualquer rota
+    ↓
+Middleware verifica cookie 'nextar_user'
+    ↓
+Se AUTENTICADO:
+    • /login → redireciona para /dashboard
+    • Outras rotas → permite acesso
+    ↓
+Se NÃO AUTENTICADO:
+    • Qualquer rota protegida → redireciona para /login
+    • /login → permite acesso
+```
+
+##### **3. Logout:**
+```
+Usuário clica em "Sair"
+    ↓
+Context Auth remove:
+    • localStorage
+    • Cookie 'nextar_user'
+    ↓
+Middleware detecta ausência do cookie
+    ↓
+Redirecionamento automático para /login
+```
+
+### 📁 **Arquivos do Sistema de Autenticação:**
+
+1. **`src/middleware.ts`** - Controle de rotas e redirecionamento
+2. **`src/context/auth.tsx`** - Gestão de cookies + localStorage
+3. **`src/app/dashboard/page.tsx`** - Página pós-login criada
+4. **`src/app/login/page.tsx`** - Formulário com React Hook Form
+
+### 🔧 **Funcionalidades Implementadas:**
+
+#### **Middleware (`src/middleware.ts`):**
+- ✅ Detecta autenticação via cookie `nextar_user`
+- ✅ Protege rotas: `/dashboard`, `/users`, `/chamados`, etc.
+- ✅ Redireciona `/` baseado na autenticação
+- ✅ Bloqueia acesso a `/login` se já autenticado
+- ✅ Redireciona para `/login` se não autenticado
+
+#### **Auth Context (`src/context/auth.tsx`):**
+- ✅ Login salva em localStorage + cookies
+- ✅ Logout remove localStorage + cookies  
+- ✅ Recuperação automática de sessão
+- ✅ Sincronização localStorage ↔ cookies
+
+#### **Dashboard (`src/app/dashboard/page.tsx`):**
+- ✅ Página inicial pós-login
+- ✅ Exibe dados do usuário logado
+- ✅ Botão de logout funcional
+- ✅ Interface moderna com stats e ações
+
+### 🍪 **Gestão de Cookies:**
+
+```typescript
+// Login - salva cookie com 7 dias de expiração
+Cookies.set('nextar_user', JSON.stringify(user), { 
+  expires: 7,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict'
+});
+
+// Logout - remove cookie
+Cookies.remove('nextar_user');
+
+// Middleware - verifica cookie
+const userCookie = request.cookies.get('nextar_user');
+const isAuthenticated = !!userCookie?.value;
+```
+
+### 🛡️ **Rotas Protegidas:**
+
+```typescript
+export const config = {
+  matcher: [
+    '/',           // Redireciona baseado na auth
+    '/login',      // Bloqueia se autenticado
+    '/dashboard/:path*',
+    '/users/:path*',
+    '/chamados/:path*',
+    '/equipamentos/:path*',
+    '/setores/:path*'
+  ]
+};
+```
+
+### 🎯 **Credenciais de Teste Completas:**
+
+| Email | Senha | Perfil | Redirecionamento |
+|-------|-------|---------|------------------|
+| admin@nextar.com | admin123 | Gestão | /login → /dashboard |
+| carlos.oliveira@antartica.br | agente123 | Agente | /login → /dashboard |
+| maria.santos@antartica.br | pesq123 | Pesquisador | /login → /dashboard |
+
+### 🔄 **Como Testar o Fluxo:**
+
+1. **Acesse `http://localhost:3000`**
+   - Deve redirecionar para `/login`
+
+2. **Faça login com credenciais de teste**
+   - Deve redirecionar automaticamente para `/dashboard`
+
+3. **Tente acessar `/login` logado**
+   - Deve redirecionar para `/dashboard`
+
+4. **Clique em "Sair" no dashboard**
+   - Deve redirecionar para `/login`
+
+5. **Tente acessar `/dashboard` sem login**
+   - Deve redirecionar para `/login`
+
+### ✨ **Próximos Passos do Sistema:**
+
+- [ ] Implementar páginas CRUD (users, chamados, etc.)
+- [ ] Adicionar proteção por perfil de usuário
+- [ ] Implementar refresh token
+- [ ] Adicionar timeout de sessão
+- [ ] Logs de auditoria de acesso
 
 ---
 
