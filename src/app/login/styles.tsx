@@ -42,7 +42,7 @@ export const Label = styled.label`
 export const CheckboxGroup = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 `;
 
 export const Checkbox = styled.input`

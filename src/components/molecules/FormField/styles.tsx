@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const FormFieldContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 24px;
 `;
 
 export const Label = styled.label<{ $required?: boolean }>`

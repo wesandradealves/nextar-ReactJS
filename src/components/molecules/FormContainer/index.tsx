@@ -354,6 +354,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         <Button
           type="submit"
           variant="primary"
+          className='w-full'
           disabled={submitDisabled || formState.isSubmitting || !formState.isValid}
           loading={formState.isSubmitting}
         >

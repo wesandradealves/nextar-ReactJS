@@ -7,7 +7,7 @@ import { StyledFormContainerProps, StyledFormActionsProps } from './types';
 export const StyledFormContainer = styled.form<StyledFormContainerProps>`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
   opacity: ${props => props.$isSubmitting ? 0.7 : 1};
   pointer-events: ${props => props.$isSubmitting ? 'none' : 'auto'};
@@ -31,8 +31,6 @@ export const StyledFormActions = styled.div<StyledFormActionsProps>`
   gap: 1rem;
   justify-content: ${props => props.$centered ? 'center' : 'flex-end'};
   align-items: center;
-  margin-top: 1rem;
-  padding-top: 1rem;
   border-top: 1px solid var(--color-gray-200);
 
   @media (max-width: 640px) {
