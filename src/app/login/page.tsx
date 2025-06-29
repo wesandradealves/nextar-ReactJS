@@ -7,13 +7,11 @@ import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
 import { LoginFormData } from '@/types';
 import { Logo, Button } from '@/components/atoms';
+import { FormField } from '@/components/molecules';
 import {
   LoginContainer,
   LoginCard,
   FormSection,
-  FormGroup,
-  Label,
-  Input,
   CheckboxGroup,
   Checkbox,
   CheckboxLabel,
@@ -76,45 +74,38 @@ export default function Login() {
 
         <FormSection>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormGroup>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Digite seu email"
-                {...register('email', {
-                  required: 'Email é obrigatório',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Email inválido'
-                  }
-                })}
-                $hasError={!!errors.email}
-              />
-              {errors.email && (
-                <ErrorMessage>{errors.email.message}</ErrorMessage>
-              )}
-            </FormGroup>
+            <FormField
+              id="email"
+              label="Email"
+              type="email"
+              placeholder="Digite seu email"
+              {...register('email', {
+                required: 'Email é obrigatório',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Email inválido'
+                }
+              })}
+              error={errors.email?.message}
+              required
+            />
 
-            <FormGroup>
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Digite sua senha"
-                {...register('password', {
-                  required: 'Senha é obrigatória',
-                  minLength: {
-                    value: 3,
-                    message: 'Senha deve ter pelo menos 3 caracteres'
-                  }
-                })}
-                $hasError={!!errors.password}
-              />
-              {errors.password && (
-                <ErrorMessage>{errors.password.message}</ErrorMessage>
-              )}
-            </FormGroup>
+            <FormField
+              id="password"
+              label="Senha"
+              type="password"
+              placeholder="Digite sua senha"
+              {...register('password', {
+                required: 'Senha é obrigatória',
+                minLength: {
+                  value: 3,
+                  message: 'Senha deve ter pelo menos 3 caracteres'
+                }
+              })}
+              error={errors.password?.message}
+              required
+              helpText="Mínimo 3 caracteres"
+            />
 
             <CheckboxGroup>
               <Checkbox

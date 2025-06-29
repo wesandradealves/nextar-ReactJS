@@ -2,14 +2,10 @@
 
 import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
-import { Logo } from '@/components/atoms';
+import { Badge } from '@/components/atoms';
+import { Header as HeaderComponent } from '@/components/organisms/Header';
 import {
   DashboardContainer,
-  Header,
-  UserInfo,
-  UserGreeting,
-  UserProfile,
-  LogoutButton,
   Content,
   WelcomeSection,
   WelcomeTitle,
@@ -31,7 +27,7 @@ import {
  * Exibe informações do usuário logado e opções de navegação
  */
 export default function Dashboard() {
-  const { user, logout, isLoggingOut } = useAuth();
+  const { user, logout } = useAuth();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
@@ -44,30 +40,16 @@ export default function Dashboard() {
 
   return (
     <DashboardContainer>
-      <Header>
-        <Logo variant="header" size="small" />
-        <UserInfo>
-          {!isLoggingOut && user && (
-            <>
-              <UserGreeting className='hidden sm:flex'>
-                Olá, <strong>{user.nome}</strong>!
-              </UserGreeting>
-              <UserProfile className='hidden sm:flex'>
-                Perfil: {user.perfil}
-              </UserProfile>
-            </>
-          )}
-          {isLoggingOut ? (
-            <LogoutButton disabled>
-              Saindo...
-            </LogoutButton>
-          ) : (
-            <LogoutButton onClick={handleLogout}>
-              Sair
-            </LogoutButton>
-          )}
-        </UserInfo>
-      </Header>
+      {user && (
+        <HeaderComponent
+          userName={user.nome}
+          userEmail={user.email}
+          userProfile={user.perfil}
+          isOnline={true}
+          onLogout={handleLogout}
+          onProfileClick={() => console.log('Abrir perfil')}
+        />
+      )}
 
       <Content>
         <WelcomeSection>
@@ -82,19 +64,25 @@ export default function Dashboard() {
           <StatCard>
             <StatTitle>🔧 Chamados</StatTitle>
             <StatValue>--</StatValue>
-            <StatLabel>Em desenvolvimento</StatLabel>
+            <StatLabel>
+              <Badge variant="warning" size="small">Em desenvolvimento</Badge>
+            </StatLabel>
           </StatCard>
 
           <StatCard>
             <StatTitle>⚙️ Equipamentos</StatTitle>
             <StatValue>--</StatValue>
-            <StatLabel>Em desenvolvimento</StatLabel>
+            <StatLabel>
+              <Badge variant="warning" size="small">Em desenvolvimento</Badge>
+            </StatLabel>
           </StatCard>
 
           <StatCard>
             <StatTitle>👥 Usuários</StatTitle>
             <StatValue>6</StatValue>
-            <StatLabel>Ativos no sistema</StatLabel>
+            <StatLabel>
+              <Badge variant="success" size="small">API Pronta</Badge>
+            </StatLabel>
           </StatCard>
 
           <StatCard>

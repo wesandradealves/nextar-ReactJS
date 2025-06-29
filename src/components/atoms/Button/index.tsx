@@ -20,7 +20,7 @@ import type { ButtonProps } from './types';
  * <Button icon={<Icon />} iconPosition="left">Com Ícone</Button>
  * ```
  */
-export default function Button({
+export const Button = ({
   children,
   variant = 'primary',
   size = 'medium',
@@ -32,7 +32,7 @@ export default function Button({
   fullWidth = false,
   icon,
   iconPosition = 'left'
-}: ButtonProps) {
+}: ButtonProps) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading && onClick) {
       onClick(event);
@@ -58,4 +58,4 @@ export default function Button({
       </ButtonContent>
     </ButtonElement>
   );
-}
+};

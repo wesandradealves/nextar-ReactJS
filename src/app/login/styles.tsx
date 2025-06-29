@@ -39,25 +39,6 @@ export const Label = styled.label`
   font-size: 0.875rem;
 `;
 
-export const Input = styled.input<{ $hasError?: boolean }>`
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid ${props => props.$hasError ? '#ef4444' : '#e5e7eb'};
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  outline: none;
-
-  &:focus {
-    border-color: ${props => props.$hasError ? '#ef4444' : '#667eea'};
-    box-shadow: 0 0 0 3px ${props => props.$hasError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(102, 126, 234, 0.1)'};
-  }
-
-  &::placeholder {
-    color: #9ca3af;
-  }
-`;
-
 export const CheckboxGroup = styled.div`
   display: flex;
   align-items: center;

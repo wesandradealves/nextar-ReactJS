@@ -18,13 +18,13 @@ import type { LogoProps } from './types';
  * <Logo variant="login" size="large" />
  * ```
  */
-export default function Logo({
+export const Logo = ({
   variant = 'default',
   size = 'medium',
   className,
   src = '/logo.png',
   alt = 'NextAR - Sistema de Manutenção da Antártica'
-}: LogoProps) {
+}: LogoProps) => {
   return (
     <LogoContainer 
       className={className}
@@ -39,4 +39,4 @@ export default function Logo({
       />
     </LogoContainer>
   );
-}
+};

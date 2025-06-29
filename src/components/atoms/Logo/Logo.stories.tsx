@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Logo from './index';
+import { Logo } from './index';
 
 const meta = {
   title: 'Atoms/Logo',
