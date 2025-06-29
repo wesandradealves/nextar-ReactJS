@@ -126,18 +126,18 @@ export default function Dashboard() {
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
+            {/* <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
               📋 Novo Chamado
-            </ActionButton>
+            </ActionButton> */}
             <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
-              👤 Gerenciar Usuários
+              Gerenciar Usuários
             </ActionButton>
-            <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
+            {/* <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
               🔧 Equipamentos
             </ActionButton>
             <ActionButton onClick={() => handleNavigate('/dashboard/relatorios')}>
               📊 Relatórios
-            </ActionButton>
+            </ActionButton> */}
           </ActionGrid>
           <ActionNote>
             * Funcionalidades em desenvolvimento

@@ -22,6 +22,7 @@ import {
   ClickableStatus,
   StatusDot
 } from './styles';
+import { useMetadata } from '@/hooks/useMetadata';
 
 /**
  * Página de Gestão de Usuários
@@ -43,6 +44,11 @@ import {
 export default function UsersPage() {
   const { user: currentUser } = useAuth();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  useMetadata({
+    title: `Nextar - Usuários`,
+    ogTitle: `Nextar - Usuários`
+  });
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
