@@ -5,6 +5,15 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.1] - 2025-06-29
+
+### Corrigido
+- **Sistema de Paginação**
+  - Correção do cálculo de páginas no hook useUsers
+  - Paginação agora usa dados corretos da API
+  - Eliminação de erro "nenhum usuário cadastrado" na página 2
+  - Integração adequada entre API paginada e interface
+
 ## [1.4.0] - 2025-06-29
 
 ### Adicionado
