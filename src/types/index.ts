@@ -19,10 +19,22 @@ export interface User {
   nome: string;
   /** Email único para autenticação */
   email: string;
+  /** Nome de usuário para login */
+  usuario: string;
   /** Senha para autenticação (apenas para dados mock) */
   senha?: string;
+  /** Setor do usuário */
+  setor: string;
   /** Perfil/função do usuário no sistema */
   perfil: PerfilUsuario;
+  /** Status ativo/inativo do usuário */
+  ativo: boolean;
+  /** Data de criação do usuário */
+  dataCriacao: string;
+  /** Data da última atualização */
+  dataAtualizacao?: string;
+  /** Index signature para compatibilidade com DataTable */
+  [key: string]: unknown;
 }
 
 /**
@@ -283,6 +295,46 @@ export interface EquipamentoForm {
   observacoes?: string;
 }
 
+/**
+ * Dados para criação de novo usuário
+ * @interface CreateUserData
+ */
+export interface CreateUserData {
+  /** Nome completo do usuário */
+  nome: string;
+  /** Email único para autenticação */
+  email: string;
+  /** Nome de usuário para login */
+  usuario: string;
+  /** Senha do usuário */
+  senha: string;
+  /** Setor do usuário */
+  setor: string;
+  /** Perfil/função do usuário no sistema */
+  perfil: PerfilUsuario;
+}
+
+/**
+ * Dados para atualização de usuário existente
+ * @interface UpdateUserData
+ */
+export interface UpdateUserData {
+  /** Nome completo do usuário */
+  nome?: string;
+  /** Email único para autenticação */
+  email?: string;
+  /** Nome de usuário para login */
+  usuario?: string;
+  /** Nova senha (opcional) */
+  senha?: string;
+  /** Setor do usuário */
+  setor?: string;
+  /** Perfil/função do usuário no sistema */
+  perfil?: PerfilUsuario;
+  /** Status ativo/inativo do usuário */
+  ativo?: boolean;
+}
+
 // ========================================
 // TIPOS PARA RESPOSTAS DA API
 // ========================================
@@ -310,4 +362,153 @@ export interface LoginResponse {
   user: User;
   /** Token de acesso */
   token: string;
+}
+
+// ========================================
+// TIPOS PARA PAGINAÇÃO E TABELAS
+// ========================================
+
+/**
+ * Configuração de paginação
+ * @interface PaginationConfig
+ */
+export interface PaginationConfig {
+  /** Página atual (1-indexed) */
+  page: number;
+  /** Itens por página */
+  limit: number;
+  /** Total de itens */
+  total: number;
+  /** Total de páginas */
+  totalPages: number;
+}
+
+/**
+ * Parâmetros de consulta com paginação
+ * @interface PaginatedQuery
+ */
+export interface PaginatedQuery {
+  /** Página atual */
+  page?: number;
+  /** Itens por página */
+  limit?: number;
+  /** Termo de busca */
+  search?: string;
+  /** Campo para ordenação */
+  sortBy?: string;
+  /** Direção da ordenação */
+  sortOrder?: 'asc' | 'desc';
+}
+
+/**
+ * Resposta paginada da API
+ * @interface PaginatedResponse
+ * @template T Tipo dos dados paginados
+ */
+export interface PaginatedResponse<T> {
+  /** Dados da página atual */
+  data: T[];
+  /** Configuração de paginação */
+  pagination: PaginationConfig;
+  /** Metadados de ordenação */
+  sorting?: {
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+  };
+}
+
+/**
+ * Configuração de coluna para DataTable
+ * @interface TableColumn
+ * @template T Tipo do item da linha
+ */
+export interface TableColumn<T = Record<string, unknown>> {
+  /** Identificador único da coluna */
+  key: string;
+  /** Título da coluna */
+  title: string;
+  /** Se a coluna pode ser ordenada */
+  sortable?: boolean;
+  /** Largura da coluna */
+  width?: string;
+  /** Alinhamento do conteúdo */
+  align?: 'left' | 'center' | 'right';
+  /** Função de renderização customizada */
+  render?: (value: unknown, item: T, index: number) => React.ReactNode;
+  /** Se a coluna deve ser ocultada em mobile */
+  hideOnMobile?: boolean;
+}
+
+/**
+ * Ação disponível em linha da tabela
+ * @interface TableAction
+ * @template T Tipo do item da linha
+ */
+export interface TableAction<T = Record<string, unknown>> {
+  /** Identificador único da ação */
+  key: string;
+  /** Título da ação */
+  title: string;
+  /** Ícone da ação */
+  icon?: string;
+  /** Variante visual da ação */
+  variant?: 'primary' | 'secondary' | 'danger';
+  /** Se a ação está desabilitada */
+  disabled?: boolean | ((item: T) => boolean);
+  /** Callback da ação */
+  onClick: (item: T, index: number) => void;
+  /** Permissões necessárias */
+  permissions?: Permission[];
+}
+
+/**
+ * Filtros para usuários
+ * @interface UserFilters
+ */
+export interface UserFilters {
+  /** Filtrar por perfil */
+  perfil?: PerfilUsuario;
+  /** Filtrar por status ativo */
+  active?: boolean;
+  /** Busca textual por nome ou email */
+  search?: string;
+}
+
+/**
+ * Props do DataTable molecule
+ * @interface DataTableProps
+ * @template T Tipo dos dados da tabela
+ */
+export interface DataTableProps<T = Record<string, unknown>> {
+  /** Dados da tabela */
+  data: T[];
+  /** Configuração das colunas */
+  columns: TableColumn<T>[];
+  /** Ações disponíveis por linha */
+  actions?: TableAction<T>[];
+  /** Se está carregando dados */
+  loading?: boolean;
+  /** Configuração de paginação */
+  pagination?: PaginationConfig;
+  /** Configuração de ordenação */
+  sorting?: {
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  };
+  /** Se permite seleção de linhas */
+  selectable?: boolean;
+  /** Linhas selecionadas */
+  selectedRows?: string[];
+  /** Callback de mudança de página */
+  onPageChange?: (page: number) => void;
+  /** Callback de mudança de ordenação */
+  onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
+  /** Callback de seleção de linhas */
+  onSelectionChange?: (selectedRows: string[]) => void;
+  /** Callback de busca */
+  onSearch?: (term: string) => void;
+  /** Mensagem quando não há dados */
+  emptyMessage?: string;
+  /** Classes CSS adicionais */
+  className?: string;
 }

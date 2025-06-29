@@ -15,6 +15,8 @@ export interface ButtonProps {
   loading?: boolean;
   /** Tipo do botão HTML */
   type?: 'button' | 'submit' | 'reset';
+  /** ID do formulário associado (para type="submit") */
+  form?: string;
   /** Classes CSS adicionais */
   className?: string;
   /** Função executada ao clicar */

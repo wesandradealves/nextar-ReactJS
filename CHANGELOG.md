@@ -5,9 +5,97 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.1] - 2025-06-29
+
+### Corrigido
+- **Sistema de Paginação**
+  - Correção do cálculo de páginas no hook useUsers
+  - Paginação agora usa dados corretos da API
+  - Eliminação de erro "nenhum usuário cadastrado" na página 2
+  - Integração adequada entre API paginada e interface
+
+## [1.4.0] - 2025-06-29
+
+### Adicionado
+- **Módulo Completo de Gestão de Usuários**
+  - Página `/dashboard/usuarios` com CRUD completo de usuários
+  - Sistema de paginação, busca e filtros avançados
+  - Estatísticas em tempo real (total, pesquisadores, agentes, gestão)
+  - Seleção múltipla para ações em lote
+  - Permissões baseadas em perfil (apenas GESTAO acessa)
+
+- **Componente DataTable Reutilizável**
+  - Molecule `DataTable` com paginação, ordenação e busca
+  - Suporte a ações por linha e seleção múltipla
+  - Responsivo com colunas que se adaptam ao mobile
+  - Integração com cache para performance otimizada
+  - Storybook completo com exemplos de uso
+
+- **Sistema de Modais Modernos**
+  - Componente `Modal` reutilizável com portal e animações
+  - `UserModal` para criação/edição de usuários
+  - Integração com `FormContainer` para validação robusta
+  - Seleção visual de perfis de usuário
+  - Tratamento de loading states e fechamento seguro
+
+- **Hook useUsers Avançado**
+  - Hook customizado com cache multicamadas
+  - Suporte a paginação, busca, filtros e ordenação
+  - Operações CRUD completas (criar, atualizar, excluir)
+  - Estatísticas automáticas por perfil
+  - Integração com API otimizada
+
+- **APIs Robustas de Usuários**
+  - Endpoint `/api/users` com GET paginado e POST para criação
+  - Endpoint `/api/users/[id]` para operações individuais (GET, PUT, DELETE)
+  - Filtros por perfil, status e busca textual
+  - Ordenação por qualquer campo
+  - Validação de dados e criptografia de senhas
+  - Remoção automática de senhas das respostas
+
+### Melhorado
+- **Tipos TypeScript Expandidos**
+  - Interfaces `CreateUserData` e `UpdateUserData` para operações
+  - Tipos de paginação, filtros e configuração de tabelas
+  - Interface `User` expandida com novos campos obrigatórios
+  - Compatibilidade com componentes genéricos
+
+- **Componente Button Aprimorado**
+  - Suporte ao atributo `form` para submit externos
+  - Melhor integração com formulários em modals
+
+- **Sistema de Navegação**
+  - Rota "Usuários" adicionada ao menu lateral
+  - Visibilidade condicionada ao perfil GESTAO
+  - Ícones e labels otimizados
+
+- **Cache e Performance**
+  - Integração completa com sistema de cache multicamadas
+  - Invalidação inteligente após operações CRUD
+  - Redução significativa de chamadas à API
+  - Loading states otimizados
+
+### Corrigido
+- **Compatibilidade de Tipos**
+  - Resolução de conflitos de interface User
+  - Correção de imports e exports de molecules
+  - Ajustes em Storybook para novos tipos
+  - Lint e TypeScript errors eliminados
+
+### Documentação
+- **Storybook Atualizado**
+  - Stories completas para DataTable com casos de uso reais
+  - Exemplos de Modal e UserModal
+  - Documentação de props e comportamentos
+
+- **Comentários JSDoc**
+  - Documentação completa dos hooks e componentes
+  - Exemplos de uso e descrições detalhadas
+  - Tipos bem documentados com descrições
+
 ## [1.3.0] - 2025-06-29
 
-### 🚀 Adicionado
+### Adicionado
 - **Template Dashboard Unificado**
   - Layout `src/app/dashboard/layout.tsx` com header persistente
   - Estrutura hierárquica `/dashboard/*` para todos os módulos
@@ -34,7 +122,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Integração com sistema de cache
   - Tratamento de loading e error states
 
-### 🔧 Melhorado
+### Melhorado
 - **Dashboard Principal Simplificado**
   - Removido header duplicado da página principal
   - Foco apenas no conteúdo (estatísticas e ações rápidas)
@@ -50,7 +138,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Separação clara entre layout e conteúdo
   - Remoção de código duplicado
 
-### 🐛 Corrigido
+### Corrigido
 - **Warnings de Build**
   - Removidas variáveis não utilizadas (`isLoggingOut`, `formData`)
   - Adicionados comentários ESLint para suppressão de warnings válidos
@@ -61,7 +149,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Valores iniciais corretamente aplicados no FormContainer
   - Sincronização entre dados do contexto e formulário
 
-### 📚 Documentação
+### Documentação
 - **README Atualizado**
   - Documentação da nova estrutura de template dashboard
   - Instruções de navegação entre módulos
@@ -69,7 +157,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [1.2.0] - 2025-06-29
 
-### 🚀 Adicionado
+### Adicionado
 - **Sistema de Cache Multicamadas Completo**
   - CacheProvider com TTL automático e gestão de memória
   - Hook useApi reutilizável com cache transparente
@@ -89,7 +177,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Dados de chamados, equipamentos, usuários e resoluções
   - Fallback para dados estáticos quando API não disponível
 
-### 🔧 Corrigido
+### Corrigido
 - **Problemas de Logout**
   - Redirecionamento forçado com window.location.href
   - Limpeza imediata de cookies e localStorage
@@ -107,7 +195,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Ativação condicional via CACHE_DEBUG=true
   - Interface responsiva e não intrusiva
 
-### ⚡ Melhorado
+### Melhorado
 - **Performance Geral**
   - Redução de 50-90% nas requisições de API
   - Cache inteligente com cleanup automático
@@ -126,7 +214,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Exemplos de uso dos hooks de API
   - Tabela de configurações com valores padrão
 
-### 🎯 Técnico
+### Técnico
 - **Arquitetura de Cache**
   - TTL diferenciado: Dashboard (2min), Usuários (15min), Equipamentos (30min), Setores (1h)
   - Sistema de tags para invalidação em lote
@@ -148,7 +236,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [1.1.0] - 2025-06-28
 
-### 🚀 Adicionado
+### Adicionado
 - **Atomic Design Pattern Completo**
   - Atoms: Logo, Button, Input, Badge, Spinner
   - Molecules: FormField, SearchBox, UserCard, FormContainer, Navigation
@@ -167,7 +255,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Estados de loading e erro
   - Integração completa na página de login
 
-### 🔧 Corrigido
+### Corrigido
 - **Bug Visual do Logout**
   - Header não sumia mais abruptamente antes do redirecionamento
   - Estado isLoggingOut para transição suave
@@ -179,7 +267,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Eliminação de warnings do Next.js
   - Lazy loading automático de imagens
 
-### ⚡ Melhorado
+### Melhorado
 - **Styled Components**
   - Arquivos de estilos separados para melhor organização
   - Props com $ prefix para evitar vazamento para DOM
@@ -196,7 +284,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [1.0.0] - 2025-06-27
 
-### 🚀 Inicial
+### Inicial
 - **Configuração Base do Projeto**
   - Next.js 15.3.3 com App Router
   - TypeScript e ESLint configurados
@@ -221,7 +309,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Sistema de contextos aninhados
   - Configuração de build e deploy
 
-### 🎯 Arquitetura
+### Técnico
 - **Padrão de Contextos**: AuthProvider → EntitiesProvider → LoaderProvider
 - **Estrutura de Dados**: ENUMs centralizados, tipos TypeScript
 - **APIs**: /api/users, /api/setores, /api/equipamentos, /api/chamados
@@ -232,10 +320,10 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## Convenções
 
 ### Tipos de Mudança
-- 🚀 **Adicionado** - Novas funcionalidades
-- 🔧 **Corrigido** - Correções de bugs
-- ⚡ **Melhorado** - Melhorias em funcionalidades existentes
-- 🎯 **Técnico** - Mudanças técnicas e refatorações
-- 📝 **Documentação** - Atualizações na documentação
+- **Adicionado** - Novas funcionalidades
+- **Corrigido** - Correções de bugs
+- **Melhorado** - Melhorias em funcionalidades existentes
+- **Técnico** - Mudanças técnicas e refatorações
+- **Documentação** - Atualizações na documentação
 
 
