@@ -8,47 +8,64 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [1.3.0] - 2025-06-29
 
 ### 🚀 Adicionado
-- **Sistema de Template Dashboard Completo**
-  - Layout unificado `src/app/dashboard/layout.tsx` com header persistente
-  - Estrutura hierárquica de rotas `/dashboard/*`
-  - Navegação centralizada e otimizada entre módulos
+- **Template Dashboard Unificado**
+  - Layout `src/app/dashboard/layout.tsx` com header persistente
+  - Estrutura hierárquica `/dashboard/*` para todos os módulos
+  - Header fixo compartilhado entre todas as subpáginas
+  - Navegação otimizada e experiência de usuário consistente
 
-- **Módulo de Perfil do Usuário Autenticado**
-  - Página `/dashboard/profile` com formulário de edição
-  - Integração completa com FormContainer para validação
-  - Pré-preenchimento automático de dados do usuário
-  - Validação de nome (mínimo 2 caracteres) e email (formato válido)
-  - Mensagens de sucesso e erro integradas
-  - Reset de formulário com botão "Cancelar"
+- **Módulo de Perfil Completo**
+  - Página `/dashboard/profile` para edição de perfil do usuário autenticado
+  - Formulário inteligente com pré-preenchimento automático dos dados
+  - Integração com FormContainer para validação robusta
+  - Validação de nome (mínimo 2 caracteres) e email válido
+  - Mensagens de sucesso/erro com timeout automático
+  - Reset de formulário funcional
 
-- **API de Perfil Robusta**
+- **API de Perfil Dedicada**
   - Endpoint GET `/api/profile` para buscar dados do usuário
   - Endpoint PUT `/api/profile` para atualização de perfil
   - Validação de email único entre usuários
-  - Tratamento completo de erros e respostas padronizadas
-  - Remoção automática de dados sensíveis (senha) das respostas
+  - Tratamento de erros e respostas padronizadas
+  - Remoção automática de dados sensíveis das respostas
 
-- **Hook Especializado useProfile**
-  - Integração com sistema de cache para performance
-  - Gerenciamento de estados de loading e erro
-  - Invalidação automática de cache após atualizações
-  - Integração com contexto de autenticação
+- **Hook useProfile Especializado**
+  - Hook customizado para operações de perfil
+  - Integração com sistema de cache
+  - Tratamento de loading e error states
 
-### 🔧 Corrigido
-- Correção de warnings ESLint em variáveis não utilizadas
-- Estrutura de rotas reorganizada para melhor hierarquia
-- Performance otimizada com cache integrado em todas as operações
+### 🔧 Melhorado
+- **Dashboard Principal Simplificado**
+  - Removido header duplicado da página principal
+  - Foco apenas no conteúdo (estatísticas e ações rápidas)
+  - Melhor performance sem componentes redundantes
 
-### 🏗️ Refatorado
-- Dashboard convertido para sistema de template com layout persistente
-- Remoção de código duplicado do header em páginas individuais
-- Simplificação da página principal do dashboard
-- Organização modular seguindo padrão Atomic Design
+- **Sistema de Navegação**
+  - Link "Meu Perfil" funcional no menu do usuário
+  - Redirecionamento otimizado para `/dashboard/profile`
+  - Experiência de navegação fluida entre módulos
 
-### 📝 Documentação
-- Atualização do README com nova estrutura de rotas
-- Documentação detalhada do módulo de perfil
-- Exemplos de uso do sistema de template
+- **Organização de Código**
+  - Reestruturação de componentes para template pattern
+  - Separação clara entre layout e conteúdo
+  - Remoção de código duplicado
+
+### 🐛 Corrigido
+- **Warnings de Build**
+  - Removidas variáveis não utilizadas (`isLoggingOut`, `formData`)
+  - Adicionados comentários ESLint para suppressão de warnings válidos
+  - Build limpo sem erros ou warnings
+
+- **Pré-preenchimento de Formulário**
+  - Formulário aguarda dados do usuário antes de renderizar
+  - Valores iniciais corretamente aplicados no FormContainer
+  - Sincronização entre dados do contexto e formulário
+
+### 📚 Documentação
+- **README Atualizado**
+  - Documentação da nova estrutura de template dashboard
+  - Instruções de navegação entre módulos
+  - Exemplos de uso do sistema de perfil
 
 ## [1.2.0] - 2025-06-29
 
