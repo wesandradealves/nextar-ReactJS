@@ -130,6 +130,11 @@ export const GlobalStyle = createGlobalStyle `
         padding-right: 24px;
     }
 
+    .pace {
+        &-progress {
+            background: coral !important;
+        }
+    } 
 `;
 
 export const App = styled.div `

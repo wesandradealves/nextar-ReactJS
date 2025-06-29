@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
-      console.log('🔐 Iniciando login...', { email, rememberMe });
       const response = await resources.login(email, password);
       setUser(response.user);
       
@@ -89,9 +88,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict'
       });
-      
-      console.log(`✅ Login realizado com sucesso! Cookie configurado para ${cookieExpires} dia(s)`);
-      console.log('🚀 Redirecionando para dashboard...');
       
       // Redirecionamento manual para dashboard
       router.push('/dashboard');
