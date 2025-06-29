@@ -49,10 +49,10 @@ export default function Dashboard() {
         <UserInfo>
           {!isLoggingOut && user && (
             <>
-              <UserGreeting>
+              <UserGreeting className='hidden sm:flex'>
                 Olá, <strong>{user.nome}</strong>!
               </UserGreeting>
-              <UserProfile>
+              <UserProfile className='hidden sm:flex'>
                 Perfil: {user.perfil}
               </UserProfile>
             </>
@@ -71,7 +71,7 @@ export default function Dashboard() {
 
       <Content>
         <WelcomeSection>
-          <WelcomeTitle>Bem-vindo ao Sistema de Manutenção da Antártica</WelcomeTitle>
+          <WelcomeTitle className='text-2xl leading-none xl:text-4xl'>Bem-vindo ao Sistema de Manutenção da Antártica</WelcomeTitle>
           <WelcomeText>
             Sistema integrado para gestão de equipamentos, chamados e recursos humanos
             em ambiente científico extremo.

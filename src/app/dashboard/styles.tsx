@@ -73,7 +73,6 @@ export const WelcomeSection = styled.section`
 `;
 
 export const WelcomeTitle = styled.h2`
-  font-size: 2rem;
   color: #1e293b;
   margin-bottom: 16px;
 `;

@@ -59,19 +59,11 @@ export default function Login() {
       setLoginError('');
       setLoading(true);
       
-      console.log('📝 Formulário de login enviado:', { 
-        email: data.email, 
-        rememberMe: data.rememberMe 
-      });
-      
       await login(data.email, data.password, data.rememberMe);
-      
-      console.log('✅ Login concluído no formulário');
-      // Login bem-sucedido - o contexto cuidará do redirect
     } catch (error) {
       console.error('❌ Erro no login do formulário:', error);
       setLoginError('Credenciais inválidas. Verifique seu email e senha.');
-      reset({ password: '' }); // Limpar apenas o campo de senha
+      reset({ password: '' });
     } finally {
       setLoading(false);
     }
