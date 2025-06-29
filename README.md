@@ -11,6 +11,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Instalação](#instalação)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Sistema de Cache Multicamadas](#sistema-de-cache-multicamadas)
 - [Atomic Design Pattern](#atomic-design-pattern)
 - [Funcionalidades](#funcionalidades)
 - [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
@@ -194,6 +195,266 @@ nextar/
 ├── tailwind.config.ts          # Configuração Tailwind
 └── tsconfig.json               # Configuração TypeScript
 ```
+
+---
+
+## 🚀 Sistema de Cache Multicamadas
+
+O sistema implementa uma estratégia de cache inteligente para otimizar performance, reduzir rebuilds desnecessários e melhorar a experiência do usuário.
+
+### **Arquitetura do Cache**
+
+```
+CacheProvider (contexto global)
+├── AuthProvider (integração com login/logout)
+├── Middleware (cache de rotas)
+├── API Hooks (cache de dados)
+└── Debug Component (desenvolvimento)
+```
+
+### **Funcionalidades**
+
+#### **1. Context Provider (`CacheProvider`)**
+Cache em memória com TTL (Time To Live) e sistema de tags:
+
+```tsx
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+  ttl: number;
+  tags: string[];
+}
+
+// Uso no contexto
+const cache = useCache();
+cache.set('users', userData, 300000, ['users', 'auth']); // 5 min
+const users = cache.get('users');
+cache.invalidateByTag('auth'); // Limpa todos com tag 'auth'
+```
+
+#### **2. Hook de API (`useApi`)**
+Hook reutilizável para requests com cache automático:
+
+```tsx
+const { data, loading, error, refetch, clearCache } = useApi(
+  async () => {
+    const response = await fetch('/api/users');
+    return response.json();
+  },
+  {
+    cacheKey: 'users',
+    ttl: 10 * 60 * 1000, // 10 minutos
+    tags: ['users', 'auth']
+  }
+);
+```
+
+#### **3. Hooks Especializados**
+Hooks pré-configurados para diferentes entidades:
+
+```tsx
+// Hook para dashboard com cache de 2 minutos
+const { data: dashboardData, loading } = useDashboard();
+
+// Hook para usuários com cache de 15 minutos
+const { data: users } = useUsuarios();
+
+// Hook para equipamentos com cache de 30 minutos
+const { data: equipamentos } = useEquipamentos();
+
+// Hook para setores com cache de 1 hora
+const { data: setores } = useSetores();
+```
+
+#### **4. Integração com Autenticação**
+O sistema se integra automaticamente com login/logout:
+
+```tsx
+// No login: cache user data por 1 hora
+cache.set('current_user', response.user, 60 * 60 * 1000, ['auth', 'user']);
+
+// No logout: limpa todos os caches relacionados
+cache.invalidateByTag('auth');
+cache.invalidateByTag('user');
+cache.invalidateByTag('dashboard');
+```
+
+#### **5. Cache de Rotas no Middleware**
+Middleware otimizado com cache de decisões de rota:
+
+```typescript
+// Cache decisions para evitar re-computação
+const cacheKey = `${pathname}:${isAuthenticated}`;
+const cachedResult = getCachedRoute(cacheKey);
+
+if (cachedResult) {
+  return cachedResult === 'next' 
+    ? NextResponse.next() 
+    : NextResponse.redirect(new URL(cachedResult, request.url));
+}
+```
+
+#### **6. Debug de Cache (Desenvolvimento)**
+Componente visual para monitorar cache em tempo real:
+
+```tsx
+<CacheDebug enabled={process.env.NODE_ENV === 'development'} />
+```
+
+**Features do Debug:**
+- Estatísticas em tempo real (hits, misses, hit rate)
+- Tamanho do cache
+- Botão para limpar cache
+- Interface minimizável
+- Oculto em produção
+
+### **Estratégias de TTL**
+
+| Tipo de Dado | TTL | Motivo |
+|--------------|-----|---------|
+| Dashboard | 2 min | Dados dinâmicos, atualizações frequentes |
+| Usuários | 15 min | Dados relativamente estáveis |
+| Equipamentos | 30 min | Dados pouco voláteis |
+| Setores | 1 hora | Dados raramente alterados |
+| User Session | 1 hora | Segurança vs. performance |
+| Rotas | 1 min | Balance entre performance e flexibilidade |
+
+### **Benefícios**
+
+1. **Performance**: Reduz requests desnecessários
+2. **UX**: Dados instantâneos em cache hits
+3. **Servidor**: Menos carga na API
+4. **Desenvolvimento**: Debug visual para monitoramento
+5. **Flexibilidade**: TTL e tags customizáveis
+6. **Automático**: Integração transparente com auth
+
+### **Invalidação Inteligente**
+
+```tsx
+// Por key específica
+cache.remove('users');
+
+// Por tag (limpa múltiplos relacionados)
+cache.invalidateByTag('auth'); // Remove user, dashboard, etc.
+
+// Limpeza completa
+cache.clear();
+
+// Automática no logout
+// Limpa auth, user, dashboard automaticamente
+```
+
+---
+
+## 🚀 Sistema de Cache Multicamadas
+
+O sistema implementa um **cache inteligente multicamadas** para otimizar performance, reduzir rebuilds desnecessários e melhorar a experiência do usuário.
+
+### 🧠 **Arquitetura do Cache**
+
+#### **1. Cache Context (`CacheProvider`)**
+- **TTL configurável** por entrada
+- **Tags de invalidação** para limpeza seletiva
+- **Estatísticas de hit/miss** para monitoramento
+- **Limpeza automática** de entradas expiradas
+
+```typescript
+// Configuração automática no layout
+<CacheProvider defaultTTL={5 * 60 * 1000}> {/* 5 minutos */}
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+</CacheProvider>
+```
+
+#### **2. Hooks de API com Cache (`useApi`)**
+Hooks especializados que integram cache automaticamente:
+
+```typescript
+import { useChamados, useUsuarios, useDashboard } from '@/hooks/useApi';
+
+// Hook com cache automático
+const { data, loading, error, refetch } = useChamados();
+// Cache key: 'chamados', TTL: 10min, Tags: ['chamados', 'tickets']
+
+const { data: users } = useUsuarios();
+// Cache key: 'users', TTL: 15min, Tags: ['users', 'auth']
+```
+
+#### **3. Cache de Rotas no Middleware**
+- **Cache de decisões de roteamento** (1 minuto)
+- **Otimização de redirects** login/logout
+- **Redução de processamento** em requisições repetidas
+
+#### **4. Integração com Autenticação**
+- **Cache de dados do usuário** (1 hora)
+- **Invalidação automática** no logout
+- **Tags organizadas** por contexto
+
+### 📊 **Estratégias de Cache por Contexto**
+
+| **Contexto** | **TTL** | **Tags** | **Uso** |
+|--------------|---------|----------|---------|
+| **Auth** | 1 hora | `auth`, `user` | Dados de autenticação |
+| **Dashboard** | 2 min | `dashboard`, `stats` | Métricas em tempo real |
+| **Chamados** | 10 min | `chamados`, `tickets` | Lista de tickets |
+| **Usuários** | 15 min | `users`, `auth` | Dados de usuários |
+| **Equipamentos** | 30 min | `equipamentos`, `assets` | Inventário de ativos |
+| **Setores** | 1 hora | `setores`, `departments` | Estrutura organizacional |
+
+### 🛠️ **Uso Manual do Cache**
+
+```typescript
+import { useCache } from '@/context/cache';
+
+const cache = useCache();
+
+// Armazenar dados
+cache.set('user_preferences', preferences, 60 * 60 * 1000, ['user', 'settings']);
+
+// Recuperar dados
+const preferences = cache.get('user_preferences');
+
+// Invalidar por tag
+cache.invalidateByTag('auth'); // Remove todos os dados de auth
+
+// Limpar tudo
+cache.clear();
+```
+
+### 🐛 **Debug de Cache (Desenvolvimento)**
+
+O componente `CacheDebug` exibe estatísticas em tempo real:
+- **Número de entradas** ativas no cache
+- **Hit rate** e miss rate
+- **Controles** para limpeza manual
+- **Auto-esconde** em produção
+
+### 🔄 **Invalidação Inteligente**
+
+#### **Por Ação do Usuário:**
+```typescript
+// No logout - limpa dados sensíveis
+cache.invalidateByTag('auth');
+cache.invalidateByTag('user');
+cache.invalidateByTag('dashboard');
+
+// Na edição de usuário - atualiza listas relacionadas
+cache.invalidateByTag('users');
+```
+
+#### **Por TTL Automático:**
+- **Dashboard:** 2 minutos (dados dinâmicos)
+- **Listas:** 10-15 minutos (dados semi-estáticos)
+- **Configurações:** 30-60 minutos (dados estáticos)
+
+### ⚡ **Benefícios de Performance**
+
+1. **Redução de requests** - Dados frequentes ficam em memória
+2. **Redirects otimizados** - Middleware com cache de rotas
+3. **UX suave** - Logout sem "flash" de componentes
+4. **Rebuilds inteligentes** - Apenas quando necessário
+5. **Invalidação seletiva** - Limpeza precisa por contexto
 
 ---
 

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { User, Permission } from '@/types';
 import { PERMISSIONS } from '@/utils/enums';
 import { resources } from '@/services/resources';
+import { useCache } from './cache';
 import Cookies from 'js-cookie';
 
 /**
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+  const cache = useCache();
 
   useEffect(() => {
     // Recuperar usuário do localStorage e verificar cookie
@@ -89,11 +91,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         sameSite: 'strict'
       });
       
+      // Cache user data for quick access
+      cache.set('current_user', response.user, 60 * 60 * 1000, ['auth', 'user']); // 1 hour
+      
       // Redirecionamento manual para dashboard
       router.push('/dashboard');
       
     } catch (error) {
-      console.error('❌ Erro no login:', error);
+      console.error('Erro no login:', error);
       throw error;
     }
   };
@@ -105,6 +110,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const logout = () => {
     setIsLoggingOut(true);
+    
+    // Clear all cache data on logout
+    cache.invalidateByTag('auth');
+    cache.invalidateByTag('user');
+    cache.invalidateByTag('dashboard');
     
     // Estratégia: manter usuário visível até garantir redirecionamento completo
     setTimeout(() => {

@@ -16,8 +16,7 @@ import {
   UserMenuDropdown,
   MenuItem,
   MobileMenuButton,
-  MenuIcon,
-  ChevronDownIcon
+  MenuIcon
 } from './styles';
 import type { HeaderProps } from './types';
 
@@ -139,7 +138,6 @@ export const Header = ({
                     profile={userProfile}
                     size="small"
                   />
-                  <ChevronDownIcon $isOpen={isUserMenuOpen} />
                 </UserMenuButton>
                 
                 <UserMenuDropdown $isOpen={isUserMenuOpen && !isLoggingOut}>
