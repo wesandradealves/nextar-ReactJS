@@ -64,6 +64,10 @@ export const useUsers = () => {
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiPagination, setApiPagination] = useState<{
+    total: number;
+    totalPages: number;
+  } | null>(null);
 
   // Cache context
   const cache = useCache();
@@ -139,6 +143,7 @@ export const useUsers = () => {
       // Senão, aplicar filtros e paginação localmente
       let userData: User[];
       if (Array.isArray(result)) {
+        // Resposta sem paginação - aplicar filtros e paginação localmente
         userData = result;
         
         // Aplicar filtros localmente se necessário
@@ -166,8 +171,22 @@ export const useUsers = () => {
         // Aplicar paginação local
         const startIndex = ((query.page || 1) - 1) * (query.limit || 10);
         userData = userData.slice(startIndex, startIndex + (query.limit || 10));
+        
+        // Limpar paginação da API
+        setApiPagination(null);
       } else {
+        // Resposta com paginação - usar dados da API
         userData = result.data || result;
+        
+        // Capturar informações de paginação da API
+        if (result.pagination) {
+          setApiPagination({
+            total: result.pagination.total,
+            totalPages: result.pagination.totalPages
+          });
+        } else {
+          setApiPagination(null);
+        }
       }
 
       setData(userData);
@@ -192,10 +211,10 @@ export const useUsers = () => {
     return {
       page: currentPage,
       limit: currentLimit,
-      total: data.length * 10, // Estimativa - seria ideal vir da API
-      totalPages: Math.ceil((data.length * 10) / currentLimit)
+      total: apiPagination?.total || data.length,
+      totalPages: apiPagination?.totalPages || Math.ceil(data.length / currentLimit)
     };
-  }, [query.page, query.limit, data.length]);
+  }, [query.page, query.limit, data.length, apiPagination]);
 
   /**
    * Configuração de ordenação atual

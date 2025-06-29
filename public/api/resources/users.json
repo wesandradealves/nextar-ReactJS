@@ -7,20 +7,6 @@
     "perfil": "gestao"
   },
   {
-    "id": "1",
-    "nome": "Dr. Ana Silva",
-    "email": "ana.silva@antartica.br",
-    "senha": "0192023a7bbd73250516f069df18b500",
-    "perfil": "gestao"
-  },
-  {
-    "id": "2",
-    "nome": "Carlos Oliveira",
-    "email": "carlos.oliveira@antartica.br",
-    "senha": "64c02c20fc6540b184ae152181571990",
-    "perfil": "agente"
-  },
-  {
     "id": "3",
     "nome": "Maria Santos",
     "email": "maria.santos@antartica.br",
@@ -29,10 +15,13 @@
   },
   {
     "id": "4",
-    "nome": "João Costa",
+    "nome": "João Costa Teste",
     "email": "joao.costa@antartica.br",
     "senha": "64c02c20fc6540b184ae152181571990",
-    "perfil": "agente"
+    "perfil": "agente",
+    "usuario": "joao.silva",
+    "setor": "TI",
+    "dataAtualizacao": "2025-06-29T20:26:27.126Z"
   },
   {
     "id": "5",
