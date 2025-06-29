@@ -1,0 +1,173 @@
+/**
+ * Breakpoints centralizados para uso em toda aplicação
+ * Baseado no arquivo breakpoints.js
+ * 
+ * Uso:
+ * @include media('sm') { ... }
+ * @include media-down('md') { ... }
+ * @include media-between('sm', 'lg') { ... }
+ */
+
+// Definição dos breakpoints (mesmos valores do breakpoints.js)
+$breakpoints: (
+  'xs': 0,
+  'sm': 40rem,     // 640px
+  'md': 48rem,     // 768px  
+  'lg': 64rem,     // 1024px
+  'xl': 80rem,     // 1280px
+  'xxl': 96rem     // 1536px
+) !default;
+
+/**
+ * Função para obter um breakpoint
+ * @param {string} $name - Nome do breakpoint
+ * @returns {string} - Valor do breakpoint
+ */
+@function breakpoint($name) {
+  @if map-has-key($breakpoints, $name) {
+    @return map-get($breakpoints, $name);
+  }
+  
+  @warn "Breakpoint `#{$name}` não encontrado. Breakpoints disponíveis: #{map-keys($breakpoints)}";
+  @return null;
+}
+
+/**
+ * Mixin para media queries mobile-first (min-width)
+ * @param {string} $name - Nome do breakpoint
+ * 
+ * @example
+ * .component {
+ *   @include media('md') {
+ *     font-size: 1.2rem;
+ *   }
+ * }
+ */
+@mixin media($name) {
+  $size: breakpoint($name);
+  
+  @if $size != null {
+    @if $size == 0 {
+      @content;
+    } @else {
+      @media (min-width: $size) {
+        @content;
+      }
+    }
+  }
+}
+
+/**
+ * Mixin para media queries desktop-first (max-width)
+ * @param {string} $name - Nome do breakpoint
+ * 
+ * @example
+ * .component {
+ *   @include media-down('md') {
+ *     display: none;
+ *   }
+ * }
+ */
+@mixin media-down($name) {
+  $size: breakpoint($name);
+  
+  @if $size != null and $size > 0 {
+    @media (max-width: calc(#{$size} - 0.02rem)) {
+      @content;
+    }
+  }
+}
+
+/**
+ * Mixin para media queries entre dois breakpoints
+ * @param {string} $min - Breakpoint mínimo
+ * @param {string} $max - Breakpoint máximo
+ * 
+ * @example
+ * .component {
+ *   @include media-between('sm', 'lg') {
+ *     padding: 2rem;
+ *   }
+ * }
+ */
+@mixin media-between($min, $max) {
+  $min-size: breakpoint($min);
+  $max-size: breakpoint($max);
+  
+  @if $min-size != null and $max-size != null {
+    @media (min-width: #{$min-size}) and (max-width: calc(#{$max-size} - 0.02rem)) {
+      @content;
+    }
+  }
+}
+
+/**
+ * Mixin para orientação específica
+ * @param {string} $orientation - landscape ou portrait
+ * 
+ * @example
+ * .component {
+ *   @include orientation('landscape') {
+ *     height: 100vh;
+ *   }
+ * }
+ */
+@mixin orientation($orientation) {
+  @media (orientation: $orientation) {
+    @content;
+  }
+}
+
+/**
+ * Mixin para retina displays
+ * 
+ * @example
+ * .component {
+ *   @include retina {
+ *     background-image: url('image@2x.png');
+ *   }
+ * }
+ */
+@mixin retina {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    @content;
+  }
+}
+
+/**
+ * Mixin para print media
+ * 
+ * @example
+ * .component {
+ *   @include print {
+ *     display: none;
+ *   }
+ * }
+ */
+@mixin print {
+  @media print {
+    @content;
+  }
+}
+
+/**
+ * Classes utilitárias de breakpoints (opcional)
+ * Descomente se necessário
+ */
+/*
+.hidden {
+  &-xs { @include media-down('sm') { display: none !important; } }
+  &-sm { @include media-between('sm', 'md') { display: none !important; } }
+  &-md { @include media-between('md', 'lg') { display: none !important; } }
+  &-lg { @include media-between('lg', 'xl') { display: none !important; } }
+  &-xl { @include media('xl') { display: none !important; } }
+}
+
+.visible {
+  &-xs { @include media('sm') { display: none !important; } }
+  &-sm { @include media-down('sm'), media('md') { display: none !important; } }
+  &-md { @include media-down('md'), media('lg') { display: none !important; } }
+  &-lg { @include media-down('lg'), media('xl') { display: none !important; } }
+  &-xl { @include media-down('xl') { display: none !important; } }
+}
+*/

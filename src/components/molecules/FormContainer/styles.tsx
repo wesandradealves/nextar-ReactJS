@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { mediaDown } from '@/assets/scss/breakpoints';
 import { StyledFormContainerProps, StyledFormActionsProps } from './types';
 
 /**
@@ -33,14 +34,14 @@ export const StyledFormActions = styled.div<StyledFormActionsProps>`
   align-items: center;
   border-top: 1px solid var(--color-gray-200);
 
-  @media (max-width: 640px) {
+  ${mediaDown.sm(`
     flex-direction: column;
     gap: 0.75rem;
     
     button {
       width: 100%;
     }
-  }
+  `)}
 `;
 
 /**

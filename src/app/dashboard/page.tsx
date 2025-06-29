@@ -53,7 +53,6 @@ export default function Dashboard() {
           userName={headerUserName}
           userEmail={headerUserEmail}
           userProfile={headerUserProfile}
-          isOnline={true}
           isLoggingOut={isLoggingOut}
           onLogout={handleLogout}
           onProfileClick={() => console.log('Abrir perfil')}
