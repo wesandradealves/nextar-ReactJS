@@ -101,22 +101,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Função para realizar logout do usuário
    * Remove dados do usuário do estado, localStorage e cookies
+   * Implementa transição suave para evitar "flash" visual
    */
   const logout = () => {
     setIsLoggingOut(true);
     
-    // Primeiro limpar os dados de armazenamento
-    localStorage.removeItem('user');
-    Cookies.remove('nextar_user');
-    
-    // Redirecionamento manual para login
-    router.push('/login');
-    
-    // Limpar o estado do usuário após redirecionamento
+    // Estratégia: manter usuário visível até garantir redirecionamento completo
     setTimeout(() => {
-      setUser(null);
-      setIsLoggingOut(false);
-    }, 100);
+      // Primeiro, fazer o redirecionamento
+      router.push('/login');
+      
+      // Só depois limpar os dados de armazenamento
+      setTimeout(() => {
+        localStorage.removeItem('user');
+        Cookies.remove('nextar_user');
+        
+        // Aguardar ainda mais para garantir que o redirecionamento foi processado
+        setTimeout(() => {
+          setUser(null);
+          setIsLoggingOut(false);
+        }, 1500); // 1.5s após limpeza dos dados
+      }, 500); // 500ms após redirecionamento
+    }, 1200); // 1.2s de delay inicial para feedback visual
   };
 
   /**

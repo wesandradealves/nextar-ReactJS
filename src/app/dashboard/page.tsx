@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
+import { PerfilUsuario } from '@/utils/enums';
 import { Badge } from '@/components/atoms';
 import { Header as HeaderComponent } from '@/components/organisms/Header';
 import {
@@ -27,7 +28,7 @@ import {
  * Exibe informações do usuário logado e opções de navegação
  */
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggingOut } = useAuth();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
@@ -38,14 +39,22 @@ export default function Dashboard() {
     logout();
   };
 
+  // Garante que o header permaneça visível durante todo o processo de logout
+  const shouldShowHeader = user || isLoggingOut;
+  // Dados seguros para o header durante logout
+  const headerUserName = user?.nome || 'Usuário';
+  const headerUserEmail = user?.email || '';
+  const headerUserProfile = user?.perfil || PerfilUsuario.PESQUISADOR;
+
   return (
     <DashboardContainer>
-      {user && (
+      {shouldShowHeader && (
         <HeaderComponent
-          userName={user.nome}
-          userEmail={user.email}
-          userProfile={user.perfil}
+          userName={headerUserName}
+          userEmail={headerUserEmail}
+          userProfile={headerUserProfile}
           isOnline={true}
+          isLoggingOut={isLoggingOut}
           onLogout={handleLogout}
           onProfileClick={() => console.log('Abrir perfil')}
         />
@@ -95,21 +104,21 @@ export default function Dashboard() {
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            <ActionButton disabled>
+            <ActionButton disabled={isLoggingOut}>
               📋 Novo Chamado
             </ActionButton>
-            <ActionButton disabled>
+            <ActionButton disabled={isLoggingOut}>
               👤 Gerenciar Usuários
             </ActionButton>
-            <ActionButton disabled>
+            <ActionButton disabled={isLoggingOut}>
               🔧 Equipamentos
             </ActionButton>
-            <ActionButton disabled>
+            <ActionButton disabled={isLoggingOut}>
               📊 Relatórios
             </ActionButton>
           </ActionGrid>
           <ActionNote>
-            * Funcionalidades em desenvolvimento
+            {isLoggingOut ? '🔄 Fazendo logout... Aguarde um momento.' : '* Funcionalidades em desenvolvimento'}
           </ActionNote>
         </QuickActions>
       </Content>

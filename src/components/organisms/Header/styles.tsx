@@ -11,6 +11,34 @@ export const HeaderContainer = styled.header`
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  
+  /* Estado de logout - mantém visível mas com feedback visual */
+  &.logging-out {
+    opacity: 0.9;
+    pointer-events: none;
+    
+    /* Sutis indicações visuais de que está em processo de logout */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        #667eea 0%, 
+        #764ba2 50%, 
+        #667eea 100%
+      );
+      animation: logoutProgress 2s ease-in-out;
+    }
+  }
+  
+  @keyframes logoutProgress {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(0); }
+  }
 `;
 
 export const LeftSection = styled.div`
@@ -51,15 +79,13 @@ export const RightSection = styled.div`
 `;
 
 export const SearchSection = styled.div`
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) {
     display: none;
   }
 `;
 
 export const UserSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  position: relative;
 `;
 
 export const UserMenu = styled.div`
@@ -77,8 +103,13 @@ export const UserMenuButton = styled.button`
   cursor: pointer;
   transition: all 0.2s ease;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: #f3f4f6;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 `;
 
@@ -86,29 +117,29 @@ export const UserMenuDropdown = styled.div<{ $isOpen: boolean }>`
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
+  width: 200px;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  z-index: 50;
-  
+  z-index: 1000;
   display: ${props => props.$isOpen ? 'block' : 'none'};
+  margin-top: 8px;
 `;
 
-export const MenuItem = styled.button`
+export const MenuItem = styled.button<{ disabled?: boolean }>`
   width: 100%;
   padding: 12px 16px;
   border: none;
   background: transparent;
   text-align: left;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: background 0.2s ease;
   font-size: 0.875rem;
-  color: #374151;
+  color: ${props => props.disabled ? '#9ca3af' : '#374151'};
+  opacity: ${props => props.disabled ? 0.6 : 1};
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: #f3f4f6;
   }
   
@@ -118,7 +149,7 @@ export const MenuItem = styled.button`
   
   &:last-child {
     border-radius: 0 0 8px 8px;
-    color: #ef4444;
+    color: ${props => props.disabled ? '#9ca3af' : '#ef4444'};
     border-top: 1px solid #e5e7eb;
   }
 `;

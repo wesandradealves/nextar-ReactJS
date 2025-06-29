@@ -40,6 +40,7 @@ export const Header = ({
   userName,
   userProfile,
   isOnline = true,
+  isLoggingOut = false,
   onLogout,
   onProfileClick,
   className
@@ -71,12 +72,16 @@ export const Header = ({
   };
   
   const handleLogout = () => {
-    setIsMenuOpen(false);
-    onLogout?.();
+    if (!isLoggingOut) {
+      setIsMenuOpen(false);
+      onLogout?.();
+    }
   };
   
   return (
-    <HeaderContainer className={className}>
+    <HeaderContainer 
+      className={`${className || ''} ${isLoggingOut ? 'logging-out' : ''}`.trim()}
+    >
       <LeftSection>
         <Logo variant="header" size="small" />
         
@@ -103,33 +108,37 @@ export const Header = ({
             placeholder="Buscar chamados, equipamentos..."
             onChange={setSearchTerm}
             onSearch={handleSearch}
+            disabled={isLoggingOut}
           />
         </SearchSection>
         
         <UserSection>
           <UserMenu ref={menuRef}>
-            <UserMenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <UserMenuButton 
+              onClick={() => !isLoggingOut && setIsMenuOpen(!isMenuOpen)}
+              disabled={isLoggingOut}
+            >
               <UserCard
                 name={userName}
                 profile={userProfile}
-                isOnline={isOnline}
+                isOnline={isOnline && !isLoggingOut}
                 size="small"
               />
               <ChevronDownIcon />
             </UserMenuButton>
             
-            <UserMenuDropdown $isOpen={isMenuOpen}>
-              <MenuItem onClick={handleProfileClick}>
+            <UserMenuDropdown $isOpen={isMenuOpen && !isLoggingOut}>
+              <MenuItem onClick={handleProfileClick} disabled={isLoggingOut}>
                 Meu Perfil
               </MenuItem>
-              <MenuItem onClick={() => setIsMenuOpen(false)}>
+              <MenuItem onClick={() => setIsMenuOpen(false)} disabled={isLoggingOut}>
                 Configurações
               </MenuItem>
-              <MenuItem onClick={() => setIsMenuOpen(false)}>
+              <MenuItem onClick={() => setIsMenuOpen(false)} disabled={isLoggingOut}>
                 Ajuda
               </MenuItem>
-              <MenuItem onClick={handleLogout}>
-                Sair
+              <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
+                {isLoggingOut ? '🔄 Saindo...' : 'Sair'}
               </MenuItem>
             </UserMenuDropdown>
           </UserMenu>
