@@ -5,6 +5,68 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] - 2025-06-29
+
+### 🚀 Adicionado
+- **Template Dashboard Unificado**
+  - Layout `src/app/dashboard/layout.tsx` com header persistente
+  - Estrutura hierárquica `/dashboard/*` para todos os módulos
+  - Header fixo compartilhado entre todas as subpáginas
+  - Navegação otimizada e experiência de usuário consistente
+
+- **Módulo de Perfil Completo**
+  - Página `/dashboard/profile` para edição de perfil do usuário autenticado
+  - Formulário inteligente com pré-preenchimento automático dos dados
+  - Integração com FormContainer para validação robusta
+  - Validação de nome (mínimo 2 caracteres) e email válido
+  - Mensagens de sucesso/erro com timeout automático
+  - Reset de formulário funcional
+
+- **API de Perfil Dedicada**
+  - Endpoint GET `/api/profile` para buscar dados do usuário
+  - Endpoint PUT `/api/profile` para atualização de perfil
+  - Validação de email único entre usuários
+  - Tratamento de erros e respostas padronizadas
+  - Remoção automática de dados sensíveis das respostas
+
+- **Hook useProfile Especializado**
+  - Hook customizado para operações de perfil
+  - Integração com sistema de cache
+  - Tratamento de loading e error states
+
+### 🔧 Melhorado
+- **Dashboard Principal Simplificado**
+  - Removido header duplicado da página principal
+  - Foco apenas no conteúdo (estatísticas e ações rápidas)
+  - Melhor performance sem componentes redundantes
+
+- **Sistema de Navegação**
+  - Link "Meu Perfil" funcional no menu do usuário
+  - Redirecionamento otimizado para `/dashboard/profile`
+  - Experiência de navegação fluida entre módulos
+
+- **Organização de Código**
+  - Reestruturação de componentes para template pattern
+  - Separação clara entre layout e conteúdo
+  - Remoção de código duplicado
+
+### 🐛 Corrigido
+- **Warnings de Build**
+  - Removidas variáveis não utilizadas (`isLoggingOut`, `formData`)
+  - Adicionados comentários ESLint para suppressão de warnings válidos
+  - Build limpo sem erros ou warnings
+
+- **Pré-preenchimento de Formulário**
+  - Formulário aguarda dados do usuário antes de renderizar
+  - Valores iniciais corretamente aplicados no FormContainer
+  - Sincronização entre dados do contexto e formulário
+
+### 📚 Documentação
+- **README Atualizado**
+  - Documentação da nova estrutura de template dashboard
+  - Instruções de navegação entre módulos
+  - Exemplos de uso do sistema de perfil
+
 ## [1.2.0] - 2025-06-29
 
 ### 🚀 Adicionado
