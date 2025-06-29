@@ -94,12 +94,7 @@ export default function UsersPage() {
    */
   const handleToggleUserStatus = useCallback(async (user: User) => {
     const newStatus = !user.ativo;
-    const action = newStatus ? 'ativar' : 'desativar';
     
-    if (!window.confirm(`Tem certeza que deseja ${action} o usuário ${user.nome}?`)) {
-      return;
-    }
-
     const success = await updateUser(user.id, { ativo: newStatus });
     if (!success) {
       console.error('Erro ao atualizar status do usuário');
