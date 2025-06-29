@@ -114,17 +114,33 @@ cp .env.example .env.local
 
 **Variáveis disponíveis:**
 ```bash
-# Debug do sistema de cache (desenvolvimento)
+# Ambiente
+NEXT_PUBLIC_ENVIRONMENT=development
+CHOKIDAR_USEPOLLING=true
+
+# Configurações de desenvolvimento
 CACHE_DEBUG=true
 
-# Configurações de cache
-CACHE_DEFAULT_TTL=300000    # TTL padrão em ms (5 minutos)
-CACHE_MAX_ENTRIES=1000      # Máximo de entradas no cache
-
-# Informações da aplicação
+# Next.js
 NEXT_PUBLIC_APP_NAME=Nextar
 NEXT_PUBLIC_APP_VERSION=0.1.0
+
+# Cache settings
+CACHE_DEFAULT_TTL=300000    # TTL padrão em ms (5 minutos)
+CACHE_MAX_ENTRIES=1000      # Máximo de entradas no cache
 ```
+
+**Descrição das Variáveis:**
+
+| Variável | Descrição | Valor Padrão |
+|----------|-----------|--------------|
+| `NEXT_PUBLIC_ENVIRONMENT` | Ambiente de execução | `development` |
+| `CHOKIDAR_USEPOLLING` | Habilita polling para file watching | `true` |
+| `CACHE_DEBUG` | Ativa componente de debug do cache | `true` |
+| `NEXT_PUBLIC_APP_NAME` | Nome da aplicação | `Nextar` |
+| `NEXT_PUBLIC_APP_VERSION` | Versão da aplicação | `0.1.0` |
+| `CACHE_DEFAULT_TTL` | TTL padrão do cache (ms) | `300000` (5 min) |
+| `CACHE_MAX_ENTRIES` | Máximo de entradas no cache | `1000` |
 
 ### 3. Instale as dependências
 ```bash
