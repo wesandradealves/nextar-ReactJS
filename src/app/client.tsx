@@ -9,11 +9,10 @@ import { CacheDebug } from '@/components/debug';
 import Spinner from '@/components/spinner/spinner';
 import StyledJsxRegistry from './registry';
 import { App, GlobalStyle } from '@/app/style';
-import { AnimatePresence, motion /*, useScroll */ } from 'motion/react';
-import { Suspense, /* useRef, useState,*/  useEffect } from 'react';
-// import Header from '@/components/header/header';
-// import Footer from '@/components/footer/footer';
+import { AnimatePresence, motion } from 'motion/react';
+import { Suspense, useEffect } from 'react';
 import { setupInterceptors } from '@/services/api';
+import { ToastContainer } from 'react-toastify';
 
 import {
   _breakpoints,
@@ -24,22 +23,6 @@ const theme = {
 };
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
-  // const scrollRef = useRef<HTMLDivElement | null>(null);
-  // const { scrollY } = useScroll({
-  //   container: scrollRef,
-  // });
-  // const [scrollPosition, setScrollPosition] = useState<number>(0);
-
-  // useEffect(() => {
-  //   const unsubscribe = scrollY.onChange((n) => {
-  //     setScrollPosition(n);
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-
-  // }, [scrollY]);
-
   return (
     <ThemeProvider theme={theme}>
       <LoaderProvider>
@@ -51,30 +34,28 @@ export default function ClientProviders({ children }: { children: React.ReactNod
                 <StyledJsxRegistry>
                   <AnimatePresence
                     mode="wait"
-                  initial={true}
-                  onExitComplete={() => window.scrollTo(0, 0)}
-                >
-                  <App id="primary">
-                    <motion.div
-                      className="min-h-screen flex flex-start flex-col"
-                      initial={{ x: 0, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: 0, opacity: 0 }}
-                      // ref={scrollRef}
-                    >
-                      {/* <Header scrollPosition={scrollPosition} /> */}
-                      {children}
-                      {/* <Footer /> */}
-                    </motion.div>
-                    <Spinner />
-                    <CacheDebug />
-                  </App>
-                </AnimatePresence>
-              </StyledJsxRegistry>
-            </Suspense>
-          </EntitiesProvider>
-        </AuthProvider>
-      </CacheProvider>
+                    initial={true}
+                    onExitComplete={() => window.scrollTo(0, 0)}
+                  >
+                    <App id="primary">
+                      <motion.div
+                        className="min-h-screen flex flex-start flex-col"
+                        initial={{ x: 0, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: 0, opacity: 0 }}
+                      >
+                        {children}
+                      </motion.div>
+                      <Spinner />
+                      <ToastContainer />
+                      <CacheDebug />
+                    </App>
+                  </AnimatePresence>
+                </StyledJsxRegistry>
+              </Suspense>
+            </EntitiesProvider>
+          </AuthProvider>
+        </CacheProvider>
       </LoaderProvider>
       <GlobalStyle />
     </ThemeProvider>

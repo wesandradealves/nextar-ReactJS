@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useCache } from '@/context/cache';
+import { useToast } from '@/hooks/useToast';
 import type { 
   User, 
   PaginatedQuery, 
@@ -71,6 +72,9 @@ export const useUsers = () => {
 
   // Cache context
   const cache = useCache();
+  
+  // Toast helpers
+  const toast = useToast();
 
   /**
    * Constrói parâmetros da query para a API
@@ -283,7 +287,8 @@ export const useUsers = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao criar usuário');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao criar usuário');
       }
 
       const newUser = await response.json() as User;
@@ -291,13 +296,27 @@ export const useUsers = () => {
       // Invalidar cache e refrescar dados
       refresh();
       
+      // Toast de sucesso
+      toast.success(
+        'Usuário criado com sucesso!',
+        `${newUser.nome} foi adicionado ao sistema`
+      );
+      
       return newUser;
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao criar usuário');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar usuário';
+      setError(errorMessage);
+      
+      // Toast de erro
+      toast.error(
+        'Erro ao criar usuário',
+        errorMessage
+      );
+      
       return null;
     }
-  }, [refresh]);
+  }, [refresh, toast]);
 
   /**
    * Atualiza um usuário existente
@@ -329,13 +348,27 @@ export const useUsers = () => {
       // Também limpar outros caches relacionados
       cache.invalidateByTag('users');
       
+      // Toast de sucesso
+      toast.success(
+        'Usuário atualizado com sucesso!',
+        `As informações de ${updatedUser.nome} foram salvas`
+      );
+      
       return true;
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao atualizar usuário');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar usuário';
+      setError(errorMessage);
+      
+      // Toast de erro
+      toast.error(
+        'Erro ao atualizar usuário',
+        errorMessage
+      );
+      
       return false;
     }
-  }, [data, cache, cacheKey]);
+  }, [data, cache, cacheKey, toast]);
 
   /**
    * Remove um usuário
@@ -347,8 +380,12 @@ export const useUsers = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao excluir usuário');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao excluir usuário');
       }
+      
+      // Buscar nome do usuário para o toast
+      const deletedUser = data.find((user: User) => user.id === userId);
       
       // Atualizar cache otimisticamente
       const updatedData = data.filter((user: User) => user.id !== userId);
@@ -358,13 +395,27 @@ export const useUsers = () => {
       // Também limpar outros caches relacionados
       cache.invalidateByTag('users');
       
+      // Toast de sucesso
+      toast.success(
+        'Usuário excluído com sucesso!',
+        deletedUser ? `${deletedUser.nome} foi removido do sistema` : 'Usuário removido do sistema'
+      );
+      
       return true;
     } catch (error) {
       console.error('Erro ao excluir usuário:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao excluir usuário');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir usuário';
+      setError(errorMessage);
+      
+      // Toast de erro
+      toast.error(
+        'Erro ao excluir usuário',
+        errorMessage
+      );
+      
       return false;
     }
-  }, [data, cache, cacheKey]);
+  }, [data, cache, cacheKey, toast]);
 
   /**
    * Alterar própria senha do usuário
@@ -392,13 +443,27 @@ export const useUsers = () => {
         throw new Error(errorData.message || 'Erro ao alterar senha');
       }
 
+      // Toast de sucesso
+      toast.success(
+        'Senha alterada com sucesso!',
+        'Sua senha foi atualizada'
+      );
+
       return true;
     } catch (error) {
       console.error('Erro ao alterar senha:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao alterar senha');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao alterar senha';
+      setError(errorMessage);
+      
+      // Toast de erro
+      toast.error(
+        'Erro ao alterar senha',
+        errorMessage
+      );
+      
       return false;
     }
-  }, []);
+  }, [toast]);
 
   /**
    * Alterar senha de outro usuário (apenas para administradores)
@@ -427,13 +492,31 @@ export const useUsers = () => {
         throw new Error(errorData.message || 'Erro ao alterar senha do usuário');
       }
 
+      const responseData = await response.json();
+      
+      // Toast de sucesso
+      toast.success(
+        'Senha alterada com sucesso!',
+        responseData.targetUser ? 
+          `Senha de ${responseData.targetUser.nome} foi alterada` : 
+          'Senha do usuário foi alterada'
+      );
+
       return true;
     } catch (error) {
       console.error('Erro ao alterar senha do usuário:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao alterar senha do usuário');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao alterar senha do usuário';
+      setError(errorMessage);
+      
+      // Toast de erro
+      toast.error(
+        'Erro ao alterar senha do usuário',
+        errorMessage
+      );
+      
       return false;
     }
-  }, []);
+  }, [toast]);
 
   /**
    * Utilitários para filtros rápidos

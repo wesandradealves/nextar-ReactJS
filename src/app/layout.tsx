@@ -2,6 +2,7 @@ import Script from 'next/script';
 import '@/assets/scss/globals.scss';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'react-toastify/dist/ReactToastify.css';
 import classNames from 'classnames';
 import ClientProviders from '@/app/client';
 

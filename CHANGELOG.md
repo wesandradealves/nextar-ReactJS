@@ -5,6 +5,35 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.0] - 2025-06-29
+
+### Migrado
+- **Sistema de Notificações para react-toastify**
+  - Remoção completa do sistema de toast customizado
+  - Integração com `react-toastify` para notificações padronizadas
+  - Novo hook `useToast` simplificado com helpers pré-configurados
+  - Configuração automática do `ToastContainer` no layout global
+  - CSS do react-toastify incluído automaticamente
+
+### Removido
+- **Sistema de Toast Customizado**
+  - Componente `Toast` customizado removido
+  - Contexto `ToastProvider` e `useToastHelpers` removidos
+  - Arquivos de estilo e tipos do toast customizado excluídos
+  - Limpeza de importações e exports desnecessários
+
+### Melhorado
+- **Hook useUsers**: Mantém todas as funcionalidades de feedback
+- **Performance**: Redução do bundle size com remoção de código desnecessário
+- **Consistência**: Notificações padronizadas em todo o sistema
+- **Manutenibilidade**: Menos código customizado para manter
+
+### Técnico
+- Atualização das importações em todos os módulos afetados
+- Configuração do react-toastify no layout principal
+- Testes de build e lint passando com sucesso
+- Funcionalidades de toast mantidas nos fluxos CRUD de usuários
+
 ## [1.5.0] - 2025-06-29
 
 ### Adicionado
