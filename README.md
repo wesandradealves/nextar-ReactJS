@@ -11,6 +11,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Instalação](#instalação)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Atomic Design Pattern](#atomic-design-pattern)
 - [Funcionalidades](#funcionalidades)
 - [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
 - [Fluxo de Autenticação Implementado](#fluxo-de-autenticação-implementado)
@@ -193,6 +194,162 @@ nextar/
 ├── tailwind.config.ts          # Configuração Tailwind
 └── tsconfig.json               # Configuração TypeScript
 ```
+
+---
+
+## ⚛️ Atomic Design Pattern
+
+O projeto utiliza o **Atomic Design Pattern** para organização dos componentes, criando uma arquitetura escalável e reutilizável.
+
+### 🔬 **Estrutura dos Componentes**
+
+```
+src/components/
+├── atoms/                      # Componentes básicos (indivisíveis)
+│   ├── Logo/
+│   │   ├── index.tsx          # Componente principal
+│   │   ├── styles.tsx         # Styled components
+│   │   ├── types.ts           # Interfaces TypeScript
+│   │   └── Logo.stories.tsx   # Stories do Storybook
+│   ├── Button/
+│   │   ├── index.tsx
+│   │   ├── styles.tsx
+│   │   ├── types.ts
+│   │   └── Button.stories.tsx
+│   ├── Spinner/
+│   │   ├── index.tsx
+│   │   ├── styles.tsx
+│   │   ├── types.ts
+│   │   └── Spinner.stories.tsx
+│   └── index.ts               # Barrel exports
+├── molecules/                  # Combinação de atoms
+├── organisms/                  # Seções da interface
+├── templates/                  # Layout de páginas
+└── pages/                      # Páginas completas
+```
+
+### 🧬 **Níveis do Atomic Design**
+
+#### **1. Atoms (Átomos)**
+Componentes básicos e indivisíveis que não podem ser quebrados em partes menores.
+
+**Implementados:**
+- **Logo**: Logotipo com variações (header, login) e tamanhos
+- **Button**: Botões com 4 variantes e estados (loading, disabled)
+- **Spinner**: Indicador de carregamento com cores e tamanhos
+
+**Características:**
+- ✅ **Reutilizáveis** em qualquer contexto
+- ✅ **Props bem definidas** com TypeScript
+- ✅ **Styled Components** responsivos
+- ✅ **Stories completas** no Storybook
+- ✅ **Testes visuais** com múltiplas variações
+
+```tsx
+// Exemplo de uso dos atoms
+import { Logo, Button, Spinner } from '@/components/atoms';
+
+<Logo variant="header" size="small" />
+<Button variant="primary" loading={isSubmitting}>
+  Salvar
+</Button>
+<Spinner size="large" color="#ff0000" />
+```
+
+#### **2. Molecules (Moléculas)**
+Combinação de atoms que formam componentes mais complexos.
+
+**Planejados:**
+- **FormField**: Label + Input + ErrorMessage
+- **SearchBox**: Input + Button + Icon
+- **UserCard**: Avatar + Name + Role
+
+#### **3. Organisms (Organismos)**
+Seções distintas da interface que combinam molecules e atoms.
+
+**Planejados:**
+- **Header**: Logo + Navigation + UserMenu
+- **Sidebar**: Navigation + QuickActions
+- **DataTable**: SearchBox + Table + Pagination
+
+#### **4. Templates (Templates)**
+Layout de páginas sem conteúdo específico.
+
+**Planejados:**
+- **AuthTemplate**: Layout para login/registro
+- **DashboardTemplate**: Layout para área logada
+- **FormTemplate**: Layout para formulários
+
+#### **5. Pages (Páginas)**
+Instâncias específicas de templates com conteúdo real.
+
+**Implementadas:**
+- **LoginPage**: Formulário de autenticação
+- **DashboardPage**: Painel principal
+
+### 📖 **Convenções de Desenvolvimento**
+
+#### **Estrutura de Arquivo Padrão**
+```
+ComponentName/
+├── index.tsx           # Componente principal
+├── styles.tsx          # Styled components
+├── types.ts            # Interfaces TypeScript
+└── Component.stories.tsx # Stories do Storybook
+```
+
+#### **Nomenclatura**
+- **Componentes**: PascalCase (`Button`, `Logo`)
+- **Props**: camelCase com `$` para styled-components (`$variant`, `$size`)
+- **Arquivos**: camelCase (`types.ts`, `styles.tsx`)
+- **Stories**: ComponentName.stories.tsx
+
+#### **Padrões de Props**
+```tsx
+interface ComponentProps {
+  /** Descrição da prop */
+  variant?: 'primary' | 'secondary';
+  size?: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+```
+
+### 🎨 **Storybook Integration**
+
+Cada componente atômico possui stories completas:
+
+```tsx
+export const AllVariants: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '12px' }}>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="danger">Danger</Button>
+    </div>
+  )
+};
+```
+
+### 🔄 **Vantagens da Implementação**
+
+- ✅ **Reutilização máxima** de componentes
+- ✅ **Consistência visual** em toda aplicação
+- ✅ **Manutenção facilitada** com componentes isolados
+- ✅ **Testes visuais** automatizados no Storybook
+- ✅ **Documentação viva** sempre atualizada
+- ✅ **Desenvolvimento paralelo** entre equipes
+- ✅ **Escalabilidade** para projetos grandes
+
+### 🚀 **Próximos Passos**
+
+1. **Molecules**: Implementar FormField, SearchBox, UserCard
+2. **Organisms**: Criar Header, Sidebar, DataTable
+3. **Templates**: Desenvolver layouts reutilizáveis
+4. **Testing**: Adicionar testes unitários para atoms
+5. **Theming**: Sistema de design tokens
+6. **Animation**: Micro-interações com Framer Motion
 
 ---
 

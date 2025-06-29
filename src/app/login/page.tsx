@@ -6,7 +6,7 @@ import { useMetadata } from '@/hooks/useMetadata';
 import { useAuth } from '@/context/auth';
 import { useLoader } from '@/context/spinner';
 import { LoginFormData } from '@/types';
-import { Logo } from '@/components/atoms';
+import { Logo, Button } from '@/components/atoms';
 import {
   LoginContainer,
   LoginCard,
@@ -18,7 +18,6 @@ import {
   Checkbox,
   CheckboxLabel,
   ErrorMessage,
-  SubmitButton,
   HelpSection,
   HelpText
 } from './styles';
@@ -140,12 +139,16 @@ export default function Login() {
               <ErrorMessage $isGlobal>{loginError}</ErrorMessage>
             )}
 
-            <SubmitButton
+            <Button
               type="submit"
+              variant="primary"
+              size="large"
+              fullWidth
+              loading={isSubmitting}
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Entrando...' : 'Entrar'}
-            </SubmitButton>
+            </Button>
           </form>
 
           <HelpSection>

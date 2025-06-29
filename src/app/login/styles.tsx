@@ -117,34 +117,6 @@ export const ErrorMessage = styled.div<{ $isGlobal?: boolean }>`
   border-radius: ${props => props.$isGlobal ? '8px' : '0'};
 `;
 
-export const SubmitButton = styled.button`
-  width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
 export const HelpSection = styled.div`
   margin-top: 24px;
   padding-top: 24px;
