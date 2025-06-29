@@ -46,20 +46,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const updateData: UpdateUserData = req.body;
 
-        if (!updateData.nome || !updateData.email || !updateData.perfil) {
-          return res.status(400).json({ 
-            message: 'Nome, email e perfil são obrigatórios' 
-          });
+        // Validar apenas se campos obrigatórios estão sendo atualizados
+        if (updateData.nome !== undefined && !updateData.nome.trim()) {
+          return res.status(400).json({ message: 'Nome não pode estar vazio' });
+        }
+        if (updateData.email !== undefined && !updateData.email.trim()) {
+          return res.status(400).json({ message: 'Email não pode estar vazio' });
+        }
+        if (updateData.perfil !== undefined && !updateData.perfil) {
+          return res.status(400).json({ message: 'Perfil não pode estar vazio' });
         }
 
-        // Verificar se email já existe em outro usuário
-        const emailExists = users.some(user => 
-          user.email === updateData.email && user.id !== id
-        );
-        if (emailExists) {
-          return res.status(400).json({ 
-            message: 'Email já está em uso por outro usuário' 
-          });
+        // Verificar se email já existe em outro usuário (apenas se email está sendo atualizado)
+        if (updateData.email) {
+          const emailExists = users.some(user => 
+            user.email === updateData.email && user.id !== id
+          );
+          if (emailExists) {
+            return res.status(400).json({ 
+              message: 'Email já está em uso por outro usuário' 
+            });
+          }
         }
 
         // Atualizar usuário

@@ -144,12 +144,12 @@ export const Header = ({
                   <MenuItem onClick={handleProfileClick} disabled={isLoggingOut}>
                     Meu Perfil
                   </MenuItem>
-                  <MenuItem onClick={() => setIsUserMenuOpen(false)} disabled={isLoggingOut}>
+                  {/* <MenuItem onClick={() => setIsUserMenuOpen(false)} disabled={isLoggingOut}>
                     Configurações
                   </MenuItem>
                   <MenuItem onClick={() => setIsUserMenuOpen(false)} disabled={isLoggingOut}>
                     Ajuda
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
                     Sair
                   </MenuItem>

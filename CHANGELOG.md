@@ -5,6 +5,34 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.2] - 2025-06-29
+
+### Corrigido
+- **Sistema de Ativação/Desativação de Usuários**
+  - Correção da API PUT `/api/users/[id]` para permitir atualizações parciais
+  - Remoção da validação excessivamente restritiva que exigia todos os campos
+  - Implementação de validações condicionais para campos específicos
+  - Correção do tipo de retorno do hook `updateUser` para boolean consistente
+  - Melhoria no tratamento de erros com mensagens específicas da API
+
+- **Componentes Styled Components**
+  - Correção de props customizadas passadas para DOM (`isActive`, `isClickable`)
+  - Implementação de `shouldForwardProp` para filtrar props não-DOM
+  - Eliminação de warnings do React sobre propriedades não reconhecidas
+
+### Melhorado
+- **UX da Funcionalidade de Status**
+  - Toggle de status agora funciona corretamente via checkbox
+  - Span clicável (bolinha + texto) responsivo e funcional
+  - Atualizações em tempo real no cache e estatísticas
+  - Feedback visual imediato para mudanças de status
+  - Cache multicamadas sincronizado após operações
+
+- **Validação de API**
+  - Validação inteligente que permite atualizações parciais de campos
+  - Verificação de email duplicado apenas quando email está sendo atualizado
+  - Mensagens de erro mais específicas e informativas
+
 ## [1.4.1] - 2025-06-29
 
 ### Corrigido

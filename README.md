@@ -988,6 +988,16 @@ export const Interactive: Story = {
 - **Estatísticas** - Contadores por perfil em tempo real
 - **Proteções** - Não pode excluir a si mesmo ou último GESTÃO
 
+#### **🔄 Sistema de Ativação/Desativação**
+- **Controle de Status** - Ativar/desativar usuários individualmente
+- **Interface Dupla** - Checkbox funcional + span clicável (UX aprimorada)
+- **Feedback Visual** - Bolinha colorida (verde=ativo, vermelho=inativo)
+- **Confirmação de Ação** - Modal de confirmação antes de alterar status
+- **Atualização em Tempo Real** - Cache e estatísticas sincronizados
+- **Validação de Permissões** - Apenas perfil GESTÃO pode alterar status
+- **API Otimizada** - Suporte a atualizações parciais via PUT `/api/users/[id]`
+- **Estatísticas Dinâmicas** - Contadores de usuários ativos/inativos atualizados automaticamente
+
 ### **🏢 Gestão de Setores**
 - Cadastro por categoria científica
 - 10 categorias pré-definidas (Biologia, Meteorologia, etc.)
@@ -1337,6 +1347,8 @@ Response: { user: User }
 PUT    /api/users/[id]
 Body: { nome?, email?, senha?, perfil?, telefone?, setor?, observacoes?, ativo? }
 Response: { user: User }
+Note: Suporte a atualizações parciais. Apenas campos fornecidos são validados/atualizados.
+Exemplo: { "ativo": false } - Atualiza apenas o status do usuário
 
 DELETE /api/users/[id]
 Response: { message: string }

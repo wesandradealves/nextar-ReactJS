@@ -302,7 +302,7 @@ export const useUsers = () => {
   /**
    * Atualiza um usuário existente
    */
-  const updateUser = useCallback(async (userId: string, userData: UpdateUserData): Promise<User | null> => {
+  const updateUser = useCallback(async (userId: string, userData: UpdateUserData): Promise<boolean> => {
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: 'PUT',
@@ -313,7 +313,8 @@ export const useUsers = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao atualizar usuário');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao atualizar usuário');
       }
 
       const updatedUser = await response.json() as User;
@@ -328,11 +329,11 @@ export const useUsers = () => {
       // Também limpar outros caches relacionados
       cache.invalidateByTag('users');
       
-      return updatedUser;
+      return true;
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error);
       setError(error instanceof Error ? error.message : 'Erro ao atualizar usuário');
-      return null;
+      return false;
     }
   }, [data, cache, cacheKey]);
 

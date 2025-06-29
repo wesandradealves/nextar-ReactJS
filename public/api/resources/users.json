@@ -4,14 +4,23 @@
     "nome": "Wesley Alves",
     "email": "wesandradealves@gmail.com",
     "senha": "0192023a7bbd73250516f069df18b500",
-    "perfil": "gestao"
+    "perfil": "gestao",
+    "usuario": "wesley.alves",
+    "setor": "TI",
+    "ativo": true,
+    "dataCriacao": "2025-06-29T00:00:00.000Z"
   },
   {
     "id": "3",
     "nome": "Maria Santos",
     "email": "maria.santos@antartica.br",
     "senha": "88c96a9bdaee9e9b733751a180dcd298",
-    "perfil": "pesquisador"
+    "perfil": "pesquisador",
+    "usuario": "maria.santos",
+    "setor": "TI",
+    "ativo": false,
+    "dataCriacao": "2025-06-29T00:00:00.000Z",
+    "dataAtualizacao": "2025-06-29T21:12:34.555Z"
   },
   {
     "id": "4",
@@ -21,13 +30,8 @@
     "perfil": "agente",
     "usuario": "joao.silva",
     "setor": "TI",
-    "dataAtualizacao": "2025-06-29T20:26:27.126Z"
-  },
-  {
-    "id": "5",
-    "nome": "Prof. Pedro Lima",
-    "email": "pedro.lima@antartica.br",
-    "senha": "88c96a9bdaee9e9b733751a180dcd298",
-    "perfil": "pesquisador"
+    "ativo": false,
+    "dataCriacao": "2025-06-29T00:00:00.000Z",
+    "dataAtualizacao": "2025-06-29T21:12:40.776Z"
   }
 ]

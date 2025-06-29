@@ -5,6 +5,7 @@ import { useMetadata } from '@/hooks/useMetadata';
 import { useDashboard } from '@/hooks/useApi';
 import { Badge } from '@/components/atoms';
 import CountUp from 'react-countup';
+import { useRouter } from 'next/navigation';
 import {
   DashboardContainer,
   Content,
@@ -30,6 +31,7 @@ import {
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: dashboardData } = useDashboard();
+  const router = useRouter();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
@@ -38,10 +40,18 @@ export default function Dashboard() {
 
   // Use cached dashboard data or fallback to static data
   const stats = dashboardData?.stats || {
-    totalEquipamentos: 156,
-    chamadosAbertos: 23,
-    chamadosResolvidos: 89,
-    usuariosAtivos: 42
+    totalEquipamentos: 0,
+    chamadosAbertos: 0,
+    chamadosResolvidos: 0,
+    usuariosAtivos: 0
+  };
+
+  /**
+   * Navega para o path especificado
+   * @param path - Caminho para navegação
+   */
+  const handleNavigate = (path: string) => {
+    router.push(path);
   };
 
   return (
@@ -56,7 +66,7 @@ export default function Dashboard() {
         </WelcomeSection>
 
         <StatsGrid>
-          {stats.chamadosAbertos && (<StatCard>
+          <StatCard>
             <StatTitle>🔧 Chamados</StatTitle>
             <StatValue>
               <CountUp
@@ -68,9 +78,9 @@ export default function Dashboard() {
             <StatLabel>
               <Badge variant="primary" size="small">Abertos</Badge>
             </StatLabel>
-          </StatCard>)}
+          </StatCard>
 
-          {stats.totalEquipamentos && (<StatCard>
+          <StatCard>
             <StatTitle>⚙️ Equipamentos</StatTitle>
             <StatValue>
               <CountUp
@@ -82,9 +92,9 @@ export default function Dashboard() {
             <StatLabel>
               <Badge variant="success" size="small">Total</Badge>
             </StatLabel>
-          </StatCard>)}
+          </StatCard>
 
-          {stats.usuariosAtivos && (<StatCard>
+          <StatCard>
             <StatTitle>👥 Usuários</StatTitle>
             <StatValue>
               <CountUp
@@ -96,9 +106,9 @@ export default function Dashboard() {
             <StatLabel>
               <Badge variant="success" size="small">Ativos</Badge>
             </StatLabel>
-          </StatCard>)}
+          </StatCard>
 
-          {stats.chamadosResolvidos && (<StatCard>
+          <StatCard>
             <StatTitle>✅ Resolvidos</StatTitle>
             <StatValue>
               <CountUp
@@ -110,22 +120,22 @@ export default function Dashboard() {
             <StatLabel>
               <Badge variant="primary" size="small">Este mês</Badge>
             </StatLabel>
-          </StatCard>)}
+          </StatCard>
         </StatsGrid>
 
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            <ActionButton>
+            <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
               📋 Novo Chamado
             </ActionButton>
-            <ActionButton>
+            <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
               👤 Gerenciar Usuários
             </ActionButton>
-            <ActionButton>
+            <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
               🔧 Equipamentos
             </ActionButton>
-            <ActionButton>
+            <ActionButton onClick={() => handleNavigate('/dashboard/relatorios')}>
               📊 Relatórios
             </ActionButton>
           </ActionGrid>

@@ -18,7 +18,9 @@ import {
   StatsContainer,
   StatCard,
   StatValue,
-  StatLabel
+  StatLabel,
+  ClickableStatus,
+  StatusDot
 } from './styles';
 
 /**
@@ -88,13 +90,32 @@ export default function UsersPage() {
   }, [deleteUser]);
 
   /**
+   * Manipula ativação/desativação de usuário
+   */
+  const handleToggleUserStatus = useCallback(async (user: User) => {
+    const newStatus = !user.ativo;
+    const action = newStatus ? 'ativar' : 'desativar';
+    
+    if (!window.confirm(`Tem certeza que deseja ${action} o usuário ${user.nome}?`)) {
+      return;
+    }
+
+    const success = await updateUser(user.id, { ativo: newStatus });
+    if (!success) {
+      console.error('Erro ao atualizar status do usuário');
+    }
+  }, [updateUser]);
+
+  /**
    * Estatísticas dos usuários
    */
   const userStats = useMemo(() => {
-    if (!users.length) return { total: 0, pesquisadores: 0, agentes: 0, gestores: 0 };
+    if (!users.length) return { total: 0, ativos: 0, inativos: 0, pesquisadores: 0, agentes: 0, gestores: 0 };
     
     return {
       total: users.length,
+      ativos: users.filter(u => u.ativo).length,
+      inativos: users.filter(u => !u.ativo).length,
       pesquisadores: users.filter(u => u.perfil === PerfilUsuario.PESQUISADOR).length,
       agentes: users.filter(u => u.perfil === PerfilUsuario.AGENTE).length,
       gestores: users.filter(u => u.perfil === PerfilUsuario.GESTAO).length
@@ -156,25 +177,40 @@ export default function UsersPage() {
       sortable: false,
       width: '15%',
       align: 'center',
-      render: () => (
-        <span style={{
-          display: 'inline-flex',
+      render: (_, user: User) => (
+        <div style={{
+          display: 'flex',
           alignItems: 'center',
-          gap: '4px',
-          fontSize: '0.875rem',
-          color: '#10b981'
+          gap: '8px',
+          justifyContent: 'center'
         }}>
-          <span style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            backgroundColor: '#10b981'
-          }} />
-          Ativo
-        </span>
+          <input
+            type="checkbox"
+            checked={user.ativo}
+            onChange={() => handleToggleUserStatus(user)}
+            disabled={!hasManagePermission}
+            style={{
+              width: '16px',
+              height: '16px',
+              cursor: hasManagePermission ? 'pointer' : 'not-allowed'
+            }}
+          />
+          <ClickableStatus
+            onClick={hasManagePermission ? () => handleToggleUserStatus(user) : undefined}
+            isActive={user.ativo}
+            isClickable={hasManagePermission}
+            title={hasManagePermission ? 
+              `Clique para ${user.ativo ? 'desativar' : 'ativar'} o usuário` : 
+              'Status do usuário'
+            }
+          >
+            <StatusDot isActive={user.ativo} />
+            {user.ativo ? 'Ativo' : 'Inativo'}
+          </ClickableStatus>
+        </div>
       )
     }
-  ], []);
+  ], [hasManagePermission, handleToggleUserStatus]);
 
   /**
    * Handlers do modal
@@ -309,6 +345,14 @@ export default function UsersPage() {
         <StatCard>
           <StatValue>{userStats.total}</StatValue>
           <StatLabel>Total de Usuários</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue style={{ color: '#10b981' }}>{userStats.ativos}</StatValue>
+          <StatLabel>Ativos</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue style={{ color: '#ef4444' }}>{userStats.inativos}</StatValue>
+          <StatLabel>Inativos</StatLabel>
         </StatCard>
         <StatCard>
           <StatValue>{userStats.pesquisadores}</StatValue>

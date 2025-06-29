@@ -281,3 +281,39 @@ export const DesktopOnlyActions = styled.div`
     display: none;
   `)}
 `;
+
+// =================================
+// COMPONENTES DE STATUS
+// =================================
+
+export const ClickableStatus = styled.span.withConfig({
+  shouldForwardProp: (prop) => !['isActive', 'isClickable'].includes(prop),
+})<{ 
+  isActive: boolean; 
+  isClickable: boolean; 
+}>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: ${props => props.isActive ? '#10b981' : '#ef4444'};
+  cursor: ${props => props.isClickable ? 'pointer' : 'default'};
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  ${props => props.isClickable && `
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  `}
+`;
+
+export const StatusDot = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})<{ isActive: boolean }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${props => props.isActive ? '#10b981' : '#ef4444'};
+`;
