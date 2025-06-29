@@ -6,6 +6,7 @@ import { useDashboard } from '@/hooks/useApi';
 import { PerfilUsuario } from '@/utils/enums';
 import { Badge } from '@/components/atoms';
 import { Header as HeaderComponent } from '@/components/organisms/Header';
+import CountUp from 'react-countup';
 import {
   DashboardContainer,
   Content,
@@ -81,7 +82,15 @@ export default function Dashboard() {
         <StatsGrid>
           <StatCard>
             <StatTitle>🔧 Chamados</StatTitle>
-            <StatValue>{dashboardLoading ? '...' : stats.chamadosAbertos}</StatValue>
+            <StatValue>
+              {dashboardLoading ? '...' : (
+                <CountUp 
+                  end={stats.chamadosAbertos} 
+                  duration={1.2}
+                  separator="."
+                />
+              )}
+            </StatValue>
             <StatLabel>
               <Badge variant="primary" size="small">Abertos</Badge>
             </StatLabel>
@@ -89,7 +98,15 @@ export default function Dashboard() {
 
           <StatCard>
             <StatTitle>⚙️ Equipamentos</StatTitle>
-            <StatValue>{dashboardLoading ? '...' : stats.totalEquipamentos}</StatValue>
+            <StatValue>
+              {dashboardLoading ? '...' : (
+                <CountUp 
+                  end={stats.totalEquipamentos} 
+                  duration={1.5}
+                  separator="."
+                />
+              )}
+            </StatValue>
             <StatLabel>
               <Badge variant="success" size="small">Total</Badge>
             </StatLabel>
@@ -97,7 +114,15 @@ export default function Dashboard() {
 
           <StatCard>
             <StatTitle>👥 Usuários</StatTitle>
-            <StatValue>{dashboardLoading ? '...' : stats.usuariosAtivos}</StatValue>
+            <StatValue>
+              {dashboardLoading ? '...' : (
+                <CountUp 
+                  end={stats.usuariosAtivos} 
+                  duration={1.0}
+                  separator="."
+                />
+              )}
+            </StatValue>
             <StatLabel>
               <Badge variant="success" size="small">Ativos</Badge>
             </StatLabel>
@@ -105,7 +130,15 @@ export default function Dashboard() {
 
           <StatCard>
             <StatTitle>✅ Resolvidos</StatTitle>
-            <StatValue>{dashboardLoading ? '...' : stats.chamadosResolvidos}</StatValue>
+            <StatValue>
+              {dashboardLoading ? '...' : (
+                <CountUp 
+                  end={stats.chamadosResolvidos} 
+                  duration={1.8}
+                  separator="."
+                />
+              )}
+            </StatValue>
             <StatLabel>
               <Badge variant="primary" size="small">Este mês</Badge>
             </StatLabel>
