@@ -46,9 +46,12 @@ export default function Login() {
       setLoginError('');
       setLoading(true);
       
-      console.log('📝 Formulário de login enviado:', { email: data.email });
+      console.log('📝 Formulário de login enviado:', { 
+        email: data.email, 
+        rememberMe: data.rememberMe 
+      });
       
-      await login(data.email, data.password);
+      await login(data.email, data.password, data.rememberMe);
       
       console.log('✅ Login concluído no formulário');
       // Login bem-sucedido - o contexto cuidará do redirect
@@ -119,7 +122,7 @@ export default function Login() {
                 {...register('rememberMe')}
               />
               <CheckboxLabel htmlFor="rememberMe">
-                Lembrar de mim
+                Lembrar de mim <small>(manter logado por 30 dias)</small>
               </CheckboxLabel>
             </CheckboxGroup>
 
@@ -238,13 +241,35 @@ const Checkbox = styled.input`
   margin-right: 8px;
   width: 16px;
   height: 16px;
-  border: 2px solid lightgray;
+  border: 2px solid #e5e7eb;
   border-radius: 4px;
   cursor: pointer;
   appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+
   &:checked {
     background-color: #667eea;
-    border-color: rgba(255, 255, 255, 0.8);
+    border-color: #667eea;
+  }
+
+  &:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  &:hover {
+    border-color: #667eea;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
   }
 `;
 

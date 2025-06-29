@@ -17,7 +17,7 @@ interface AuthContextProps {
   /** Status de logout em progresso */
   isLoggingOut: boolean;
   /** Função para realizar login */
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   /** Função para realizar logout */
   logout: () => void;
   /** Função para verificar se o usuário tem uma permissão específica */
@@ -70,21 +70,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    * Função para realizar login do usuário
    * @param email - Email do usuário
    * @param password - Senha do usuário
+   * @param rememberMe - Se deve manter o usuário logado por mais tempo
    * @throws {Error} Quando as credenciais são inválidas
    */
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
-      console.log('🔐 Iniciando login...', { email });
+      console.log('🔐 Iniciando login...', { email, rememberMe });
       const response = await resources.login(email, password);
       setUser(response.user);
+      
+      // Configurar duração do cookie baseado na opção "lembrar de mim"
+      const cookieExpires = rememberMe ? 30 : 1; // 30 dias vs 1 dia
       
       // Salvar no localStorage E em cookies para que o middleware detecte
       localStorage.setItem('user', JSON.stringify(response.user));
       Cookies.set('nextar_user', JSON.stringify(response.user), { 
-        expires: 7, // 7 dias
+        expires: cookieExpires,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict'
       });
+      
+      console.log(`✅ Login realizado com sucesso! Cookie configurado para ${cookieExpires} dia(s)`);
+      console.log('🚀 Redirecionando para dashboard...');
       
       // Redirecionamento manual para dashboard
       router.push('/dashboard');
