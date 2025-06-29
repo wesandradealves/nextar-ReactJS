@@ -16,6 +16,7 @@ import {
   ProfileInfoLabel,
   ProfileInfoValue
 } from './styles';
+import { useMetadata } from '@/hooks/useMetadata';
 
 interface ProfileFormData {
   nome: string;
@@ -29,11 +30,16 @@ interface ProfileFormData {
  * 
  * @returns JSX.Element
  */
-const ProfilePage: React.FC = () => {
+export default function ProfilePage() {
   const { user } = useAuth();
   const { updateProfile } = useProfile();
   const [showSuccess, setShowSuccess] = useState(false);
   const [isFormReady, setIsFormReady] = useState(false);
+
+  useMetadata({
+    title: `Nextar - Perfil`,
+    ogTitle: `Nextar - Perfil`
+  });
 
   // Aguardar os dados do usuário estarem disponíveis
   useEffect(() => {
@@ -144,6 +150,4 @@ const ProfilePage: React.FC = () => {
       </ProfileContent>
     </ProfileContainer>
   );
-};
-
-export default ProfilePage;
+}
