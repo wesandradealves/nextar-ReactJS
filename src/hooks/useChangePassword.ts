@@ -13,6 +13,7 @@ interface ChangePasswordData {
 /**
  * Hook para alteração de senha do usuário autenticado
  * Integra com o endpoint existente /api/users/change-password
+ * Após alteração bem-sucedida, executa logout automático com contador
  * 
  * @example
  * ```tsx
@@ -21,7 +22,7 @@ interface ChangePasswordData {
  * const handleSubmit = async (data) => {
  *   const success = await changePassword(data);
  *   if (success) {
- *     // Senha alterada com sucesso
+ *     // Senha alterada com sucesso - logout automático iniciado
  *   }
  * };
  * ```
@@ -29,8 +30,39 @@ interface ChangePasswordData {
 export const useChangePassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const toast = useToast();
+
+  /**
+   * Executa logout automático com toast de aviso e contador
+   */
+  const executeAutoLogout = () => {
+    let countdown = 5;
+    
+    // Usar toast.promise ou toast.update seria ideal, mas vamos usar uma abordagem simples
+    const showCountdown = () => {
+      if (countdown > 0) {
+        toast.warning(
+          `⚠️ Senha alterada! Desconectando em ${countdown}s`,
+          'Por segurança, você será deslogado automaticamente'
+        );
+        countdown--;
+        setTimeout(showCountdown, 1000);
+      } else {
+        toast.info(
+          '🔒 Desconectando...',
+          'Redirecionando para página de login'
+        );
+        // Logout após um breve delay
+        setTimeout(() => {
+          logout();
+        }, 1000);
+      }
+    };
+
+    // Iniciar countdown
+    showCountdown();
+  };
 
   /**
    * Altera a senha do usuário autenticado
@@ -88,11 +120,8 @@ export const useChangePassword = () => {
         throw new Error(result.message || 'Erro ao alterar senha');
       }
 
-      // Sucesso
-      toast.success(
-        'Senha alterada com sucesso!',
-        'Sua senha foi atualizada'
-      );
+      // Sucesso - Iniciar logout automático por segurança
+      executeAutoLogout();
 
       return true;
     } catch (error) {

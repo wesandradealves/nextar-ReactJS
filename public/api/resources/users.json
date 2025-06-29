@@ -3,12 +3,13 @@
     "id": "0",
     "nome": "Wesley Alves",
     "email": "wesandradealves@gmail.com",
-    "senha": "0192023a7bbd73250516f069df18b500",
+    "senha": "560651e187fbcbd94d89cf47905ec607",
     "perfil": "gestao",
     "usuario": "wesley.alves",
     "setor": "TI",
     "ativo": true,
-    "dataCriacao": "2025-06-29T00:00:00.000Z"
+    "dataCriacao": "2025-06-29T00:00:00.000Z",
+    "updatedAt": "2025-06-29T23:50:12.000Z"
   },
   {
     "id": "3",
@@ -18,9 +19,9 @@
     "perfil": "pesquisador",
     "usuario": "maria.santos",
     "setor": "TI",
-    "ativo": true,
+    "ativo": false,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T22:19:48.692Z"
+    "dataAtualizacao": "2025-06-29T23:50:42.640Z"
   },
   {
     "id": "4",
@@ -30,8 +31,8 @@
     "perfil": "agente",
     "usuario": "joao.silva",
     "setor": "TI",
-    "ativo": true,
+    "ativo": false,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T23:26:57.509Z"
+    "dataAtualizacao": "2025-06-29T23:50:42.025Z"
   }
 ]
