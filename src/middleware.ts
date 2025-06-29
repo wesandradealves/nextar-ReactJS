@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // Simple in-memory cache for middleware (resets on redeploy)
 const routeCache = new Map<string, { result: string; timestamp: number }>();
-const CACHE_TTL = 60 * 1000; // 1 minute
+const CACHE_TTL = 30 * 1000; // 30 seconds
 
 /**
  * Get cached route decision or null if expired/not found
@@ -39,6 +39,13 @@ function setCachedRoute(key: string, result: string): void {
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Permitir acesso a assets e APIs
+  if (pathname.startsWith('/_next') || 
+      pathname.startsWith('/api') || 
+      pathname.includes('.')) {
+    return NextResponse.next();
+  }
   
   // Check cache first
   const userCookie = request.cookies.get('nextar_user');
@@ -78,7 +85,10 @@ export function middleware(request: NextRequest) {
   if (!isAuthenticated && !isPublicRoute) {
     result = '/login';
     setCachedRoute(cacheKey, result);
-    return NextResponse.redirect(new URL(result, request.url));
+    const response = NextResponse.redirect(new URL(result, request.url));
+    // Limpar cookie inválido se existir
+    response.cookies.delete('nextar_user');
+    return response;
   }
   
   // Continue normally
