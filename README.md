@@ -1114,12 +1114,6 @@ test: adição de testes
 
 ---
 
-## �📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
 ## 👨‍💻 Autor: Wesley Alves 
 [http://github.com/wesandradealves] http://github.com/wesandradealves
 
@@ -1127,17 +1121,3 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 - Sistema de manutenção científica da Antártica
 - Stack: Next.js, TypeScript, Styled Components, Tailwind
 - Arquitetura moderna com contextos e APIs internas
-
----
-
-## 🧊 Sobre a Antártica
-
-Este sistema foi projetado considerando as condições únicas de uma estação científica antártica:
-- **Ambientes extremos** exigem manutenção rigorosa
-- **Isolamento** requer sistemas autônomos
-- **Recursos limitados** demandam gestão eficiente
-- **Missão científica** não pode ser comprometida
-
----
-
-*🐧 "Na Antártica, cada equipamento é vital para a sobrevivência e para a ciência!"*
