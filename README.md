@@ -28,6 +28,7 @@ O **NextAR** é um sistema de manutenção completo projetado para gerenciar equ
 
 - **CRUD completo** para usuários, setores, equipamentos e chamados
 - **Sistema de autenticação** baseado em perfis (Pesquisador, Agente, Gestão)
+- **Gestão avançada de usuários** com alteração de senhas por administradores
 - **Dashboard analítico** com estatísticas e métricas
 - **Dados mockados** em JSON para desenvolvimento
 - **APIs internas** do Next.js
@@ -992,11 +993,20 @@ export const Interactive: Story = {
 - **Controle de Status** - Ativar/desativar usuários individualmente
 - **Interface Dupla** - Checkbox funcional + span clicável (UX aprimorada)
 - **Feedback Visual** - Bolinha colorida (verde=ativo, vermelho=inativo)
-- **Confirmação de Ação** - Modal de confirmação antes de alterar status
 - **Atualização em Tempo Real** - Cache e estatísticas sincronizados
 - **Validação de Permissões** - Apenas perfil GESTÃO pode alterar status
 - **API Otimizada** - Suporte a atualizações parciais via PUT `/api/users/[id]`
 - **Estatísticas Dinâmicas** - Contadores de usuários ativos/inativos atualizados automaticamente
+
+#### **🔑 Gestão de Senhas por Administradores**
+- **Alteração Administrativa** - Gestores podem alterar senhas de qualquer usuário
+- **Campo Opcional** - Campo senha aparece na edição apenas para perfil GESTÃO
+- **Sem Confirmação Atual** - Administradores não precisam da senha atual do usuário
+- **Interface Intuitiva** - Placeholder explicativo e campo opcional no modal de edição
+- **Validação Rigorosa** - Endpoint valida permissões de gestão antes de alterar
+- **API Expandida** - `/api/users/change-password` suporta alterações administrativas
+- **Segurança** - Logs de alteração identificam o administrador responsável
+- **UX Otimizada** - Textos explicativos específicos para operações administrativas
 
 ### **🏢 Gestão de Setores**
 - Cadastro por categoria científica
@@ -1121,10 +1131,10 @@ O sistema utiliza criptografia MD5 para armazenamento seguro de senhas:
 3. Usuário retornado sem campo senha
 
 #### **Alteração de Senha**
-1. Usuário fornece senha atual + nova senha
-2. Sistema verifica senha atual (hash)
-3. Nova senha é criptografada e salva
-4. Processo com validação de segurança
+1. **Usuário alterando própria senha** - Fornece senha atual + nova senha
+2. **Administrador alterando senha de outro usuário** - Apenas nova senha (sem senha atual)
+3. Sistema verifica permissões e criptografa nova senha
+4. Processo com validação de segurança e logs de auditoria
 
 ### **Endpoints de Segurança**
 ```
@@ -1133,7 +1143,12 @@ Body: { email: string, password: string }
 Response: { user: User (sem senha), token: string }
 
 PUT /api/users/change-password
+# Alteração própria
 Body: { userId: string, currentPassword: string, newPassword: string }
+
+# Alteração administrativa (apenas GESTAO)
+Body: { userId: string, adminUserId: string, newPassword: string, isAdminChange: true }
+
 Response: { success: boolean, message: string }
 ```
 
