@@ -5,6 +5,41 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.0] - 2025-06-29
+
+### Adicionado
+- **Alteração de Senha na Página de Perfil**
+  - Seção "Segurança" integrada na página de perfil existente
+  - Formulário dedicado para alteração de senha com 3 campos
+  - Hook `useChangePassword` com validação robusta e feedback via toasts
+  - Integração com endpoint existente `/api/users/change-password`
+  - Validação de senha atual obrigatória para segurança
+  - Nova senha com mínimo de 6 caracteres e confirmação
+  - Mensagens de erro específicas para diferentes cenários
+
+### Melhorado
+- **Página de Perfil Reorganizada**
+  - Estrutura em seções: "Informações da Conta", "Dados Pessoais" e "Segurança"
+  - Novos componentes de estilo: `ProfileSection`, `SectionTitle`, `SectionDescription`
+  - Interface mais organizada e intuitiva
+  - Formulários separados para diferentes tipos de operação
+  - Feedback visual aprimorado com mensagens de sucesso específicas
+
+### Técnico
+- **Validação Avançada de Senha**
+  - Verificação de senha atual obrigatória
+  - Validação de força da nova senha (mínimo 6 caracteres)
+  - Confirmação de senha com verificação de igualdade
+  - Prevenção de reutilização da senha atual
+  - Tratamento de erros da API com mensagens específicas
+
+- **UX e Interface**
+  - Toasts integrados com react-toastify para feedback
+  - Estilos responsivos e consistentes
+  - Campos de senha com type="password" para segurança
+  - Reset de formulário após alteração bem-sucedida
+  - Mantém compatibilidade com estrutura existente
+
 ## [1.5.1] - 2025-06-29
 
 ### Migrado

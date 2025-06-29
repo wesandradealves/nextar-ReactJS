@@ -999,7 +999,17 @@ export const Interactive: Story = {
 - **API Otimizada** - Suporte a atualizações parciais via PUT `/api/users/[id]`
 - **Estatísticas Dinâmicas** - Contadores de usuários ativos/inativos atualizados automaticamente
 
-#### **🔑 Gestão de Senhas por Administradores**
+#### **� Alteração de Senha Pessoal**
+- **Página de Perfil Integrada** - Seção "Segurança" na página `/dashboard/profile`
+- **Validação Robusta** - Senha atual obrigatória + nova senha mínimo 6 caracteres
+- **Confirmação de Senha** - Campo de confirmação com validação em tempo real
+- **Prevenção de Reutilização** - Impede usar a mesma senha atual como nova senha
+- **Hook Dedicado** - `useChangePassword` com tratamento de erros e loading states
+- **Feedback Instantâneo** - Toasts de sucesso/erro integrados com react-toastify
+- **Interface Intuitiva** - Formulário separado com campos tipo password
+- **Reset Automático** - Campos limpos após alteração bem-sucedida
+
+#### **�🔑 Gestão de Senhas por Administradores**
 - **Alteração Administrativa** - Gestores podem alterar senhas de qualquer usuário
 - **Campo Opcional** - Campo senha aparece na edição apenas para perfil GESTÃO
 - **Sem Confirmação Atual** - Administradores não precisam da senha atual do usuário
