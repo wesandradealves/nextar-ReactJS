@@ -5,6 +5,51 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] - 2025-06-29
+
+### 🚀 Adicionado
+- **Sistema de Template Dashboard Completo**
+  - Layout unificado `src/app/dashboard/layout.tsx` com header persistente
+  - Estrutura hierárquica de rotas `/dashboard/*`
+  - Navegação centralizada e otimizada entre módulos
+
+- **Módulo de Perfil do Usuário Autenticado**
+  - Página `/dashboard/profile` com formulário de edição
+  - Integração completa com FormContainer para validação
+  - Pré-preenchimento automático de dados do usuário
+  - Validação de nome (mínimo 2 caracteres) e email (formato válido)
+  - Mensagens de sucesso e erro integradas
+  - Reset de formulário com botão "Cancelar"
+
+- **API de Perfil Robusta**
+  - Endpoint GET `/api/profile` para buscar dados do usuário
+  - Endpoint PUT `/api/profile` para atualização de perfil
+  - Validação de email único entre usuários
+  - Tratamento completo de erros e respostas padronizadas
+  - Remoção automática de dados sensíveis (senha) das respostas
+
+- **Hook Especializado useProfile**
+  - Integração com sistema de cache para performance
+  - Gerenciamento de estados de loading e erro
+  - Invalidação automática de cache após atualizações
+  - Integração com contexto de autenticação
+
+### 🔧 Corrigido
+- Correção de warnings ESLint em variáveis não utilizadas
+- Estrutura de rotas reorganizada para melhor hierarquia
+- Performance otimizada com cache integrado em todas as operações
+
+### 🏗️ Refatorado
+- Dashboard convertido para sistema de template com layout persistente
+- Remoção de código duplicado do header em páginas individuais
+- Simplificação da página principal do dashboard
+- Organização modular seguindo padrão Atomic Design
+
+### 📝 Documentação
+- Atualização do README com nova estrutura de rotas
+- Documentação detalhada do módulo de perfil
+- Exemplos de uso do sistema de template
+
 ## [1.2.0] - 2025-06-29
 
 ### 🚀 Adicionado

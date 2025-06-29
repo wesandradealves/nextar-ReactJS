@@ -492,21 +492,6 @@ cache.invalidateByTag('dashboard');
 cache.invalidateByTag('users');
 ```
 
-#### **Por TTL Automático:**
-- **Dashboard:** 2 minutos (dados dinâmicos)
-- **Listas:** 10-15 minutos (dados semi-estáticos)
-- **Configurações:** 30-60 minutos (dados estáticos)
-
-### ⚡ **Benefícios de Performance**
-
-1. **Redução de requests** - Dados frequentes ficam em memória
-2. **Redirects otimizados** - Middleware com cache de rotas
-3. **UX suave** - Logout sem "flash" de componentes
-4. **Rebuilds inteligentes** - Apenas quando necessário
-5. **Invalidação seletiva** - Limpeza precisa por contexto
-
----
-
 ## ⚛️ Atomic Design Pattern
 
 O projeto utiliza o **Atomic Design Pattern** para organização dos componentes, criando uma arquitetura escalável e reutilizável.
@@ -935,7 +920,21 @@ export const Interactive: Story = {
 - Login com email/senha
 - 3 perfis de usuário: Pesquisador, Agente, Gestão
 - Sistema de permissões granular
-- Persistência no localStorage
+- Persistência segura com cookies
+- Middleware de proteção de rotas
+
+### **🏗️ Sistema de Template Dashboard**
+- Layout unificado com header persistente
+- Navegação hierárquica `/dashboard/*`
+- Otimização de performance com cache integrado
+- Experiência de usuário consistente
+
+### **👤 Gestão de Perfil do Usuário**
+- **Página `/dashboard/profile`** - Edição de perfil do usuário autenticado
+- **Formulário inteligente** - Pré-preenchimento automático de dados
+- **Validação robusta** - Nome (mín. 2 caracteres) e email (formato válido)
+- **API dedicada** - Endpoints GET/PUT `/api/profile` com validação de email único
+- **UX otimizada** - Mensagens de sucesso/erro e reset de formulário
 
 ### **👥 Gestão de Usuários**
 - CRUD completo
@@ -959,10 +958,11 @@ export const Interactive: Story = {
 - Histórico completo
 
 ### **📊 Dashboard Analítico**
-- Estatísticas em tempo real
+- Estatísticas em tempo real com cache otimizado
 - Distribuição por status/tipo
 - Métricas por agente
-- Visualizações gráficas
+- Visualizações gráficas com animações (react-countup)
+- Sistema de cache multicamadas para performance
 
 ---
 
@@ -1088,14 +1088,31 @@ Middleware detecta ausência do cookie
 Redirecionamento automático para /login
 ```
 
-### 📁 **Arquivos do Sistema de Autenticação:**
+### 📁 **Arquivos do Sistema de Autenticação e Dashboard:**
 
 1. **`src/middleware.ts`** - Controle de rotas e redirecionamento
 2. **`src/context/auth.tsx`** - Gestão de cookies + localStorage
-3. **`src/app/dashboard/page.tsx`** - Página pós-login criada
-4. **`src/app/login/page.tsx`** - Formulário com React Hook Form
+3. **`src/app/dashboard/layout.tsx`** - Template unificado com header persistente
+4. **`src/app/dashboard/page.tsx`** - Página principal do dashboard
+5. **`src/app/dashboard/profile/page.tsx`** - Edição de perfil do usuário
+6. **`src/app/login/page.tsx`** - Formulário com React Hook Form
+7. **`src/hooks/useProfile.ts`** - Hook especializado para operações de perfil
+8. **`src/pages/api/profile.ts`** - API endpoints para gestão de perfil
 
 ### 🔧 **Funcionalidades Implementadas:**
+
+#### **Template Dashboard (`src/app/dashboard/layout.tsx`):**
+- ✅ Header persistente em todas as subpáginas do dashboard
+- ✅ Navegação centralizada e otimizada
+- ✅ Gestão de logout com redirecionamento
+- ✅ Link funcional para perfil do usuário
+
+#### **Módulo de Perfil (`src/app/dashboard/profile/`):**
+- ✅ Formulário pré-preenchido com dados do usuário
+- ✅ Validação robusta (nome mín. 2 chars, email válido)
+- ✅ Integração com FormContainer para UX consistente
+- ✅ Mensagens de sucesso/erro integradas
+- ✅ API dedicada com validação de email único
 
 #### **Middleware (`src/middleware.ts`):**
 - ✅ Detecta autenticação via cookie `nextar_user`
@@ -1111,10 +1128,10 @@ Redirecionamento automático para /login
 - ✅ Sincronização localStorage ↔ cookies
 
 #### **Dashboard (`src/app/dashboard/page.tsx`):**
-- ✅ Página inicial pós-login
+- ✅ Página inicial pós-login com estatísticas animadas
 - ✅ Exibe dados do usuário logado
-- ✅ Botão de logout funcional
-- ✅ Interface moderna com stats e ações
+- ✅ Interface moderna com métricas em tempo real
+- ✅ Sistema de cache otimizado integrado
 
 ### 🍪 **Gestão de Cookies:**
 

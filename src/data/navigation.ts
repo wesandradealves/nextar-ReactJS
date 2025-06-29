@@ -12,39 +12,46 @@ export const navigationItems: NavItem[] = [
     // Todos os perfis podem acessar
     permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
   },
-  {
-    href: '/chamados',
-    label: 'Chamados',
-    icon: '',
-    // Todos os perfis podem acessar
-    permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
-  },
-  {
-    href: '/equipamentos',
-    label: 'Equipamentos',
-    icon: '',
-    // Todos os perfis podem acessar
-    permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
-  },
-  {
-    href: '/setores',
-    label: 'Setores',
-    icon: '',
-    // Todos os perfis podem acessar
-    permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
-  },
-  {
-    href: '/usuarios',
-    label: 'Usuários',
-    icon: '',
-    // Apenas gestão pode gerenciar usuários
-    permissions: [PerfilUsuario.GESTAO]
-  },
-  {
-    href: '/relatorios',
-    label: 'Relatórios',
-    icon: '',
-    // Apenas gestão pode ver relatórios completos
-    permissions: [PerfilUsuario.GESTAO]
-  }
+  // {
+  //   href: '/profile',
+  //   label: 'Meu Perfil',
+  //   icon: '',
+  //   // Todos os perfis podem editar o próprio perfil
+  //   permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
+  // },
+  // {
+  //   href: '/chamados',
+  //   label: 'Chamados',
+  //   icon: '',
+  //   // Todos os perfis podem acessar
+  //   permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
+  // },
+  // {
+  //   href: '/equipamentos',
+  //   label: 'Equipamentos',
+  //   icon: '',
+  //   // Todos os perfis podem acessar
+  //   permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
+  // },
+  // {
+  //   href: '/setores',
+  //   label: 'Setores',
+  //   icon: '',
+  //   // Todos os perfis podem acessar
+  //   permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
+  // },
+  // {
+  //   href: '/usuarios',
+  //   label: 'Usuários',
+  //   icon: '',
+  //   // Apenas gestão pode gerenciar usuários
+  //   permissions: [PerfilUsuario.GESTAO]
+  // },
+  // {
+  //   href: '/relatorios',
+  //   label: 'Relatórios',
+  //   icon: '',
+  //   // Apenas gestão pode ver relatórios completos
+  //   permissions: [PerfilUsuario.GESTAO]
+  // }
 ];

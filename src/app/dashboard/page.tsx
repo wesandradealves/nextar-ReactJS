@@ -3,9 +3,7 @@
 import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
 import { useDashboard } from '@/hooks/useApi';
-import { PerfilUsuario } from '@/utils/enums';
 import { Badge } from '@/components/atoms';
-import { Header as HeaderComponent } from '@/components/organisms/Header';
 import CountUp from 'react-countup';
 import {
   DashboardContainer,
@@ -30,24 +28,13 @@ import {
  * Exibe informações do usuário logado e opções de navegação
  */
 export default function Dashboard() {
-  const { user, logout, isLoggingOut } = useAuth();
-  const { data: dashboardData, loading: dashboardLoading } = useDashboard();
+  const { user } = useAuth();
+  const { data: dashboardData } = useDashboard();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
     ogTitle: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`
   });
-
-  const handleLogout = () => {
-    logout();
-  };
-
-  // Garante que o header permaneça visível durante todo o processo de logout
-  const shouldShowHeader = user || isLoggingOut;
-  // Dados seguros para o header durante logout
-  const headerUserName = user?.nome || 'Usuário';
-  const headerUserEmail = user?.email || '';
-  const headerUserProfile = user?.perfil || PerfilUsuario.PESQUISADOR;
 
   // Use cached dashboard data or fallback to static data
   const stats = dashboardData?.stats || {
@@ -59,17 +46,6 @@ export default function Dashboard() {
 
   return (
     <DashboardContainer>
-      {shouldShowHeader && (
-        <HeaderComponent
-          userName={headerUserName}
-          userEmail={headerUserEmail}
-          userProfile={headerUserProfile}
-          isLoggingOut={isLoggingOut}
-          onLogout={handleLogout}
-          onProfileClick={() => console.log('Abrir perfil')}
-        />
-      )}
-
       <Content>
         <WelcomeSection>
           <WelcomeTitle className='text-2xl leading-none xl:text-4xl'>Bem-vindo ao Sistema de Manutenção da Antártica</WelcomeTitle>
@@ -140,21 +116,21 @@ export default function Dashboard() {
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            <ActionButton disabled={isLoggingOut}>
+            <ActionButton>
               📋 Novo Chamado
             </ActionButton>
-            <ActionButton disabled={isLoggingOut}>
+            <ActionButton>
               👤 Gerenciar Usuários
             </ActionButton>
-            <ActionButton disabled={isLoggingOut}>
+            <ActionButton>
               🔧 Equipamentos
             </ActionButton>
-            <ActionButton disabled={isLoggingOut}>
+            <ActionButton>
               📊 Relatórios
             </ActionButton>
           </ActionGrid>
           <ActionNote>
-            {isLoggingOut ? '🔄 Fazendo logout... Aguarde um momento.' : '* Funcionalidades em desenvolvimento'}
+            * Funcionalidades em desenvolvimento
           </ActionNote>
         </QuickActions>
       </Content>

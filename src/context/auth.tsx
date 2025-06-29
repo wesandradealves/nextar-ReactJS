@@ -21,6 +21,8 @@ interface AuthContextProps {
   login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   /** Função para realizar logout */
   logout: () => void;
+  /** Função para atualizar dados do usuário */
+  updateUser: (userData: Partial<User>) => void;
   /** Função para verificar se o usuário tem uma permissão específica */
   hasPermission: (permission: string) => boolean;
 }
@@ -131,6 +133,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
+   * Função para atualizar dados do usuário no contexto
+   * @param userData - Dados parciais do usuário para atualização
+   */
+  const updateUser = (userData: Partial<User>) => {
+    if (!user) return;
+    
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    
+    // Atualizar localStorage e cookies
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    Cookies.set('nextar_user', JSON.stringify(updatedUser), { 
+      expires: 30, // Manter configuração existente
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+  };
+
+  /**
    * Verifica se o usuário atual possui uma permissão específica
    * @param permission - Nome da permissão a ser verificada
    * @returns {boolean} true se o usuário tem a permissão, false caso contrário
@@ -150,6 +171,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isLoggingOut,
       login,
       logout,
+      updateUser,
       hasPermission
     }}>
       {children}
