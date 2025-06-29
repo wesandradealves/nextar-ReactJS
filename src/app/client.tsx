@@ -3,7 +3,9 @@
 import { ThemeProvider } from 'styled-components';
 import { LoaderProvider, useLoader } from '@/context/spinner';
 import { AuthProvider } from '@/context/auth';
+import { CacheProvider } from '@/context/cache';
 import { EntitiesProvider } from '@/context/entities';
+import { CacheDebug } from '@/components/debug';
 import Spinner from '@/components/spinner/spinner';
 import StyledJsxRegistry from './registry';
 import { App, GlobalStyle } from '@/app/style';
@@ -42,12 +44,13 @@ export default function ClientProviders({ children }: { children: React.ReactNod
     <ThemeProvider theme={theme}>
       <LoaderProvider>
         <LoaderSetup />
-        <AuthProvider>
-          <EntitiesProvider>
-            <Suspense fallback={<div>Loading...</div>}>
-              <StyledJsxRegistry>
-                <AnimatePresence
-                  mode="wait"
+        <CacheProvider>
+          <AuthProvider>
+            <EntitiesProvider>
+              <Suspense fallback={<div>Loading...</div>}>
+                <StyledJsxRegistry>
+                  <AnimatePresence
+                    mode="wait"
                   initial={true}
                   onExitComplete={() => window.scrollTo(0, 0)}
                 >
@@ -64,12 +67,14 @@ export default function ClientProviders({ children }: { children: React.ReactNod
                       {/* <Footer /> */}
                     </motion.div>
                     <Spinner />
+                    <CacheDebug />
                   </App>
                 </AnimatePresence>
               </StyledJsxRegistry>
             </Suspense>
           </EntitiesProvider>
         </AuthProvider>
+      </CacheProvider>
       </LoaderProvider>
       <GlobalStyle />
     </ThemeProvider>

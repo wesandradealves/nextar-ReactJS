@@ -20,9 +20,9 @@ const meta: Meta<typeof Header> = {
       options: Object.values(PerfilUsuario),
       description: 'Perfil do usuário',
     },
-    isOnline: {
+    isLoggingOut: {
       control: 'boolean',
-      description: 'Se o usuário está online',
+      description: 'Se está fazendo logout',
     },
     onLogout: {
       action: 'logout',
@@ -36,14 +36,13 @@ const meta: Meta<typeof Header> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Header>;
 
 export const Default: Story = {
   args: {
     userName: 'João Silva',
     userEmail: 'joao.silva@antartica.gov.br',
     userProfile: PerfilUsuario.PESQUISADOR,
-    isOnline: true,
   },
 };
 
@@ -52,7 +51,6 @@ export const Gestao: Story = {
     userName: 'Dr. Maria Santos',
     userEmail: 'maria.santos@antartica.gov.br',
     userProfile: PerfilUsuario.GESTAO,
-    isOnline: true,
   },
 };
 
@@ -61,7 +59,6 @@ export const Agente: Story = {
     userName: 'Carlos Eduardo',
     userEmail: 'carlos.eduardo@antartica.gov.br',
     userProfile: PerfilUsuario.AGENTE,
-    isOnline: false,
   },
 };
 
@@ -70,7 +67,6 @@ export const WithLongName: Story = {
     userName: 'Ana Paula dos Santos Oliveira',
     userEmail: 'ana.paula.santos.oliveira@antartica.gov.br',
     userProfile: PerfilUsuario.PESQUISADOR,
-    isOnline: true,
   },
 };
 
@@ -90,7 +86,6 @@ export const Interactive: Story = {
           userName="Roberto Mendes"
           userEmail="roberto.mendes@antartica.gov.br"
           userProfile={PerfilUsuario.GESTAO}
-          isOnline={true}
           onLogout={handleLogout}
           onProfileClick={handleProfileClick}
         />

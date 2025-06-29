@@ -13,8 +13,6 @@ export interface UserCardProps {
   profile: PerfilUsuario;
   /** URL do avatar (opcional, gera iniciais se não fornecido) */
   avatar?: string;
-  /** Se o usuário está online */
-  isOnline?: boolean;
   /** Tamanho do card */
   size?: 'small' | 'medium' | 'large';
   /** Se o card é clicável */

@@ -11,8 +11,6 @@ export interface HeaderProps {
   userEmail?: string;
   /** Perfil do usuário logado */
   userProfile: PerfilUsuario;
-  /** Se o usuário está online */
-  isOnline?: boolean;
   /** Se está fazendo logout (para estados de loading) */
   isLoggingOut?: boolean;
   /** Função executada ao fazer logout */

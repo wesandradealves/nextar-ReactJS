@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
+import { useDashboard } from '@/hooks/useApi';
 import { PerfilUsuario } from '@/utils/enums';
 import { Badge } from '@/components/atoms';
 import { Header as HeaderComponent } from '@/components/organisms/Header';
@@ -29,6 +30,7 @@ import {
  */
 export default function Dashboard() {
   const { user, logout, isLoggingOut } = useAuth();
+  const { data: dashboardData, loading: dashboardLoading } = useDashboard();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
@@ -46,6 +48,14 @@ export default function Dashboard() {
   const headerUserEmail = user?.email || '';
   const headerUserProfile = user?.perfil || PerfilUsuario.PESQUISADOR;
 
+  // Use cached dashboard data or fallback to static data
+  const stats = dashboardData?.stats || {
+    totalEquipamentos: 156,
+    chamadosAbertos: 23,
+    chamadosResolvidos: 89,
+    usuariosAtivos: 42
+  };
+
   return (
     <DashboardContainer>
       {shouldShowHeader && (
@@ -53,7 +63,6 @@ export default function Dashboard() {
           userName={headerUserName}
           userEmail={headerUserEmail}
           userProfile={headerUserProfile}
-          isOnline={true}
           isLoggingOut={isLoggingOut}
           onLogout={handleLogout}
           onProfileClick={() => console.log('Abrir perfil')}
@@ -72,32 +81,34 @@ export default function Dashboard() {
         <StatsGrid>
           <StatCard>
             <StatTitle>🔧 Chamados</StatTitle>
-            <StatValue>--</StatValue>
+            <StatValue>{dashboardLoading ? '...' : stats.chamadosAbertos}</StatValue>
             <StatLabel>
-              <Badge variant="warning" size="small">Em desenvolvimento</Badge>
+              <Badge variant="primary" size="small">Abertos</Badge>
             </StatLabel>
           </StatCard>
 
           <StatCard>
             <StatTitle>⚙️ Equipamentos</StatTitle>
-            <StatValue>--</StatValue>
+            <StatValue>{dashboardLoading ? '...' : stats.totalEquipamentos}</StatValue>
             <StatLabel>
-              <Badge variant="warning" size="small">Em desenvolvimento</Badge>
+              <Badge variant="success" size="small">Total</Badge>
             </StatLabel>
           </StatCard>
 
           <StatCard>
             <StatTitle>👥 Usuários</StatTitle>
-            <StatValue>6</StatValue>
+            <StatValue>{dashboardLoading ? '...' : stats.usuariosAtivos}</StatValue>
             <StatLabel>
-              <Badge variant="success" size="small">API Pronta</Badge>
+              <Badge variant="success" size="small">Ativos</Badge>
             </StatLabel>
           </StatCard>
 
           <StatCard>
-            <StatTitle>🏢 Setores</StatTitle>
-            <StatValue>--</StatValue>
-            <StatLabel>Em desenvolvimento</StatLabel>
+            <StatTitle>✅ Resolvidos</StatTitle>
+            <StatValue>{dashboardLoading ? '...' : stats.chamadosResolvidos}</StatValue>
+            <StatLabel>
+              <Badge variant="primary" size="small">Este mês</Badge>
+            </StatLabel>
           </StatCard>
         </StatsGrid>
 

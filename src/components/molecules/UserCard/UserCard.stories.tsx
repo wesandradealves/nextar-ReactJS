@@ -25,10 +25,6 @@ const meta: Meta<typeof UserCard> = {
       options: ['small', 'medium', 'large'],
       description: 'Tamanho do card',
     },
-    isOnline: {
-      control: 'boolean',
-      description: 'Se o usuário está online',
-    },
     clickable: {
       control: 'boolean',
       description: 'Se o card é clicável',
@@ -58,19 +54,16 @@ export const Profiles: Story = {
         name="Dr. Maria Santos"
         email="maria.santos@antartica.gov.br"
         profile={PerfilUsuario.GESTAO}
-        isOnline={true}
       />
       <UserCard
         name="Carlos Eduardo"
         email="carlos.eduardo@antartica.gov.br"
         profile={PerfilUsuario.AGENTE}
-        isOnline={false}
       />
       <UserCard
         name="Ana Paula"
         email="ana.paula@antartica.gov.br"
         profile={PerfilUsuario.PESQUISADOR}
-        isOnline={true}
       />
     </div>
   ),
@@ -95,7 +88,6 @@ export const Sizes: Story = {
         email="grande@antartica.gov.br"
         profile={PerfilUsuario.GESTAO}
         size="large"
-        isOnline={true}
       />
     </div>
   ),
@@ -105,7 +97,6 @@ export const WithoutEmail: Story = {
   args: {
     name: 'Usuário Sem Email',
     profile: PerfilUsuario.PESQUISADOR,
-    isOnline: true,
   },
 };
 
@@ -126,13 +117,11 @@ export const OnlineStatus: Story = {
         name="Usuário Online"
         email="online@antartica.gov.br"
         profile={PerfilUsuario.PESQUISADOR}
-        isOnline={true}
       />
       <UserCard
         name="Usuário Offline"
         email="offline@antartica.gov.br"
         profile={PerfilUsuario.AGENTE}
-        isOnline={false}
       />
     </div>
   ),
@@ -148,7 +137,6 @@ export const TeamExample: Story = {
           name="Dr. Roberto Mendes"
           email="roberto.mendes@antartica.gov.br"
           profile={PerfilUsuario.GESTAO}
-          isOnline={true}
           clickable
           onClick={() => console.log('Abrir perfil do gestor')}
         />
@@ -157,7 +145,6 @@ export const TeamExample: Story = {
           name="Eng. Carlos Santos"
           email="carlos.santos@antartica.gov.br"
           profile={PerfilUsuario.AGENTE}
-          isOnline={true}
           clickable
           onClick={() => console.log('Abrir perfil do agente')}
         />
@@ -166,7 +153,6 @@ export const TeamExample: Story = {
           name="Dra. Ana Costa"
           email="ana.costa@antartica.gov.br"
           profile={PerfilUsuario.PESQUISADOR}
-          isOnline={false}
           clickable
           onClick={() => console.log('Abrir perfil da pesquisadora')}
         />
@@ -175,7 +161,6 @@ export const TeamExample: Story = {
           name="José Silva"
           email="jose.silva@antartica.gov.br"
           profile={PerfilUsuario.AGENTE}
-          isOnline={true}
           clickable
           onClick={() => console.log('Abrir perfil do técnico')}
         />
@@ -194,21 +179,18 @@ export const CompactList: Story = {
           name="Maria Santos"
           profile={PerfilUsuario.GESTAO}
           size="small"
-          isOnline={true}
           clickable
         />
         <UserCard
           name="João Silva"
           profile={PerfilUsuario.AGENTE}
           size="small"
-          isOnline={true}
           clickable
         />
         <UserCard
           name="Ana Paula"
           profile={PerfilUsuario.PESQUISADOR}
           size="small"
-          isOnline={true}
           clickable
         />
       </div>

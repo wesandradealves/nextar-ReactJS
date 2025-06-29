@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { User, Permission } from '@/types';
 import { PERMISSIONS } from '@/utils/enums';
 import { resources } from '@/services/resources';
+import { useCache } from './cache';
 import Cookies from 'js-cookie';
 
 /**
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+  const cache = useCache();
 
   useEffect(() => {
     // Recuperar usuário do localStorage e verificar cookie
@@ -89,11 +91,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         sameSite: 'strict'
       });
       
+      // Cache user data for quick access
+      cache.set('current_user', response.user, 60 * 60 * 1000, ['auth', 'user']); // 1 hour
+      
       // Redirecionamento manual para dashboard
       router.push('/dashboard');
       
     } catch (error) {
-      console.error('❌ Erro no login:', error);
+      console.error('Erro no login:', error);
       throw error;
     }
   };
@@ -101,28 +106,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Função para realizar logout do usuário
    * Remove dados do usuário do estado, localStorage e cookies
-   * Implementa transição suave para evitar "flash" visual
+   * Força redirecionamento para evitar problemas de cache
    */
   const logout = () => {
     setIsLoggingOut(true);
     
-    // Estratégia: manter usuário visível até garantir redirecionamento completo
+    // Limpeza imediata de dados
+    localStorage.removeItem('user');
+    Cookies.remove('nextar_user');
+    
+    // Clear all cache data on logout
+    cache.invalidateByTag('auth');
+    cache.invalidateByTag('user');
+    cache.invalidateByTag('dashboard');
+    
+    // Redirecionamento forçado após pequeno delay para feedback visual
     setTimeout(() => {
-      // Primeiro, fazer o redirecionamento
-      router.push('/login');
+      setUser(null);
+      setIsLoggingOut(false);
       
-      // Só depois limpar os dados de armazenamento
-      setTimeout(() => {
-        localStorage.removeItem('user');
-        Cookies.remove('nextar_user');
-        
-        // Aguardar ainda mais para garantir que o redirecionamento foi processado
-        setTimeout(() => {
-          setUser(null);
-          setIsLoggingOut(false);
-        }, 1500); // 1.5s após limpeza dos dados
-      }, 500); // 500ms após redirecionamento
-    }, 1200); // 1.2s de delay inicial para feedback visual
+      // Usar window.location para forçar redirecionamento
+      window.location.href = '/login';
+    }, 300);
   };
 
   /**

@@ -7,7 +7,6 @@ import { PerfilUsuario } from '@/utils/enums';
 import {
   UserCardContainer,
   Avatar,
-  OnlineIndicator,
   UserInfo,
   UserName,
   UserEmail,
@@ -44,7 +43,6 @@ export const UserCard = ({
   email,
   profile,
   avatar,
-  isOnline = false,
   size = 'medium',
   clickable = false,
   onClick,
@@ -117,7 +115,7 @@ export const UserCard = ({
         ) : (
           getInitials(name)
         )}
-        {isOnline && <OnlineIndicator $size={size} />}
+        {/* {isOnline && <OnlineIndicator $size={size} />} */}
       </Avatar>
       
       <UserInfo>
