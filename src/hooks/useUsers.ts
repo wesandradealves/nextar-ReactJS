@@ -119,6 +119,34 @@ export const useUsers = () => {
   }, [buildQueryParams]);
 
   /**
+   * Busca TODOS os usuários para estatísticas (sempre)
+   */
+  const fetchAllUsers = useCallback(async () => {
+    const allUsersKey = 'users_all';
+    let allUsersData = cache.get<User[]>(allUsersKey);
+    
+    if (!allUsersData) {
+      try {
+        const allUsersResponse = await fetch('/api/users?page=1&limit=1000'); // Buscar todos
+        if (allUsersResponse.ok) {
+          const allUsersResult = await allUsersResponse.json();
+          allUsersData = Array.isArray(allUsersResult) ? allUsersResult : allUsersResult.data || [];
+          // Cache por 10 minutos para estatísticas
+          cache.set(allUsersKey, allUsersData, 10 * 60 * 1000, ['users']);
+        } else {
+          allUsersData = [];
+        }
+      } catch (error) {
+        console.error('Erro ao buscar todos os usuários:', error);
+        allUsersData = [];
+      }
+    }
+    
+    // Sempre atualizar dados completos para estatísticas
+    setAllUsers(allUsersData || []);
+  }, [cache]);
+
+  /**
    * Busca dados da API
    */
   const fetchUsers = useCallback(async () => {
@@ -134,26 +162,7 @@ export const useUsers = () => {
         return;
       }
 
-      // Primeiro, buscar TODOS os usuários para estatísticas (sem filtros)
-      const allUsersKey = 'users_all';
-      let allUsersData = cache.get<User[]>(allUsersKey);
-      
-      if (!allUsersData) {
-        const allUsersResponse = await fetch('/api/users?page=1&limit=1000'); // Buscar todos
-        if (allUsersResponse.ok) {
-          const allUsersResult = await allUsersResponse.json();
-          allUsersData = Array.isArray(allUsersResult) ? allUsersResult : allUsersResult.data || [];
-          // Cache por 5 minutos para estatísticas
-          cache.set(allUsersKey, allUsersData, 5 * 60 * 1000, ['users']);
-        } else {
-          allUsersData = [];
-        }
-      }
-      
-      // Atualizar dados completos para estatísticas
-      setAllUsers(allUsersData || []);
-
-      // Agora buscar dados filtrados/paginados
+      // Buscar dados filtrados/paginados
       const params = buildQueryParams();
       const queryString = new URLSearchParams(params).toString();
       const response = await fetch(`/api/users?${queryString}`);
@@ -295,9 +304,10 @@ export const useUsers = () => {
     // Limpar cache relacionado
     cache.remove(cacheKey);
     cache.invalidateByTag('users');
-    // Refazer a requisição
+    // Refazer as requisições (dados filtrados e todos os usuários)
+    fetchAllUsers();
     fetchUsers();
-  }, [cache, cacheKey, fetchUsers]);
+  }, [cache, cacheKey, fetchUsers, fetchAllUsers]);
 
   /**
    * Cria um novo usuário
@@ -585,6 +595,11 @@ export const useUsers = () => {
       gestores: allUsers.filter(u => u.perfil === PerfilUsuario.GESTAO).length
     };
   }, [allUsers]);
+
+  // Effect para carregar TODOS os usuários (estatísticas) na inicialização
+  useEffect(() => {
+    fetchAllUsers();
+  }, [fetchAllUsers]);
 
   // Effect para carregar dados quando query/filtros mudam
   useEffect(() => {

@@ -5,6 +5,44 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.3] - 2025-06-29
+
+### Corrigido
+- **SearchBox Component - Busca Vazia**
+  - Removido `type="search"` do input para eliminar o "X" nativo do browser
+  - Permitir execução de busca mesmo com campo vazio para retornar todos os resultados
+  - Botão de busca não fica mais desabilitado quando campo está vazio
+  - Função `handleClear` agora executa busca vazia automaticamente
+  - CSS adicionado para remover controles nativos de busca em todos os browsers
+
+- **Estatísticas de Usuários - Dados Corretos**
+  - Estatísticas agora mostram dados do banco completo, não dos usuários filtrados
+  - Hook `useUsers` separou dados filtrados (`users`) dos dados totais (`allUsers`)
+  - Nova função `userStats` calculada com base em todos os usuários do sistema
+  - Cache otimizado para dados completos (5 minutos) separado do cache de filtros
+  - Estatísticas permanecem constantes independente de busca ou filtros aplicados
+
+### Melhorado
+- **Hook useUsers Aprimorado**
+  - Estado `allUsers` adicionado para armazenar todos os usuários do sistema
+  - Busca inicial de todos os usuários para cálculo de estatísticas precisas
+  - Cache inteligente com chaves separadas para dados completos e filtrados
+  - Função `userStats` retornada diretamente do hook para reuso
+  - Invalidação de cache otimizada para busca vazia
+
+- **UX do Sistema de Busca**
+  - Busca vazia agora funciona corretamente em todos os cenários
+  - Botão "limpar" executa busca automaticamente para mostrar todos os dados
+  - Remoção de comportamentos confusos com campo de busca bloqueado
+  - Interface mais intuitiva e previsível para usuários finais
+
+### Técnico
+- **Refatoração de Componentes**
+  - Página de usuários usa `userStats` do hook em vez de cálculo local
+  - Remoção de código duplicado para cálculo de estatísticas
+  - Melhor separação de responsabilidades entre hook e componente
+  - Otimização de renders com dados já calculados no hook
+
 ## [1.6.2] - 2025-06-29
 
 ### Corrigido
