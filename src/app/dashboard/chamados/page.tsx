@@ -1,16 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAuth } from '@/context/auth';
 import { useEntities } from '@/context/entities';
 import { useChamados } from '@/hooks/useChamados';
-import { DataTable } from '@/components/molecules/DataTable';
-import { Button } from '@/components/atoms/Button';
+import { useToast } from '@/hooks/useToast';
+import { DataTable, ChamadoModal } from '@/components/molecules';
+import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
-import { PerfilUsuario, Chamado, User, Setor, Equipamento } from '@/types';
-import Link from 'next/link';
-import { Container, Header, FiltersContainer, StyledSelect } from './styles';
+import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
+import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
+import { Container, Header, FiltersContainer } from './styles';
 
 /**
  * Página de Listagem de Chamados de Manutenção
@@ -43,14 +44,164 @@ import { Container, Header, FiltersContainer, StyledSelect } from './styles';
  */
 export default function ChamadosPage() {
   const { user } = useAuth();
-  const { usuarios, setores, equipamentos } = useEntities();
+  const { 
+    usuarios, 
+    setores, 
+    equipamentos, 
+    createChamado,
+    updateChamado,
+    deleteChamado 
+  } = useEntities();
   
   const {
     chamados,
     loading,
     filters,
-    handleFilterChange
+    handleFilterChange,
+    refreshData
   } = useChamados(user);
+
+  // Toast para feedback visual
+  const toast = useToast();
+
+  // Estados do modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingChamado, setEditingChamado] = useState<Chamado | undefined>(undefined);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
+
+  /**
+   * Handlers do modal seguindo padrão do UserModal
+   * @decorator @modal - Funções de controle de modal
+   */
+  const handleCreateChamado = useCallback(() => {
+    setEditingChamado(undefined);
+    setModalMode('create');
+    setIsModalOpen(true);
+  }, []);
+
+  const handleEditChamado = useCallback((chamado: Chamado) => {
+    setEditingChamado(chamado);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  }, []);
+
+  const handleViewChamado = useCallback((chamado: Chamado) => {
+    setEditingChamado(chamado);
+    setModalMode('view');
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingChamado(undefined);
+    setModalMode('create');
+  }, []);
+
+  const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
+    try {
+      let success = false;
+      
+      if (chamadoId) {
+        // Edição - atualizar chamado existente
+        success = await updateChamado(chamadoId, {
+          tipo: data.tipo as TipoManutencao,
+          prioridade: data.prioridade as Prioridade,
+          descricao: data.descricao,
+          setorId: data.setorId,
+          equipamentoId: data.equipamentoId,
+          observacoes: data.observacoes,
+          status: data.status as ChamadoStatus
+        });
+        
+        if (success) {
+          // Toast de sucesso
+          toast.success(
+            'Chamado atualizado com sucesso!',
+            'As informações do chamado foram salvas'
+          );
+          
+          console.log('Chamado atualizado:', chamadoId, data);
+        } else {
+          throw new Error('Falha ao atualizar chamado');
+        }
+      } else {
+        // Criação - criar novo chamado
+        success = await createChamado({
+          tipo: data.tipo as TipoManutencao,
+          prioridade: data.prioridade as Prioridade,
+          descricao: data.descricao,
+          setorId: data.setorId,
+          equipamentoId: data.equipamentoId,
+          observacoes: data.observacoes,
+          solicitanteId: data.solicitanteId || user?.id || '',
+          status: ChamadoStatus.ABERTO
+        });
+        
+        if (success) {
+          // Toast de sucesso
+          toast.success(
+            'Chamado criado com sucesso!',
+            'O novo chamado foi registrado no sistema'
+          );
+          
+          console.log('Novo chamado criado:', data);
+        } else {
+          throw new Error('Falha ao criar chamado');
+        }
+      }
+      
+      if (success) {
+        // Atualizar a lista de chamados
+        refreshData();
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error('Erro ao salvar chamado:', error);
+      
+      // Toast de erro
+      const action = chamadoId ? 'atualizar' : 'criar';
+      toast.error(
+        `Erro ao ${action} chamado`,
+        error instanceof Error ? error.message : `Erro inesperado ao ${action} o chamado`
+      );
+    }
+  }, [createChamado, updateChamado, user, handleCloseModal, toast, refreshData]);
+
+  /**
+   * Handler para deletar chamado
+   * @decorator @confirm - Deve incluir confirmação antes de deletar
+   * @param {Chamado} chamado - Chamado a ser deletado
+   */
+  const handleDeleteChamado = useCallback(async (chamado: Chamado) => {
+    if (window.confirm(`Tem certeza que deseja excluir o chamado #${chamado.id}?`)) {
+      try {
+        const success = await deleteChamado(chamado.id);
+        
+        if (success) {
+          // Toast de sucesso
+          toast.success(
+            'Chamado excluído com sucesso!',
+            `O chamado #${chamado.id} foi removido do sistema`
+          );
+          
+          // Atualizar a lista de chamados
+          refreshData();
+          
+          console.log('Chamado deletado:', chamado.id);
+        } else {
+          throw new Error('Falha ao excluir chamado');
+        }
+      } catch (error) {
+        console.error('Erro ao excluir chamado:', error);
+        
+        // Toast de erro
+        toast.error(
+          'Erro ao excluir chamado',
+          error instanceof Error ? error.message : 'Erro inesperado ao excluir o chamado'
+        );
+      }
+    }
+  }, [deleteChamado, toast, refreshData]);
 
   /**
    * Renderiza badge de status do chamado
@@ -277,15 +428,33 @@ export default function ChamadosPage() {
       title: 'Ações',
       render: (value: unknown, item: Chamado) => (
         <div style={{ display: 'flex', gap: '8px' }}>
-          <Link href={`/dashboard/chamados/${item.id}`}>
-            <Button variant="outline" size="small">Ver</Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            size="small"
+            onClick={() => handleViewChamado(item)}
+          >
+            Ver
+          </Button>
           {(user?.perfil === PerfilUsuario.GESTAO || 
             (user?.perfil === PerfilUsuario.AGENTE && item.agenteId === user.id) ||
             (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
-            <Link href={`/dashboard/chamados/${item.id}/editar`}>
-              <Button variant="primary" size="small">Editar</Button>
-            </Link>
+            <Button 
+              variant="primary" 
+              size="small"
+              onClick={() => handleEditChamado(item)}
+            >
+              Editar
+            </Button>
+          )}
+          {(user?.perfil === PerfilUsuario.GESTAO || 
+            (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
+            <Button 
+              variant="danger" 
+              size="small"
+              onClick={() => handleDeleteChamado(item)}
+            >
+              Excluir
+            </Button>
           )}
         </div>
       )
@@ -310,9 +479,12 @@ export default function ChamadosPage() {
       <Header>
         <h1>Chamados de Manutenção</h1>
         {canCreateChamado && (
-          <Link href="/dashboard/chamados/novo">
-            <Button variant="primary">Novo Chamado</Button>
-          </Link>
+          <Button 
+            variant="primary"
+            onClick={handleCreateChamado}
+          >
+            Novo Chamado
+          </Button>
         )}
       </Header>
 
@@ -323,36 +495,39 @@ export default function ChamadosPage() {
           onSearch={(value) => handleFilterChange({ search: value })}
         />
         
-        <StyledSelect
+        <Select
           value={filters.tipo}
           onChange={(e) => handleFilterChange({ tipo: e.target.value })}
+          placeholder="Todos os tipos"
         >
           <option value="">Todos os tipos</option>
           <option value="corretiva">Corretiva</option>
           <option value="preventiva">Preventiva</option>
-        </StyledSelect>
+        </Select>
 
-        <StyledSelect
+        <Select
           value={filters.status}
           onChange={(e) => handleFilterChange({ status: e.target.value })}
+          placeholder="Todos os status"
         >
           <option value="">Todos os status</option>
           <option value="aberto">Aberto</option>
           <option value="em_progresso">Em Progresso</option>
           <option value="concluido">Concluído</option>
-        </StyledSelect>
+        </Select>
 
         {user?.perfil === PerfilUsuario.GESTAO && (
-          <StyledSelect
+          <Select
             value={filters.agenteId}
             onChange={(e) => handleFilterChange({ agenteId: e.target.value })}
+            placeholder="Todos os agentes"
           >
             <option value="">Todos os agentes</option>
             <option value="sem_agente">Sem agente</option>
             {Array.isArray(usuarios) && usuarios.filter(u => u.perfil === PerfilUsuario.AGENTE).map(agente => (
               <option key={agente.id} value={agente.id}>{agente.nome}</option>
             ))}
-          </StyledSelect>
+          </Select>
         )}
       </FiltersContainer>
 
@@ -361,6 +536,16 @@ export default function ChamadosPage() {
         columns={columns}
         loading={loading}
         emptyMessage="Nenhum chamado encontrado"
+      />
+
+      {/* Modal de criação/edição/visualização de chamados */}
+      <ChamadoModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitChamado}
+        chamado={editingChamado}
+        isLoading={loading}
+        mode={modalMode}
       />
     </Container>
   );

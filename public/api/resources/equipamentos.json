@@ -41,5 +41,32 @@
     "setorId": "5",
     "proximaManutencao": "2025-12-01T00:00:00.000Z",
     "observacoes": "Equipamento crítico para emergências médicas"
+  },
+  {
+    "id": "6",
+    "nome": "Equipamento de Medição",
+    "codigo": "MET006F",
+    "modelo": "Fluke 1587",
+    "setorId": "2",
+    "proximaManutencao": "2025-08-01T00:00:00.000Z",
+    "observacoes": "Multímetro de precisão para medições elétricas"
+  },
+  {
+    "id": "7",
+    "nome": "Sistema de Ventilação",
+    "codigo": "VEN007G",
+    "modelo": "Systemair SAVE VSR 300",
+    "setorId": "3",
+    "proximaManutencao": "2025-09-15T00:00:00.000Z",
+    "observacoes": "Sistema de ventilação com recuperação de calor"
+  },
+  {
+    "id": "8",
+    "nome": "Sistema de Iluminação",
+    "codigo": "ILU008H",
+    "modelo": "LED Professional 5000K",
+    "setorId": "1",
+    "proximaManutencao": "2025-10-01T00:00:00.000Z",
+    "observacoes": "Sistema de iluminação LED para laboratório"
   }
 ]

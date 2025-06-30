@@ -54,23 +54,21 @@ export function useChamados(currentUser: User | null) {
 
   /**
    * Constrói parâmetros de busca baseado no usuário e filtros
-   * @decorator @memoized - Resultado é memoizado para evitar recálculos
-   * @decorator @authorization - Aplica regras de permissão por perfil
-   * @returns {Record<string, string>} Parâmetros para query da API
    */
   const buildQueryParams = useCallback(() => {
     const params: Record<string, string> = {};
     
     // Filtros baseados no perfil do usuário
     if (currentUser?.perfil === PerfilUsuario.AGENTE) {
-      // Agente só vê chamados atribuídos a ele
       params.agenteId = currentUser.id;
     }
     
     // Aplicar filtros da interface (apenas para GESTAO)
     if (filters.tipo) params.tipo = filters.tipo;
     if (filters.status) params.status = filters.status;
-    if (filters.agenteId && currentUser?.perfil === PerfilUsuario.GESTAO) {
+    
+    // Para filtro de agente, só adicionar aos params se não for "sem_agente"
+    if (filters.agenteId && currentUser?.perfil === PerfilUsuario.GESTAO && filters.agenteId !== 'sem_agente') {
       params.agenteId = filters.agenteId;
     }
     
@@ -79,8 +77,6 @@ export function useChamados(currentUser: User | null) {
 
   /**
    * Chave de cache baseada nos parâmetros atuais
-   * @decorator @reactive - Recalcula automaticamente quando parâmetros mudam
-   * @returns {string} Chave única para cache
    */
   const cacheKey = useMemo(() => {
     const params = buildQueryParams();
@@ -89,10 +85,6 @@ export function useChamados(currentUser: User | null) {
 
   /**
    * Busca dados da API com cache
-   * @decorator @async - Operação assíncrona com tratamento de erro
-   * @decorator @cache - Implementa cache inteligente com TTL de 5 minutos
-   * @decorator @filter - Aplica filtros locais após busca da API
-   * @throws {Error} Se a requisição da API falhar
    */
   const fetchChamados = useCallback(async () => {
     try {
@@ -111,13 +103,32 @@ export function useChamados(currentUser: User | null) {
         cache.set(cacheKey, chamadosData, 5 * 60 * 1000, ['chamados']);
       }
       
-      // Aplicar filtro de busca local (se houver)
+      // Aplicar filtros locais
       let filteredData = chamadosData || [];
+      
+      // Filtro de busca por texto
       if (filters.search) {
-        filteredData = chamadosData.filter((chamado: Chamado) =>
+        filteredData = filteredData.filter((chamado: Chamado) =>
           chamado.descricao?.toLowerCase().includes(filters.search.toLowerCase()) ||
           chamado.tipo?.toLowerCase().includes(filters.search.toLowerCase())
         );
+      }
+      
+      // Filtro específico para "sem agente" (apenas para GESTAO)
+      if (filters.agenteId === 'sem_agente' && currentUser?.perfil === PerfilUsuario.GESTAO) {
+        filteredData = filteredData.filter((chamado: Chamado) => {
+          const agenteId = chamado.agenteId;
+          return !agenteId || 
+                 agenteId === '' || 
+                 agenteId === null || 
+                 agenteId === undefined ||
+                 (typeof agenteId === 'string' && (
+                   agenteId.toLowerCase() === 'n/a' ||
+                   agenteId.toLowerCase() === 'nao atribuido' ||
+                   agenteId.toLowerCase() === 'não atribuído' ||
+                   agenteId.toLowerCase() === 'sem agente'
+                 ));
+        });
       }
       
       setData(filteredData);
@@ -130,7 +141,7 @@ export function useChamados(currentUser: User | null) {
     } finally {
       setLoading(false);
     }
-  }, [cache, cacheKey, buildQueryParams, filters.search, showError]);
+  }, [cache, cacheKey, filters.search, filters.agenteId, currentUser, showError]);
 
   /**
    * Atualiza filtros
@@ -156,17 +167,18 @@ export function useChamados(currentUser: User | null) {
    */
   const refreshData = useCallback(() => {
     // Limpar cache relacionado
+    cache.remove(cacheKey);
     cache.invalidateByTag('chamados');
-    // Recarregar dados
+    // Refazer a requisição
     fetchChamados();
-  }, [cache, fetchChamados]);
+  }, [cache, cacheKey, fetchChamados]);
 
   // Effect para carregar dados quando parâmetros mudam
   useEffect(() => {
     if (currentUser) {
       fetchChamados();
     }
-  }, [fetchChamados, currentUser]);
+  }, [currentUser, filters.tipo, filters.status, filters.agenteId, filters.search]);
 
   return {
     // Dados

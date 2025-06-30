@@ -7,6 +7,7 @@ export { Navigation } from './Navigation';
 export { DataTable } from './DataTable';
 export { default as Modal } from './Modal';
 export { default as UserModal } from './UserModal';
+export { default as ChamadoModal } from './ChamadoModal';
 
 // Exportações dos tipos
 export type { FormFieldProps } from './FormField/types';
@@ -27,3 +28,4 @@ export type {
 } from './DataTable/types';
 export type { ModalProps } from './Modal/types';
 export type { UserModalProps } from './UserModal/types';
+export type { ChamadoModalProps, ChamadoFormData } from './ChamadoModal/types';

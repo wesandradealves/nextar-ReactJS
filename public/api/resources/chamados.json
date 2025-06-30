@@ -60,5 +60,41 @@
     "setorId": "1",
     "solicitanteId": "3",
     "dataAbertura": "2025-06-28T11:20:00.000Z"
+  },
+  {
+    "id": "6",
+    "tipo": "corretiva",
+    "status": "aberto",
+    "prioridade": "alta",
+    "descricao": "Equipamento de medição com falha na calibração.",
+    "setorId": "2",
+    "solicitanteId": "1",
+    "agenteId": "n/a",
+    "equipamentoId": "5",
+    "dataAbertura": "2025-06-29T08:15:00.000Z"
+  },
+  {
+    "id": "7",
+    "tipo": "preventiva",
+    "status": "aberto",
+    "prioridade": "media",
+    "descricao": "Manutenção preventiva do sistema de ventilação.",
+    "setorId": "3",
+    "solicitanteId": "2",
+    "agenteId": "não atribuído",
+    "equipamentoId": "6",
+    "dataAbertura": "2025-06-29T10:30:00.000Z"
+  },
+  {
+    "id": "8",
+    "tipo": "corretiva",
+    "status": "aberto",
+    "prioridade": "baixa",
+    "descricao": "Problema no sistema de iluminação do laboratório.",
+    "setorId": "1",
+    "solicitanteId": "3",
+    "agenteId": "",
+    "equipamentoId": "7",
+    "dataAbertura": "2025-06-29T14:45:00.000Z"
   }
 ]

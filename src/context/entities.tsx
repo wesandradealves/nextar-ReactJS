@@ -20,11 +20,11 @@ interface EntitiesContextProps {
   
   // CRUD operations para Chamados
   /** Criar novo chamado */
-  createChamado: (chamado: Omit<Chamado, 'id' | 'dataAbertura'>) => void;
+  createChamado: (chamado: Omit<Chamado, 'id' | 'dataAbertura'>) => Promise<boolean>;
   /** Atualizar chamado existente */
-  updateChamado: (id: string, updates: Partial<Chamado>) => void;
+  updateChamado: (id: string, updates: Partial<Chamado>) => Promise<boolean>;
   /** Deletar chamado */
-  deleteChamado: (id: string) => void;
+  deleteChamado: (id: string) => Promise<boolean>;
   
   // CRUD operations para Usuários
   /** Criar novo usuário */
@@ -106,14 +106,22 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
    * @decorator @crud - Operação de criação com ID auto-gerado
    * @decorator @realtime - Atualiza estado local imediatamente
    * @param {Omit<Chamado, 'id' | 'dataAbertura'>} chamado - Dados do chamado (sem id e dataAbertura)
+   * @returns {Promise<boolean>} True se a operação foi bem-sucedida
    */
-  const createChamado = (chamado: Omit<Chamado, 'id' | 'dataAbertura'>) => {
-    const newChamado = {
-      ...chamado,
-      id: Date.now().toString(),
-      dataAbertura: new Date().toISOString(),
-    } as Chamado;
-    setChamados(prev => [...prev, newChamado]);
+  const createChamado = async (chamado: Omit<Chamado, 'id' | 'dataAbertura'>): Promise<boolean> => {
+    try {
+      const newChamado = {
+        ...chamado,
+        id: Date.now().toString(),
+        dataAbertura: new Date().toISOString(),
+      } as Chamado;
+      
+      setChamados(prev => [...prev, newChamado]);
+      return true;
+    } catch (error) {
+      console.error('Erro ao criar chamado:', error);
+      return false;
+    }
   };
 
   /**
@@ -122,22 +130,36 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
    * @decorator @partial - Permite atualizações parciais dos dados
    * @param {string} id - ID do chamado a ser atualizado
    * @param {Partial<Chamado>} updates - Dados parciais para atualização
+   * @returns {Promise<boolean>} True se a operação foi bem-sucedida
    */
-  const updateChamado = (id: string, updates: Partial<Chamado>) => {
-    setChamados(prev => 
-      prev.map(chamado => 
-        chamado.id === id ? { ...chamado, ...updates } : chamado
-      )
-    );
+  const updateChamado = async (id: string, updates: Partial<Chamado>): Promise<boolean> => {
+    try {
+      setChamados(prev => 
+        prev.map(chamado => 
+          chamado.id === id ? { ...chamado, ...updates } : chamado
+        )
+      );
+      return true;
+    } catch (error) {
+      console.error('Erro ao atualizar chamado:', error);
+      return false;
+    }
   };
 
   /**
    * Remove um chamado
    * @decorator @filter - Remove item por ID mantendo integridade da lista
    * @param {string} id - ID do chamado a ser removido
+   * @returns {Promise<boolean>} True se a operação foi bem-sucedida
    */
-  const deleteChamado = (id: string) => {
-    setChamados(prev => prev.filter(chamado => chamado.id !== id));
+  const deleteChamado = async (id: string): Promise<boolean> => {
+    try {
+      setChamados(prev => prev.filter(chamado => chamado.id !== id));
+      return true;
+    } catch (error) {
+      console.error('Erro ao deletar chamado:', error);
+      return false;
+    }
   };
 
   /**

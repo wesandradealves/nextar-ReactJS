@@ -203,6 +203,20 @@ export default function UserModal({
       >
         Cancelar
       </Button>
+      <Button
+        variant="primary"
+        onClick={() => {
+          // Trigger form submission
+          const form = document.getElementById('user-form') as HTMLFormElement;
+          if (form) {
+            form.requestSubmit();
+          }
+        }}
+        disabled={isSubmitting || isLoading}
+        loading={isSubmitting}
+      >
+        {isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
+      </Button>
     </>
   );
 
@@ -231,6 +245,8 @@ export default function UserModal({
           validateOnBlur
           submitText={isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
           showReset={false}
+          showSubmit={false}
+          formId="user-form"
         >
           {/* Seleção de Perfil */}
           <FieldGroup>

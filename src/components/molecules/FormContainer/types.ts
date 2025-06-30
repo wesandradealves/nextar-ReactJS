@@ -81,6 +81,8 @@ export interface FormContainerProps {
   resetText?: string;
   /** Se deve mostrar o botão de reset */
   showReset?: boolean;
+  /** Se deve mostrar o botão de submit */
+  showSubmit?: boolean;
   /** Callback quando o formulário é resetado */
   onReset?: () => void;
   /** Callback quando há mudanças no formulário */
@@ -89,6 +91,8 @@ export interface FormContainerProps {
   children?: ReactNode;
   /** Classes CSS adicionais */
   className?: string;
+  /** ID do formulário para referência externa */
+  formId?: string;
 }
 
 /**

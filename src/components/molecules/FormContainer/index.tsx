@@ -108,10 +108,12 @@ export default function FormContainer({
   submitDisabled = false,
   resetText = 'Limpar',
   showReset = false,
+  showSubmit = true,
   onReset,
   onChange,
   children,
-  className
+  className,
+  formId
 }: FormContainerProps) {
   // Estado do formulário
   const [formState, setFormState] = useState<FormState>(() => {
@@ -309,6 +311,7 @@ export default function FormContainer({
       $isSubmitting={formState.isSubmitting}
       onSubmit={handleSubmit}
       className={className}
+      id={formId}
     >
       <StyledValidationProgress style={{ '--progress': `${validationProgress}%` } as React.CSSProperties} />
       
@@ -351,15 +354,17 @@ export default function FormContainer({
           </Button>
         )}
         
-        <Button
-          type="submit"
-          variant="primary"
-          className='w-full'
-          disabled={submitDisabled || formState.isSubmitting || !formState.isValid}
-          loading={formState.isSubmitting}
-        >
-          {submitText}
-        </Button>
+        {showSubmit && (
+          <Button
+            type="submit"
+            variant="primary"
+            className='w-full'
+            disabled={submitDisabled || formState.isSubmitting || !formState.isValid}
+            loading={formState.isSubmitting}
+          >
+            {submitText}
+          </Button>
+        )}
       </StyledFormActions>
     </StyledFormContainer>
   );
