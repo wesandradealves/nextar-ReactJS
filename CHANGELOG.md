@@ -5,6 +5,30 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.1] - 2025-06-29
+
+### Adicionado
+- **Logout Automático Após Alteração de Senha**
+  - Logout automático por segurança quando usuário altera sua própria senha
+  - Toast de aviso com contador regressivo de 5 segundos
+  - Mensagem explicativa sobre desconexão por motivos de segurança
+  - Redirecionamento automático para página de login após logout
+  - Prevenção de sessões comprometidas após mudança de credenciais
+
+### Melhorado
+- **Hook useChangePassword**
+  - Função `executeAutoLogout()` com contador visual
+  - Integração com contexto de autenticação para logout seguro
+  - Toasts informativos durante o processo de desconexão
+  - UX aprimorada com feedback claro sobre ações de segurança
+
+### Técnico
+- **Segurança Aprimorada**
+  - Implementação de best practice: logout após alteração de senha
+  - Contador regressivo não-bloqueante com setTimeout
+  - Feedback visual contínuo durante processo de logout
+  - Integração seamless com sistema de toasts existente
+
 ## [1.6.0] - 2025-06-29
 
 ### Adicionado

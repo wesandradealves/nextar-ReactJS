@@ -19,9 +19,9 @@
     "perfil": "pesquisador",
     "usuario": "maria.santos",
     "setor": "TI",
-    "ativo": false,
+    "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T23:50:42.640Z"
+    "dataAtualizacao": "2025-06-29T23:57:49.807Z"
   },
   {
     "id": "4",
@@ -31,8 +31,19 @@
     "perfil": "agente",
     "usuario": "joao.silva",
     "setor": "TI",
-    "ativo": false,
+    "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T23:50:42.025Z"
+    "dataAtualizacao": "2025-06-29T23:57:49.359Z"
+  },
+  {
+    "nome": "Admin Teste",
+    "email": "admin@nextar.com",
+    "usuario": "admin",
+    "senha": "0192023a7bbd73250516f069df18b500",
+    "setor": "TI",
+    "perfil": "gestao",
+    "id": "5",
+    "ativo": true,
+    "dataCriacao": "2025-06-29T23:57:42.270Z"
   }
 ]

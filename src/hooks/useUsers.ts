@@ -93,8 +93,9 @@ export const useUsers = () => {
       params.sortOrder = currentQuery.sortOrder || 'asc';
     }
 
-    if (currentQuery.search || searchTerm) {
-      params.search = currentQuery.search || searchTerm;
+    const searchValue = currentQuery.search || searchTerm;
+    if (searchValue && searchValue.trim()) {
+      params.search = searchValue;
     }
 
     if (currentFilters.perfil) {
@@ -151,7 +152,7 @@ export const useUsers = () => {
         userData = result;
         
         // Aplicar filtros localmente se necessário
-        if (searchTerm) {
+        if (searchTerm && searchTerm.trim()) {
           userData = userData.filter(user => 
             user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())

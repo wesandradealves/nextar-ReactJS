@@ -1008,6 +1008,9 @@ export const Interactive: Story = {
 - **Feedback Instantâneo** - Toasts de sucesso/erro integrados com react-toastify
 - **Interface Intuitiva** - Formulário separado com campos tipo password
 - **Reset Automático** - Campos limpos após alteração bem-sucedida
+- **🔒 Logout Automático** - Por segurança, desconecta automaticamente em 5 segundos
+- **Contador Visual** - Toast com aviso e contagem regressiva antes do logout
+- **Redirecionamento Seguro** - Redireciona para login após desconexão automática
 
 #### **�🔑 Gestão de Senhas por Administradores**
 - **Alteração Administrativa** - Gestores podem alterar senhas de qualquer usuário
