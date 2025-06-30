@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useMemo } from 'react';
+import CountUp from 'react-countup';
 import { useAuth } from '@/context/auth';
 import { useUsers } from '@/hooks/useUsers';
 import { DataTable, UserModal } from '@/components/molecules';
@@ -329,27 +330,63 @@ export default function UsersPage() {
       {/* Estatísticas */}
       <StatsContainer>
         <StatCard>
-          <StatValue>{userStats.total}</StatValue>
+          <StatValue>
+            <CountUp
+              end={userStats.total}
+              duration={1.2}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Total de Usuários</StatLabel>
         </StatCard>
         <StatCard>
-          <StatValue style={{ color: '#10b981' }}>{userStats.ativos}</StatValue>
+          <StatValue style={{ color: '#10b981' }}>
+            <CountUp
+              end={userStats.ativos}
+              duration={1.0}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Ativos</StatLabel>
         </StatCard>
         <StatCard>
-          <StatValue style={{ color: '#ef4444' }}>{userStats.inativos}</StatValue>
+          <StatValue style={{ color: '#ef4444' }}>
+            <CountUp
+              end={userStats.inativos}
+              duration={1.0}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Inativos</StatLabel>
         </StatCard>
         <StatCard>
-          <StatValue>{userStats.pesquisadores}</StatValue>
+          <StatValue>
+            <CountUp
+              end={userStats.pesquisadores}
+              duration={1.4}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Pesquisadores</StatLabel>
         </StatCard>
         <StatCard>
-          <StatValue>{userStats.agentes}</StatValue>
+          <StatValue>
+            <CountUp
+              end={userStats.agentes}
+              duration={1.6}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Agentes</StatLabel>
         </StatCard>
         <StatCard>
-          <StatValue>{userStats.gestores}</StatValue>
+          <StatValue>
+            <CountUp
+              end={userStats.gestores}
+              duration={1.8}
+              separator="."
+            />
+          </StatValue>
           <StatLabel>Gestores</StatLabel>
         </StatCard>
       </StatsContainer>

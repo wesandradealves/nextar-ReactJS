@@ -5,6 +5,32 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.4] - 2025-06-29
+
+### Corrigido
+- **Bug de Estatísticas Zeradas - Navegação Entre Páginas**
+  - Estatísticas não apareciam zeradas ao navegar da tela inicial para usuários
+  - Hook `useUsers` agora carrega `allUsers` independentemente na inicialização
+  - `useEffect` separado para `fetchAllUsers` garante dados sempre disponíveis
+  - Cache de `allUsers` com TTL de 10 minutos para melhor persistência
+  - Função `refresh` atualizada para recarregar tanto dados filtrados quanto totais
+
+### Melhorado
+- **Hook useUsers - Gestão de Estado Aprimorada**
+  - Função `fetchAllUsers` separada da `fetchUsers` para melhor controle
+  - Dois `useEffect` independentes: um para dados totais, outro para filtrados
+  - Cache mais robusto com chaves separadas (`users_all` vs dados filtrados)
+  - Estatísticas sempre consistentes independente do ciclo de vida do componente
+  - Melhor tratamento de erro para busca de dados completos
+
+### Técnico
+- **Arquitetura de Cache Otimizada**
+  - Separação clara entre cache de estatísticas e cache de dados filtrados
+  - `fetchAllUsers` executado na montagem do componente via `useEffect`
+  - `refresh` invalidada ambos os caches e recarrega dados completos
+  - TTL aumentado para 10 minutos nos dados de estatísticas
+  - Tratamento de erro melhorado para requisições de dados completos
+
 ## [1.6.3] - 2025-06-29
 
 ### Corrigido
