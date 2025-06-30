@@ -24,9 +24,6 @@ import {
   EmptyIcon,
   EmptyMessage,
   EmptyDescription,
-  LoadingOverlay,
-  LoadingSkeleton,
-  LoadingSpinner,
   PaginationContainer,
   PaginationInfo,
   PaginationControls,
@@ -39,7 +36,8 @@ import {
   MobileCardBody,
   MobileCardField,
   MobileCardLabel,
-  MobileCardValue
+  MobileCardValue,
+  LoadingSkeleton
 } from './styles';
 import type { DataTableProps, TableColumn } from '@/types';
 
@@ -294,12 +292,6 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
 
       {/* Tabela principal */}
       <TableWrapper>
-        {loading && (
-          <LoadingOverlay>
-            <LoadingSpinner />
-          </LoadingOverlay>
-        )}
-        
         {/* Versão Desktop */}
         <Table style={{ display: 'table' }}>
           <TableHead>
@@ -344,19 +336,25 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
           
           <TableBody>
             {loading ? (
-              // Loading skeleton
+              // Skeleton loading durante carregamento
               Array.from({ length: 5 }).map((_, index) => (
-                <TableRow key={`skeleton-${index}`} $loading>
+                <TableRow key={`skeleton-${index}`}>
                   {selectable && (
                     <CheckboxCell>
                       <LoadingSkeleton style={{ width: '16px', height: '16px' }} />
                     </CheckboxCell>
                   )}
+                  
                   {columns.map(column => (
-                    <TableCell key={column.key} $hideOnMobile={column.hideOnMobile}>
-                      <LoadingSkeleton />
+                    <TableCell
+                      key={column.key}
+                      $align={column.align}
+                      $hideOnMobile={column.hideOnMobile}
+                    >
+                      <LoadingSkeleton style={{ width: '100%' }} />
                     </TableCell>
                   ))}
+                  
                   {actions.length > 0 && (
                     <TableCell $align="center">
                       <LoadingSkeleton style={{ width: '80px' }} />

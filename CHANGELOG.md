@@ -5,6 +5,21 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.8.1] - 2025-06-30
+
+### Corrigido
+- **Conflito Visual de Loading nas DataTables**
+  - Remoção do spinner visual das DataTables que conflitava com o spinner central da aplicação
+  - Mantido apenas o skeleton loading para melhor experiência do usuário durante carregamento
+  - Loading visual agora é consistente em toda a aplicação
+  - Eliminação de elementos visuais redundantes que causavam confusão na interface
+
+### Melhorado
+- **Consistência Visual**
+  - Interface de loading unificada usando apenas o spinner central global
+  - Skeleton loading preservado nas DataTables para feedback visual durante fetch de dados
+  - Experiência do usuário mais limpa e profissional
+
 ## [1.8.0] - 2025-06-30
 
 ### Corrigido
