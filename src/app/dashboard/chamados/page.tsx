@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/context/auth';
 import { useEntities } from '@/context/entities';
 import { useChamados } from '@/hooks/useChamados';
-import { useToast } from '@/hooks/useToast';
 import { DataTable, ChamadoModal } from '@/components/molecules';
 import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
-import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, CreateChamadoData, UpdateChamadoData } from '@/types';
+import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
 import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
 
@@ -62,6 +61,15 @@ export default function ChamadosPage() {
   const [editingChamado, setEditingChamado] = useState<Chamado | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
 
+  // Filtrar agentes com verificação de segurança e otimização
+  const usuariosArray = useMemo(() => {
+    return Array.isArray(usuarios) ? usuarios : (usuarios as any)?.data || [];
+  }, [usuarios]);
+
+  const agentes = useMemo(() => {
+    return usuariosArray.filter((u: any) => u.perfil === 'agente');
+  }, [usuariosArray]);
+
   /**
    * Handlers do modal seguindo padrão do UserModal
    * @decorator @modal - Funções de controle de modal
@@ -95,25 +103,33 @@ export default function ChamadosPage() {
   }, []);
 
   const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
+    console.log('handleSubmitChamado chamado:', { data, chamadoId, isEditing: !!chamadoId });
+    
     if (chamadoId) {
       // Editar chamado existente
+      console.log('Editando chamado:', chamadoId);
       await updateChamado(chamadoId, {
         tipo: data.tipo as TipoManutencao,
         prioridade: data.prioridade as Prioridade,
         descricao: data.descricao,
         setorId: data.setorId,
         equipamentoId: data.equipamentoId,
+        agenteId: data.agenteId,
         observacoes: data.observacoes,
+        observacoesFinalizacao: data.observacoesFinalizacao,
+        pecasUtilizadas: data.pecasUtilizadas,
         status: data.status as ChamadoStatus
       });
     } else {
       // Criar novo chamado
+      console.log('Criando novo chamado');
       await createChamado({
         tipo: data.tipo as TipoManutencao,
         prioridade: data.prioridade as Prioridade,
         descricao: data.descricao,
         setorId: data.setorId,
         equipamentoId: data.equipamentoId,
+        agenteId: data.agenteId,
         observacoes: data.observacoes,
         solicitanteId: data.solicitanteId || user?.id || '',
         status: ChamadoStatus.ABERTO
@@ -239,8 +255,7 @@ export default function ChamadosPage() {
    * @throws {never} Falhas silenciosas com fallback para 'N/A'
    */
   const getUserName = (userId: string) => {
-    if (!Array.isArray(usuarios)) return 'N/A';
-    const usuario = usuarios.find((u: User) => u.id === userId);
+    const usuario = usuariosArray.find((u: User) => u.id === userId);
     return usuario?.nome || 'N/A';
   };
 
@@ -425,38 +440,55 @@ export default function ChamadosPage() {
         />
         
         <Select
+          options={[
+            { value: '', label: 'Todos os tipos' },
+            { value: 'corretiva', label: 'Corretiva' },
+            { value: 'preventiva', label: 'Preventiva' }
+          ]}
           value={filters.tipo}
           onChange={(e) => handleFilterChange({ tipo: e.target.value })}
           placeholder="Todos os tipos"
-        >
-          <option value="">Todos os tipos</option>
-          <option value="corretiva">Corretiva</option>
-          <option value="preventiva">Preventiva</option>
-        </Select>
+        />
 
         <Select
+          options={[
+            { value: '', label: 'Todos os status' },
+            { value: 'aberto', label: 'Aberto' },
+            { value: 'em_progresso', label: 'Em Progresso' },
+            { value: 'concluido', label: 'Concluído' }
+          ]}
           value={filters.status}
           onChange={(e) => handleFilterChange({ status: e.target.value })}
           placeholder="Todos os status"
-        >
-          <option value="">Todos os status</option>
-          <option value="aberto">Aberto</option>
-          <option value="em_progresso">Em Progresso</option>
-          <option value="concluido">Concluído</option>
-        </Select>
+        />
+
+        <Select
+          options={[
+            { value: '', label: 'Todos os setores' },
+            ...Array.isArray(setores) ? setores.map(setor => ({
+              value: setor.id,
+              label: setor.nome
+            })) : []
+          ]}
+          value={filters.setorId || ''}
+          onChange={(e) => handleFilterChange({ setorId: e.target.value })}
+          placeholder="Todos os setores"
+        />
 
         {user?.perfil === PerfilUsuario.GESTAO && (
           <Select
+            options={[
+              { value: '', label: 'Todos os agentes' },
+              { value: 'sem_agente', label: 'Sem agente' },
+              ...agentes.map((agente: User) => ({
+                value: agente.id,
+                label: agente.nome
+              }))
+            ]}
             value={filters.agenteId}
             onChange={(e) => handleFilterChange({ agenteId: e.target.value })}
             placeholder="Todos os agentes"
-          >
-            <option value="">Todos os agentes</option>
-            <option value="sem_agente">Sem agente</option>
-            {Array.isArray(usuarios) && usuarios.filter(u => u.perfil === PerfilUsuario.AGENTE).map(agente => (
-              <option key={agente.id} value={agente.id}>{agente.nome}</option>
-            ))}
-          </Select>
+          />
         )}
       </FiltersContainer>
 

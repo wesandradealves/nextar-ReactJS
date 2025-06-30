@@ -42,7 +42,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       try {
         const chamados = getChamadosData();
-        const { status, agenteId, tipo } = req.query;
+        const { status, agenteId, tipo, setorId } = req.query;
 
         // Aplicar filtros se especificados
         let filteredChamados = chamados;
@@ -57,6 +57,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         
         if (tipo && typeof tipo === 'string') {
           filteredChamados = filteredChamados.filter(c => c.tipo === tipo);
+        }
+
+        if (setorId && typeof setorId === 'string') {
+          filteredChamados = filteredChamados.filter(c => c.setorId === setorId);
         }
 
         res.status(200).json(filteredChamados);

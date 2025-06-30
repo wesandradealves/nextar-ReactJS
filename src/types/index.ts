@@ -533,6 +533,8 @@ export interface CreateChamadoData {
   setorId: string;
   /** ID do equipamento (opcional) */
   equipamentoId?: string;
+  /** ID do agente responsável (opcional) */
+  agenteId?: string;
   /** Observações adicionais */
   observacoes?: string;
   /** ID do solicitante */
@@ -556,8 +558,14 @@ export interface UpdateChamadoData {
   setorId?: string;
   /** ID do equipamento */
   equipamentoId?: string;
+  /** ID do agente responsável */
+  agenteId?: string;
   /** Observações adicionais */
   observacoes?: string;
   /** Status do chamado */
   status?: ChamadoStatus;
+  /** Observações de finalização */
+  observacoesFinalizacao?: string;
+  /** Peças utilizadas na manutenção */
+  pecasUtilizadas?: Array<{ nome: string; quantidade: number }>;
 }

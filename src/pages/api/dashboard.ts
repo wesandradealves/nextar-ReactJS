@@ -18,32 +18,32 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     // Calcular estatísticas do dashboard
     const stats = {
       // Dados de chamados
-      totalChamados: chamados.length,
-      chamadosAbertos: chamados.filter(c => c.status === ChamadoStatus.ABERTO).length,
-      chamadosEmProgresso: chamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length,
-      chamadosConcluidos: chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length,
-      chamadosResolvidos: chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length, 
-      chamadosCorretivos: chamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length,
-      chamadosPreventivos: chamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length,
+      totalChamados: Array.isArray(chamados) ? chamados.length : 0,
+      chamadosAbertos: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.ABERTO).length : 0,
+      chamadosEmProgresso: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length : 0,
+      chamadosConcluidos: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length : 0,
+      chamadosResolvidos: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length : 0, 
+      chamadosCorretivos: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length : 0,
+      chamadosPreventivos: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length : 0,
       
       // Dados de usuários
-      totalUsuarios: usuarios.length,
-      usuariosAtivos: usuarios.filter(u => u.ativo === true).length,
+      totalUsuarios: Array.isArray(usuarios) ? usuarios.length : 0,
+      usuariosAtivos: Array.isArray(usuarios) ? usuarios.filter(u => u.ativo === true).length : 0,
       
       // Dados de equipamentos
-      totalEquipamentos: equipamentos.length,
+      totalEquipamentos: Array.isArray(equipamentos) ? equipamentos.length : 0,
       
       // Distribuição por status (para gráficos)
       distribucaoStatus: {
-        [ChamadoStatus.ABERTO]: chamados.filter(c => c.status === ChamadoStatus.ABERTO).length,
-        [ChamadoStatus.EM_PROGRESSO]: chamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length,
-        [ChamadoStatus.CONCLUIDO]: chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length
+        [ChamadoStatus.ABERTO]: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.ABERTO).length : 0,
+        [ChamadoStatus.EM_PROGRESSO]: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length : 0,
+        [ChamadoStatus.CONCLUIDO]: Array.isArray(chamados) ? chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length : 0
       },
       
       // Distribuição por tipo (para gráficos)
       distribucaoTipo: {
-        [TipoManutencao.CORRETIVA]: chamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length,
-        [TipoManutencao.PREVENTIVA]: chamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length
+        [TipoManutencao.CORRETIVA]: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length : 0,
+        [TipoManutencao.PREVENTIVA]: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length : 0
       }
     };
 

@@ -29,7 +29,10 @@ export interface ChamadoFormData {
   descricao: string;
   setorId: string;
   equipamentoId?: string;
+  agenteId?: string;
   observacoes?: string;
+  observacoesFinalizacao?: string;
+  pecasUtilizadas?: Array<{ nome: string; quantidade: number }>;
   status?: string;
   solicitanteId?: string;
   [key: string]: unknown;

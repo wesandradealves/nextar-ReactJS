@@ -16,6 +16,7 @@ const DEFAULT_FILTERS = {
   tipo: '',
   status: '',
   agenteId: '',
+  setorId: '',
   search: ''
 };
 
@@ -56,69 +57,58 @@ export function useChamados(currentUser: User | null) {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
   /**
-   * Constrói parâmetros de busca baseado no usuário e filtros
-   */
-  const buildQueryParams = useCallback(() => {
-    const params: Record<string, string> = {};
-    
-    // Filtros baseados no perfil do usuário
-    if (currentUser?.perfil === PerfilUsuario.AGENTE) {
-      params.agenteId = currentUser.id;
-    }
-    
-    // Aplicar filtros da interface (apenas para GESTAO)
-    if (filters.tipo) params.tipo = filters.tipo;
-    if (filters.status) params.status = filters.status;
-    
-    // Para filtro de agente, só adicionar aos params se não for "sem_agente"
-    if (filters.agenteId && currentUser?.perfil === PerfilUsuario.GESTAO && filters.agenteId !== 'sem_agente') {
-      params.agenteId = filters.agenteId;
-    }
-    
-    return params;
-  }, [currentUser, filters]);
-
-  /**
-   * Chave de cache baseada nos parâmetros atuais
-   */
-  const cacheKey = useMemo(() => {
-    const params = buildQueryParams();
-    return `chamados_${new URLSearchParams(params).toString()}`;
-  }, [buildQueryParams]);
-
-  /**
    * Busca dados da API com cache
    */
-  const fetchChamados = useCallback(async () => {
+  const fetchChamados = useCallback(async (filtersToUse = filters) => {
     try {
       setLoading(true);
       setError(null);
       
+      // Construir parâmetros dinamicamente
+      const params: Record<string, string> = {};
+      
+      // Filtros baseados no perfil do usuário
+      if (currentUser?.perfil === PerfilUsuario.AGENTE) {
+        params.agenteId = currentUser.id;
+      }
+      
+      // Aplicar filtros da interface (para GESTAO e PESQUISADOR)
+      if (filtersToUse.tipo) params.tipo = filtersToUse.tipo;
+      if (filtersToUse.status) params.status = filtersToUse.status;
+      if (filtersToUse.setorId) params.setorId = filtersToUse.setorId;
+      
+      // Para filtro de agente, só adicionar aos params se não for "sem_agente"
+      if (filtersToUse.agenteId && currentUser?.perfil === PerfilUsuario.GESTAO && filtersToUse.agenteId !== 'sem_agente') {
+        params.agenteId = filtersToUse.agenteId;
+      }
+      
+      // Chave de cache baseada nos parâmetros atuais
+      const currentCacheKey = `chamados_${new URLSearchParams(params).toString()}`;
+      
       // Verificar cache primeiro
-      let chamadosData = cache.get<Chamado[]>(cacheKey);
+      let chamadosData = cache.get<Chamado[]>(currentCacheKey);
       
       if (!chamadosData) {
         // Buscar da API
-        const params = buildQueryParams();
         chamadosData = await resources.getChamados(params);
         
         // Salvar no cache por 5 minutos
-        cache.set(cacheKey, chamadosData, 5 * 60 * 1000, ['chamados']);
+        cache.set(currentCacheKey, chamadosData, 5 * 60 * 1000, ['chamados']);
       }
       
       // Aplicar filtros locais
       let filteredData = chamadosData || [];
       
       // Filtro de busca por texto
-      if (filters.search) {
+      if (filtersToUse.search) {
         filteredData = filteredData.filter((chamado: Chamado) =>
-          chamado.descricao?.toLowerCase().includes(filters.search.toLowerCase()) ||
-          chamado.tipo?.toLowerCase().includes(filters.search.toLowerCase())
+          chamado.descricao?.toLowerCase().includes(filtersToUse.search.toLowerCase()) ||
+          chamado.tipo?.toLowerCase().includes(filtersToUse.search.toLowerCase())
         );
       }
       
       // Filtro específico para "sem agente" (apenas para GESTAO)
-      if (filters.agenteId === 'sem_agente' && currentUser?.perfil === PerfilUsuario.GESTAO) {
+      if (filtersToUse.agenteId === 'sem_agente' && currentUser?.perfil === PerfilUsuario.GESTAO) {
         filteredData = filteredData.filter((chamado: Chamado) => {
           const agenteId = chamado.agenteId;
           return !agenteId || 
@@ -144,7 +134,7 @@ export function useChamados(currentUser: User | null) {
     } finally {
       setLoading(false);
     }
-  }, [cache, cacheKey, filters.search, filters.agenteId, currentUser, toast]);
+  }, [currentUser, cache, toast]);
 
   /**
    * Atualiza filtros
@@ -170,18 +160,24 @@ export function useChamados(currentUser: User | null) {
    */
   const refreshData = useCallback(() => {
     // Limpar cache relacionado
-    cache.remove(cacheKey);
     cache.invalidateByTag('chamados');
-    // Refazer a requisição
-    fetchChamados();
-  }, [cache, cacheKey, fetchChamados]);
+    // Refazer a requisição com filtros atuais
+    fetchChamados(filters);
+  }, [cache, fetchChamados, filters]);
 
-  // Effect para carregar dados quando parâmetros mudam
+  // Effect para carregar dados inicialmente
   useEffect(() => {
     if (currentUser) {
       fetchChamados();
     }
-  }, [currentUser, filters.tipo, filters.status, filters.agenteId, filters.search]);
+  }, [currentUser]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Effect para reagir a mudanças de filtros
+  useEffect(() => {
+    if (currentUser) {
+      fetchChamados(filters);
+    }
+  }, [filters, currentUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Cria um novo chamado

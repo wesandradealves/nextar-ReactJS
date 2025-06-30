@@ -7,10 +7,10 @@
     "descricao": "Manutenção programada do anemômetro digital conforme cronograma.",
     "setorId": "2",
     "solicitanteId": "1",
-    "agenteId": "2",
+    "agenteId": "4",
     "equipamentoId": "2",
     "dataAbertura": "2025-06-27T14:00:00.000Z",
-    "dataAtualizacao": "2025-06-30T12:38:35.909Z",
+    "dataAtualizacao": "2025-06-30T13:44:49.789Z",
     "observacoes": "Teste"
   },
   {
@@ -46,7 +46,9 @@
     "setorId": "4",
     "solicitanteId": "1",
     "equipamentoId": "4",
-    "dataAbertura": "2025-06-28T09:00:00.000Z"
+    "dataAbertura": "2025-06-28T09:00:00.000Z",
+    "agenteId": "4",
+    "dataAtualizacao": "2025-06-30T13:59:09.540Z"
   },
   {
     "id": "5",
@@ -93,5 +95,17 @@
     "agenteId": "",
     "equipamentoId": "7",
     "dataAbertura": "2025-06-29T14:45:00.000Z"
+  },
+  {
+    "tipo": "corretiva",
+    "prioridade": "media",
+    "descricao": "Manutenção programada do anemômetro digital conforme cronograma.",
+    "setorId": "2",
+    "equipamentoId": "2",
+    "solicitanteId": "0",
+    "status": "aberto",
+    "id": "9",
+    "dataAbertura": "2025-06-30T13:19:48.589Z",
+    "dataAtualizacao": "2025-06-30T13:31:34.299Z"
   }
 ]
