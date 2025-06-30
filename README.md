@@ -537,10 +537,11 @@ Componentes básicos e indivisíveis que não podem ser quebrados em partes meno
 - **Input**: Campo de formulário reutilizável com validação e estados
 - **Badge**: Tags/etiquetas para status, categorias e indicadores
 - **Select**: Dropdown padronizado com placeholder e validação ✨ _Novo na v1.7.0_
+- **Textarea**: Campo de texto multilinha com contador e validação ✨ _Novo na v1.8.2_
 
 ```tsx
 // Exemplo de uso dos atoms
-import { Logo, Button, Spinner, Input, Badge, Select } from '@/components/atoms';
+import { Logo, Button, Spinner, Input, Badge, Select, Textarea } from '@/components/atoms';
 
 <Logo variant="header" size="small" />
 <Button variant="primary" loading={isSubmitting}>
@@ -557,6 +558,13 @@ import { Logo, Button, Spinner, Input, Badge, Select } from '@/components/atoms'
   <option value="1">Opção 1</option>
   <option value="2">Opção 2</option>
 </Select>
+<Textarea
+  placeholder="Descreva o problema..."
+  rows={4}
+  maxLength={500}
+  helperText="Seja específico sobre o problema"
+  required
+/>
 ```
 
 #### **2. Molecules (Moléculas)**
@@ -1037,7 +1045,7 @@ export const Interactive: Story = {
 - Controle de manutenção preventiva
 - Códigos únicos hexadecimais
 
-### **📋 Gestão de Chamados** ✨ _Novo na v1.7.0_
+### **📋 Gestão de Chamados** ✨ _Atualizado na v1.8.2_
 - **Página `/dashboard/chamados`** - Interface completa para gestão de chamados de manutenção
 - **CRUD Completo** - Criar, listar, editar e excluir chamados com feedback visual
 - **Modal Unificado** - Interface única para visualização, edição e criação
@@ -1051,9 +1059,16 @@ export const Interactive: Story = {
 - **Integração Completa** - Vinculação com equipamentos, setores e usuários
 - **Permissões Baseadas no Perfil** - Visualização e edição condicionadas ao perfil do usuário
 - **Toast Notifications** - Feedback visual em todas as operações CRUD
+- **Componente Textarea Atômico** - Substituição de textareas nativos por componente padronizado
 - **Componente Select Atômico** - Substituição de selects nativos por componente padronizado
 - **Validação de Formulários** - Campos obrigatórios e validação em tempo real
-- **Hook useChamados Otimizado** - Eliminação de loops infinitos e dependências estáveis
+- **Hook useChamados Otimizado** - Eliminação completa de loops infinitos e dependências estáveis
+- **Performance Aprimorada** - Gestão de cache inteligente sem re-renders desnecessários
+- **Filtros Responsivos** - Interface responsiva funciona perfeitamente em mobile e desktop
+- **Atualização Automática** - Lista atualiza automaticamente após operações CRUD
+- **Gerenciamento de Peças** - Sistema de controle de peças utilizadas na manutenção
+- **Observações de Finalização** - Campo para documentar trabalhos realizados
+- **Estados de Loading** - Feedback visual durante todas as operações assíncronas
 
 ### **📊 Dashboard Analítico**
 - Estatísticas em tempo real com cache otimizado

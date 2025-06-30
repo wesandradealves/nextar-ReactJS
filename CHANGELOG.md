@@ -5,6 +5,24 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.8.2] - 2025-06-30
+
+### Corrigido
+- **Loop Infinito no Hook useChamados**
+  - Correção definitiva do erro "Maximum update depth exceeded" no hook `useChamados`
+  - Estabilização da função `fetchChamados` removendo dependência desnecessária de `filters`
+  - Separação de effects para carregamento inicial e reação a mudanças de filtros
+  - Prevenção de recriação desnecessária de funções a cada mudança de estado
+  - Otimização do gerenciamento de cache e invalidação de dados
+
+### Melhorado
+- **Performance e Estabilidade**
+  - Hook `useChamados` agora é completamente estável sem loops infinitos
+  - Filtros funcionam corretamente sem causar re-renders desnecessários
+  - Gestão de cache mais eficiente e otimizada
+  - Funcionalidade completa de CRUD mantida com melhor performance
+  - Interface mais responsiva durante operações de filtragem
+
 ## [1.8.1] - 2025-06-30
 
 ### Corrigido
