@@ -9,7 +9,9 @@ import CryptoJS from 'crypto-js';
 
 /**
  * Gera hash MD5 de uma senha
- * @param password - Senha em texto plano
+ * @decorator @security - Função crítica para autenticação
+ * @decorator @pure - Função pura, sempre retorna o mesmo resultado para a mesma entrada
+ * @param {string} password - Senha em texto plano
  * @returns {string} Hash MD5 da senha
  * 
  * @example
@@ -24,8 +26,10 @@ export function hashPassword(password: string): string {
 
 /**
  * Verifica se uma senha em texto plano corresponde ao hash MD5
- * @param password - Senha em texto plano
- * @param hashedPassword - Hash MD5 para comparação
+ * @decorator @security - Validação crítica para login
+ * @decorator @compare - Comparação segura de hashes
+ * @param {string} password - Senha em texto plano
+ * @param {string} hashedPassword - Hash MD5 para comparação
  * @returns {boolean} true se a senha corresponder ao hash
  * 
  * @example
@@ -42,6 +46,8 @@ export function verifyPassword(password: string, hashedPassword: string): boolea
 /**
  * Gera senhas hash para os usuários de teste
  * Usado apenas para desenvolvimento/setup inicial
+ * @decorator @dev - Função apenas para desenvolvimento
+ * @decorator @setup - Inicialização de dados de teste
  * @returns {Record<string, string>} Mapeamento de senhas para seus hashes
  */
 export function generateTestPasswordHashes(): Record<string, string> {

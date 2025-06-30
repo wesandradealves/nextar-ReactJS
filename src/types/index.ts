@@ -102,6 +102,8 @@ export interface Chamado {
   observacoesFinalizacao?: string;
   /** Lista de peças utilizadas na manutenção */
   pecasUtilizadas?: Array<{ nome: string; quantidade: number }>;
+  /** Index signature para compatibilidade com DataTable */
+  [key: string]: unknown;
 }
 
 /**
@@ -512,3 +514,6 @@ export interface DataTableProps<T = Record<string, unknown>> {
   /** Classes CSS adicionais */
   className?: string;
 }
+
+// Re-export dos enums para facilitar importação
+export { ChamadoStatus, TipoManutencao, Prioridade, PerfilUsuario } from '@/utils/enums';

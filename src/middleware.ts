@@ -7,6 +7,9 @@ const CACHE_TTL = 30 * 1000; // 30 seconds
 
 /**
  * Get cached route decision or null if expired/not found
+ * @decorator @cache - Sistema de cache em memória com TTL
+ * @param {string} key - Chave única para o cache
+ * @returns {string | null} Resultado cacheado ou null se expirado
  */
 function getCachedRoute(key: string): string | null {
   const cached = routeCache.get(key);
@@ -22,6 +25,9 @@ function getCachedRoute(key: string): string | null {
 
 /**
  * Cache route decision
+ * @decorator @performance - Otimiza decisões de roteamento repetidas
+ * @param {string} key - Chave única para o cache
+ * @param {string} result - Resultado da decisão de roteamento
  */
 function setCachedRoute(key: string, result: string): void {
   routeCache.set(key, {
@@ -34,8 +40,18 @@ function setCachedRoute(key: string, result: string): void {
  * Middleware para controle de autenticação e redirecionamentos
  * Gerencia fluxo de login/logout e proteção de rotas com cache otimizado
  * 
- * @param request - Request do Next.js
- * @returns Response com redirecionamento ou continuação
+ * @decorator @security - Protege rotas baseado em autenticação
+ * @decorator @cache - Implementa cache para decisões de roteamento
+ * @decorator @performance - Otimizado para alta frequência de requisições
+ * 
+ * @param {NextRequest} request - Request do Next.js
+ * @returns {NextResponse} Response com redirecionamento ou continuação
+ * 
+ * @example
+ * ```typescript
+ * // Rota protegida: /dashboard/* - requer autenticação
+ * // Rota pública: /login - redireciona se já autenticado
+ * ```
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

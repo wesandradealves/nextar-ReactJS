@@ -72,9 +72,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   /**
    * Função para realizar login do usuário
-   * @param email - Email do usuário
-   * @param password - Senha do usuário
-   * @param rememberMe - Se deve manter o usuário logado por mais tempo
+   * @decorator @async - Operação assíncrona que comunica com API
+   * @decorator @security - Gerencia tokens e cookies seguros
+   * @decorator @cache - Armazena dados do usuário para acesso rápido
+   * @param {string} email - Email do usuário
+   * @param {string} password - Senha do usuário
+   * @param {boolean} [rememberMe=false] - Se deve manter o usuário logado por mais tempo
    * @throws {Error} Quando as credenciais são inválidas
    */
   const login = async (email: string, password: string, rememberMe: boolean = false) => {

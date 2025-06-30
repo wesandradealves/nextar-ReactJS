@@ -103,21 +103,25 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
 
   /**
    * Cria um novo chamado
-   * @param chamado - Dados do chamado (sem id e dataAbertura)
+   * @decorator @crud - Operação de criação com ID auto-gerado
+   * @decorator @realtime - Atualiza estado local imediatamente
+   * @param {Omit<Chamado, 'id' | 'dataAbertura'>} chamado - Dados do chamado (sem id e dataAbertura)
    */
   const createChamado = (chamado: Omit<Chamado, 'id' | 'dataAbertura'>) => {
-    const newChamado: Chamado = {
+    const newChamado = {
       ...chamado,
       id: Date.now().toString(),
       dataAbertura: new Date().toISOString(),
-    };
+    } as Chamado;
     setChamados(prev => [...prev, newChamado]);
   };
 
   /**
    * Atualiza um chamado existente
-   * @param id - ID do chamado a ser atualizado
-   * @param updates - Dados parciais para atualização
+   * @decorator @immutable - Preserva referências não modificadas
+   * @decorator @partial - Permite atualizações parciais dos dados
+   * @param {string} id - ID do chamado a ser atualizado
+   * @param {Partial<Chamado>} updates - Dados parciais para atualização
    */
   const updateChamado = (id: string, updates: Partial<Chamado>) => {
     setChamados(prev => 
@@ -129,7 +133,8 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
 
   /**
    * Remove um chamado
-   * @param id - ID do chamado a ser removido
+   * @decorator @filter - Remove item por ID mantendo integridade da lista
+   * @param {string} id - ID do chamado a ser removido
    */
   const deleteChamado = (id: string) => {
     setChamados(prev => prev.filter(chamado => chamado.id !== id));
@@ -137,7 +142,9 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
 
   /**
    * Cria um novo usuário
-   * @param usuario - Dados do usuário (sem id)
+   * @decorator @validation - ID único gerado automaticamente
+   * @decorator @typecast - Força casting para tipo User completo
+   * @param {Omit<User, 'id'>} usuario - Dados do usuário (sem id)
    */
   const createUsuario = (usuario: Omit<User, 'id'>) => {
     const newUsuario: User = {

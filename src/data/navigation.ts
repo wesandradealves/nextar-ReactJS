@@ -13,19 +13,19 @@ export const navigationItems: NavItem[] = [
     permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
   },
   {
+    href: '/dashboard/chamados',
+    label: 'Chamados',
+    icon: '',
+    // Todos os perfis podem acessar chamados
+    permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
+  },
+  {
     href: '/dashboard/usuarios',
     label: 'Usuários',
     icon: '',
     // Apenas gestão pode gerenciar usuários
     permissions: [PerfilUsuario.GESTAO]
   },
-  // {
-  //   href: '/chamados',
-  //   label: 'Chamados',
-  //   icon: '🎫',
-  //   // Todos os perfis podem acessar
-  //   permissions: [PerfilUsuario.PESQUISADOR, PerfilUsuario.AGENTE, PerfilUsuario.GESTAO]
-  // },
   // {
   //   href: '/equipamentos',
   //   label: 'Equipamentos',

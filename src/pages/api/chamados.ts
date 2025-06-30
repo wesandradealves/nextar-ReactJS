@@ -72,11 +72,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         
         // Gerar novo ID e data de abertura
         const newId = generateNewId(chamados.map(c => c.id));
-        const chamadoWithId: Chamado = { 
+        const chamadoWithId = { 
           ...newChamado, 
           id: newId,
           dataAbertura: new Date().toISOString()
-        };
+        } as Chamado;
         
         chamados.push(chamadoWithId);
         saveChamadosData(chamados);

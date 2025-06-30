@@ -49,6 +49,8 @@ export default function Dashboard() {
 
   // Verificar permissões do usuário
   const isGestao = user?.perfil === PerfilUsuario.GESTAO;
+  const isPesquisador = user?.perfil === PerfilUsuario.PESQUISADOR;
+  const canCreateChamados = isGestao || isPesquisador;
 
   /**
    * Navega para o path especificado
@@ -130,10 +132,18 @@ export default function Dashboard() {
         <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            {/* Novo Chamado - Todos os perfis podem criar */}
-            {/* <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
-              📋 Novo Chamado
-            </ActionButton> */}
+            {/* Ver Chamados - Todos os perfis podem ver */}
+            <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
+              📋 Ver Chamados
+            </ActionButton>
+            
+            {/* Novo Chamado - Pesquisadores e Gestores podem criar */}
+            {canCreateChamados && (
+              <></>
+              // <ActionButton onClick={() => handleNavigate('/dashboard/chamados/novo')}>
+              //   ➕ Novo Chamado
+              // </ActionButton>
+            )}
             
             {/* Gestão de Usuários - Apenas GESTAO */}
             {isGestao && (
@@ -162,7 +172,7 @@ export default function Dashboard() {
             )} */}
           </ActionGrid>
           <ActionNote>
-            * Funcionalidades em desenvolvimento
+            * Algumas funcionalidades ainda em desenvolvimento
           </ActionNote>
         </QuickActions>
       </Content>
