@@ -46,7 +46,8 @@ export default function ChamadoModal({
   onClose,
   onSubmit,
   chamado,
-  mode = 'create'
+  mode = 'create',
+  onModeChange
 }: ChamadoModalProps) {
   const { user } = useAuth();
   const { usuarios, setores, equipamentos } = useEntities();
@@ -229,10 +230,10 @@ export default function ChamadoModal({
     if (isViewing) {
       return (
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-          {canEdit && (
+          {canEdit && onModeChange && (
             <Button 
               variant="primary" 
-              onClick={() => {/* Implementar switch para modo edit */}}
+              onClick={() => onModeChange('edit')}
             >
               Editar
             </Button>

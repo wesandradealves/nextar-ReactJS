@@ -5,6 +5,63 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.7.0] - 2025-06-29
+
+### Adicionado
+- **Sistema CRUD de Chamados Completo**
+  - Implementação da listagem, criação, edição e exclusão de chamados
+  - Modal unificado para visualização, edição e criação de chamados
+  - Filtros avançados por status, prioridade, setor e agente responsável
+  - Filtro especial "sem agente" para chamados não atribuídos
+  - Modal responsivo com transição entre modos (view → edit)
+  - Integração com dados de equipamentos, setores e usuários
+  - Operações CRUD completas com feedback visual (toast)
+
+- **Componente Select Atômico**
+  - Novo componente Select padronizado no design system
+  - Estilo consistente com outros componentes atômicos
+  - Stories para Storybook com documentação completa
+  - TypeScript interfaces e tipos bem definidos
+
+### Melhorado
+- **Hook useChamados Refatorado**
+  - Eliminação de loops infinitos em filtros e dependências
+  - Dependências estáveis nos useEffect e useCallback
+  - Performance otimizada para atualizações de estado
+  - Lógica robusta para filtro "sem agente" reconhecendo casos: undefined, null, "", "n/a", "não atribuído", "sem agente"
+
+- **Feedback Visual e UX**
+  - Toast notifications em todas as operações CRUD
+  - Atualização imediata da interface após operações
+  - Loading states e spinners para operações assíncronas
+  - Validação de formulários com mensagens de erro claras
+  - Transição suave entre modos do modal (visualização → edição)
+
+- **Edição de Chamados Implementada**
+  - Botão "Editar" funcional no modo de visualização do modal
+  - Função `onModeChange` para transição entre modos (view → edit)
+  - Validação de permissões para edição baseada no perfil do usuário
+  - Interface unificada para criação, edição e visualização
+  - Manutenção do estado do chamado durante transições de modo
+
+- **Padronização de Componentes**
+  - Substituição de selects HTML nativos por componente atômico Select
+  - Consistência visual em todos os filtros e formulários
+  - Estilo unificado seguindo o design system do projeto
+
+### Técnico
+- **Arquitetura de Dados**
+  - Dados de teste atualizados para cobrir todos os cenários de filtro
+  - Estrutura JSON melhorada para chamados, equipamentos e setores
+  - Relacionamentos consistentes entre entidades
+
+- **Context e Estado**
+  - Integração com EntityContext para operações CRUD assíncronas
+  - Gerenciamento de estado otimizado com React hooks
+  - Cache inteligente para evitar requisições desnecessárias
+  - Implementação da função `onModeChange` no ChamadoModal
+  - Estados de modal unificados (create, edit, view) com transições suaves
+
 ## [1.6.5] - 2025-06-29
 
 ### Melhorado

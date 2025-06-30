@@ -16,6 +16,8 @@ export interface ChamadoModalProps {
   isLoading?: boolean;
   /** Modo do modal */
   mode?: 'create' | 'edit' | 'view';
+  /** Callback para mudar o modo do modal (view -> edit) */
+  onModeChange?: (mode: 'create' | 'edit' | 'view') => void;
 }
 
 /**

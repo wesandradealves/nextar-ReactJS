@@ -536,10 +536,11 @@ Componentes básicos e indivisíveis que não podem ser quebrados em partes meno
 - **Spinner**: Indicador de carregamento com cores e tamanhos
 - **Input**: Campo de formulário reutilizável com validação e estados
 - **Badge**: Tags/etiquetas para status, categorias e indicadores
+- **Select**: Dropdown padronizado com placeholder e validação ✨ _Novo na v1.7.0_
 
 ```tsx
 // Exemplo de uso dos atoms
-import { Logo, Button, Spinner, Input, Badge } from '@/components/atoms';
+import { Logo, Button, Spinner, Input, Badge, Select } from '@/components/atoms';
 
 <Logo variant="header" size="small" />
 <Button variant="primary" loading={isSubmitting}>
@@ -552,6 +553,10 @@ import { Logo, Button, Spinner, Input, Badge } from '@/components/atoms';
   hasError={hasError}
 />
 <Badge variant="success" size="small">Concluído</Badge>
+<Select placeholder="Selecione uma opção" required>
+  <option value="1">Opção 1</option>
+  <option value="2">Opção 2</option>
+</Select>
 ```
 
 #### **2. Molecules (Moléculas)**
@@ -901,6 +906,7 @@ npm run storybook
 - ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
 - ✅ **Input.stories**: 10 variações (tipos, estados, validação)
 - ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
+- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) ✨ _Novo na v1.7.0_
 
 **Molecules:**
 - ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
@@ -1031,12 +1037,23 @@ export const Interactive: Story = {
 - Controle de manutenção preventiva
 - Códigos únicos hexadecimais
 
-### **📋 Gestão de Chamados**
-- Tipos: Corretiva e Preventiva
-- Status: Aberto, Em Progresso, Concluído
-- Prioridades: Baixa, Média, Alta
-- Atribuição a agentes
-- Histórico completo
+### **📋 Gestão de Chamados** ✨ _Novo na v1.7.0_
+- **Página `/dashboard/chamados`** - Interface completa para gestão de chamados de manutenção
+- **CRUD Completo** - Criar, listar, editar e excluir chamados com feedback visual
+- **Modal Unificado** - Interface única para visualização, edição e criação
+- **Transição de Modos** - Botão "Editar" funcional que alterna entre visualização e edição
+- **Tipos de Manutenção** - Corretiva (falhas) e Preventiva (conservação)
+- **Status Dinâmicos** - Aberto, Em Progresso, Concluído com badges coloridos
+- **Prioridades** - Baixa (verde), Média (laranja), Alta (vermelha)
+- **Filtros Avançados** - Por tipo, status, prioridade, setor e agente responsável
+- **Filtro "Sem Agente"** - Localiza chamados não atribuídos (undefined, null, "", "n/a", etc.)
+- **Atribuição a Agentes** - Sistema de designação de responsáveis
+- **Integração Completa** - Vinculação com equipamentos, setores e usuários
+- **Permissões Baseadas no Perfil** - Visualização e edição condicionadas ao perfil do usuário
+- **Toast Notifications** - Feedback visual em todas as operações CRUD
+- **Componente Select Atômico** - Substituição de selects nativos por componente padronizado
+- **Validação de Formulários** - Campos obrigatórios e validação em tempo real
+- **Hook useChamados Otimizado** - Eliminação de loops infinitos e dependências estáveis
 
 ### **📊 Dashboard Analítico**
 - Estatísticas em tempo real com cache otimizado

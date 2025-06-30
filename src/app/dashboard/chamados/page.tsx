@@ -97,6 +97,10 @@ export default function ChamadosPage() {
     setModalMode('create');
   }, []);
 
+  const handleModeChange = useCallback((mode: 'create' | 'edit' | 'view') => {
+    setModalMode(mode);
+  }, []);
+
   const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
     try {
       let success = false;
@@ -546,6 +550,7 @@ export default function ChamadosPage() {
         chamado={editingChamado}
         isLoading={loading}
         mode={modalMode}
+        onModeChange={handleModeChange}
       />
     </Container>
   );
