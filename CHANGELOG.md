@@ -7,6 +7,30 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [1.6.4] - 2025-06-29
 
+### Melhorado
+- **Animações nas Estatísticas da Página de Usuários**
+  - Implementação do CountUp nas estatísticas da página de gestão de usuários
+  - Animações suaves com durações variadas para cada métrica (1.0s a 1.8s)
+  - Separador de milhares (.) consistente com o padrão brasileiro
+  - Experiência visual aprimorada similar ao dashboard principal
+  - Feedback visual mais atrativo para estatísticas de total, ativos, inativos e perfis
+
+### Técnico
+- **Integração com react-countup**
+  - Import do CountUp adicionado na página de usuários
+  - Configuração de durações otimizadas para cada tipo de estatística
+  - Mantidas as cores específicas para estatísticas de ativos (verde) e inativos (vermelho)
+  - Compatibilidade total com sistema existente de estatísticas
+
+## [1.6.3] - 2025-06-29log
+
+Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
+
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+
+## [1.6.4] - 2025-06-29
+
 ### Corrigido
 - **Bug de Estatísticas Zeradas - Navegação Entre Páginas**
   - Estatísticas não apareciam zeradas ao navegar da tela inicial para usuários
