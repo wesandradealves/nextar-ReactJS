@@ -3,13 +3,15 @@
     "id": "2",
     "tipo": "preventiva",
     "status": "em_progresso",
-    "prioridade": "media",
+    "prioridade": "alta",
     "descricao": "Manutenção programada do anemômetro digital conforme cronograma.",
     "setorId": "2",
     "solicitanteId": "1",
     "agenteId": "2",
     "equipamentoId": "2",
-    "dataAbertura": "2025-06-27T14:00:00.000Z"
+    "dataAbertura": "2025-06-27T14:00:00.000Z",
+    "dataAtualizacao": "2025-06-30T12:38:35.909Z",
+    "observacoes": "Teste"
   },
   {
     "id": "3",
