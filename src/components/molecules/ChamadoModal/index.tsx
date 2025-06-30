@@ -143,6 +143,7 @@ export default function ChamadoModal({
     if (isViewing) return;
 
     setIsSubmitting(true);
+    
     try {
       const chamadoData: ChamadoFormData = {
         tipo: selectedTipo,
@@ -164,9 +165,12 @@ export default function ChamadoModal({
       }
 
       await onSubmit(chamadoData, chamado?.id);
+      
+      // Fechar modal após sucesso (igual ao UserModal)
       onClose();
     } catch (error) {
       console.error('Erro ao salvar chamado:', error);
+      // Erro será tratado pela página que implementa onSubmit
     } finally {
       setIsSubmitting(false);
     }
@@ -256,11 +260,17 @@ export default function ChamadoModal({
         </Button>
         <Button 
           variant="primary" 
-          type="submit"
+          onClick={() => {
+            // Trigger form submission
+            const form = document.getElementById('chamado-form') as HTMLFormElement;
+            if (form) {
+              form.requestSubmit();
+            }
+          }}
           disabled={isSubmitting}
-          form="chamado-form"
+          loading={isSubmitting}
         >
-          {isSubmitting ? 'Salvando...' : (isEditing ? 'Atualizar' : 'Criar Chamado')}
+          {isEditing ? 'Atualizar' : 'Criar Chamado'}
         </Button>
       </div>
     );
@@ -273,6 +283,8 @@ export default function ChamadoModal({
       title={modalTitle}
       size="large"
       footer={renderFooter()}
+      closeOnOverlayClick={!isSubmitting}
+      closeOnEsc={!isSubmitting}
     >
       {renderChamadoInfo()}
       
@@ -283,6 +295,7 @@ export default function ChamadoModal({
           submitDisabled={isSubmitting}
           showReset={false}
           showSubmit={false}
+          formId="chamado-form"
         >
           <FormSection>
             {/* Seleção de Tipo */}

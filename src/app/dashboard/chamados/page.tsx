@@ -9,7 +9,7 @@ import { DataTable, ChamadoModal } from '@/components/molecules';
 import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
-import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
+import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, CreateChamadoData, UpdateChamadoData } from '@/types';
 import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
 
@@ -44,25 +44,18 @@ import { Container, Header, FiltersContainer } from './styles';
  */
 export default function ChamadosPage() {
   const { user } = useAuth();
-  const { 
-    usuarios, 
-    setores, 
-    equipamentos, 
-    createChamado,
-    updateChamado,
-    deleteChamado 
-  } = useEntities();
+  const { usuarios, setores, equipamentos } = useEntities();
   
   const {
     chamados,
     loading,
     filters,
     handleFilterChange,
+    createChamado,
+    updateChamado,
+    deleteChamado,
     refreshData
   } = useChamados(user);
-
-  // Toast para feedback visual
-  const toast = useToast();
 
   // Estados do modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,74 +95,31 @@ export default function ChamadosPage() {
   }, []);
 
   const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
-    try {
-      let success = false;
-      
-      if (chamadoId) {
-        // Edição - atualizar chamado existente
-        success = await updateChamado(chamadoId, {
-          tipo: data.tipo as TipoManutencao,
-          prioridade: data.prioridade as Prioridade,
-          descricao: data.descricao,
-          setorId: data.setorId,
-          equipamentoId: data.equipamentoId,
-          observacoes: data.observacoes,
-          status: data.status as ChamadoStatus
-        });
-        
-        if (success) {
-          // Toast de sucesso
-          toast.success(
-            'Chamado atualizado com sucesso!',
-            'As informações do chamado foram salvas'
-          );
-          
-          console.log('Chamado atualizado:', chamadoId, data);
-        } else {
-          throw new Error('Falha ao atualizar chamado');
-        }
-      } else {
-        // Criação - criar novo chamado
-        success = await createChamado({
-          tipo: data.tipo as TipoManutencao,
-          prioridade: data.prioridade as Prioridade,
-          descricao: data.descricao,
-          setorId: data.setorId,
-          equipamentoId: data.equipamentoId,
-          observacoes: data.observacoes,
-          solicitanteId: data.solicitanteId || user?.id || '',
-          status: ChamadoStatus.ABERTO
-        });
-        
-        if (success) {
-          // Toast de sucesso
-          toast.success(
-            'Chamado criado com sucesso!',
-            'O novo chamado foi registrado no sistema'
-          );
-          
-          console.log('Novo chamado criado:', data);
-        } else {
-          throw new Error('Falha ao criar chamado');
-        }
-      }
-      
-      if (success) {
-        // Atualizar a lista de chamados
-        refreshData();
-        handleCloseModal();
-      }
-    } catch (error) {
-      console.error('Erro ao salvar chamado:', error);
-      
-      // Toast de erro
-      const action = chamadoId ? 'atualizar' : 'criar';
-      toast.error(
-        `Erro ao ${action} chamado`,
-        error instanceof Error ? error.message : `Erro inesperado ao ${action} o chamado`
-      );
+    if (chamadoId) {
+      // Editar chamado existente
+      await updateChamado(chamadoId, {
+        tipo: data.tipo as TipoManutencao,
+        prioridade: data.prioridade as Prioridade,
+        descricao: data.descricao,
+        setorId: data.setorId,
+        equipamentoId: data.equipamentoId,
+        observacoes: data.observacoes,
+        status: data.status as ChamadoStatus
+      });
+    } else {
+      // Criar novo chamado
+      await createChamado({
+        tipo: data.tipo as TipoManutencao,
+        prioridade: data.prioridade as Prioridade,
+        descricao: data.descricao,
+        setorId: data.setorId,
+        equipamentoId: data.equipamentoId,
+        observacoes: data.observacoes,
+        solicitanteId: data.solicitanteId || user?.id || '',
+        status: ChamadoStatus.ABERTO
+      });
     }
-  }, [createChamado, updateChamado, user, handleCloseModal, toast, refreshData]);
+  }, [createChamado, updateChamado, user]);
 
   /**
    * Handler para deletar chamado
@@ -178,34 +128,9 @@ export default function ChamadosPage() {
    */
   const handleDeleteChamado = useCallback(async (chamado: Chamado) => {
     if (window.confirm(`Tem certeza que deseja excluir o chamado #${chamado.id}?`)) {
-      try {
-        const success = await deleteChamado(chamado.id);
-        
-        if (success) {
-          // Toast de sucesso
-          toast.success(
-            'Chamado excluído com sucesso!',
-            `O chamado #${chamado.id} foi removido do sistema`
-          );
-          
-          // Atualizar a lista de chamados
-          refreshData();
-          
-          console.log('Chamado deletado:', chamado.id);
-        } else {
-          throw new Error('Falha ao excluir chamado');
-        }
-      } catch (error) {
-        console.error('Erro ao excluir chamado:', error);
-        
-        // Toast de erro
-        toast.error(
-          'Erro ao excluir chamado',
-          error instanceof Error ? error.message : 'Erro inesperado ao excluir o chamado'
-        );
-      }
+      await deleteChamado(chamado.id);
     }
-  }, [deleteChamado, toast, refreshData]);
+  }, [deleteChamado]);
 
   /**
    * Renderiza badge de status do chamado

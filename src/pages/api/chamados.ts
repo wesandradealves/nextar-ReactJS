@@ -88,29 +88,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
 
     case 'PUT':
-      try {
-        const { id } = req.query;
-        const updates: Partial<Chamado> = req.body;
-        
-        if (!id || typeof id !== 'string') {
-          return res.status(400).json({ message: 'ID do chamado é obrigatório' });
-        }
+      // PUT agora está na rota /api/chamados/[id]
+      res.setHeader('Allow', ['GET', 'POST']);
+      res.status(405).json({ message: `Use /api/chamados/[id] para atualizar chamados` });
+      break;
 
-        const chamados = getChamadosData();
-        const chamadoIndex = chamados.findIndex(c => c.id === id);
-
-        if (chamadoIndex === -1) {
-          return res.status(404).json({ message: 'Chamado não encontrado' });
-        }
-
-        // Atualizar chamado
-        chamados[chamadoIndex] = { ...chamados[chamadoIndex], ...updates };
-        saveChamadosData(chamados);
-
-        res.status(200).json(chamados[chamadoIndex]);
-      } catch {
-        res.status(500).json({ message: 'Erro ao atualizar chamado' });
-      }
+    case 'DELETE':
+      // DELETE agora está na rota /api/chamados/[id]
+      res.setHeader('Allow', ['GET', 'POST']);
+      res.status(405).json({ message: `Use /api/chamados/[id] para deletar chamados` });
       break;
 
     default:

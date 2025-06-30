@@ -517,3 +517,47 @@ export interface DataTableProps<T = Record<string, unknown>> {
 
 // Re-export dos enums para facilitar importação
 export { ChamadoStatus, TipoManutencao, Prioridade, PerfilUsuario } from '@/utils/enums';
+
+/**
+ * Dados para criação de chamado
+ * @interface CreateChamadoData
+ */
+export interface CreateChamadoData {
+  /** Tipo de manutenção */
+  tipo: TipoManutencao;
+  /** Prioridade do chamado */
+  prioridade: Prioridade;
+  /** Descrição do problema */
+  descricao: string;
+  /** ID do setor */
+  setorId: string;
+  /** ID do equipamento (opcional) */
+  equipamentoId?: string;
+  /** Observações adicionais */
+  observacoes?: string;
+  /** ID do solicitante */
+  solicitanteId: string;
+  /** Status inicial do chamado */
+  status: ChamadoStatus;
+}
+
+/**
+ * Dados para atualização de chamado
+ * @interface UpdateChamadoData
+ */
+export interface UpdateChamadoData {
+  /** Tipo de manutenção */
+  tipo?: TipoManutencao;
+  /** Prioridade do chamado */
+  prioridade?: Prioridade;
+  /** Descrição do problema */
+  descricao?: string;
+  /** ID do setor */
+  setorId?: string;
+  /** ID do equipamento */
+  equipamentoId?: string;
+  /** Observações adicionais */
+  observacoes?: string;
+  /** Status do chamado */
+  status?: ChamadoStatus;
+}

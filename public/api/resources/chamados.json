@@ -1,16 +1,5 @@
 [
   {
-    "id": "1",
-    "tipo": "corretiva",
-    "status": "aberto",
-    "prioridade": "alta",
-    "descricao": "Microscópio eletrônico apresentando falha na objetiva. Não está focalizando adequadamente.",
-    "setorId": "1",
-    "solicitanteId": "3",
-    "equipamentoId": "1",
-    "dataAbertura": "2025-06-28T08:30:00.000Z"
-  },
-  {
     "id": "2",
     "tipo": "preventiva",
     "status": "em_progresso",
@@ -36,8 +25,14 @@
     "dataExecucao": "2025-06-26T16:30:00.000Z",
     "observacoesFinalizacao": "Substituído cabo coaxial danificado e realizado teste de transmissão.",
     "pecasUtilizadas": [
-      { "nome": "Cabo Coaxial RG-213", "quantidade": 1 },
-      { "nome": "Conector PL-259", "quantidade": 2 }
+      {
+        "nome": "Cabo Coaxial RG-213",
+        "quantidade": 1
+      },
+      {
+        "nome": "Conector PL-259",
+        "quantidade": 2
+      }
     ]
   },
   {

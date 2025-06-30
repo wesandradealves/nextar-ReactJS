@@ -5,6 +5,45 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.8.0] - 2025-06-30
+
+### Corrigido
+- **Arquitetura CRUD de Chamados Padronizada**
+  - Refatoração completa do hook `useChamados` seguindo o padrão do `useUsers`
+  - Implementação de operações CRUD via API direta com gerenciamento de toast/exceções
+  - Criação de rotas API RESTful: `/api/chamados/[id]` para operações individuais
+  - Correção do fluxo de loading e fechamento do modal de chamados
+  - Modal de chamados agora fecha apenas após sucesso da operação
+  - Botão "Atualizar" exibe loading corretamente durante a operação
+  - Toast de feedback automático integrado no hook (sucesso e erro)
+  - Atualização automática da lista após operações CRUD
+
+- **APIs de Chamados Reestruturadas**
+  - Nova rota `/api/chamados/[id]` para operações PUT/DELETE individuais
+  - Separação de responsabilidades: `/api/chamados` para GET/POST
+  - Validação adequada de dados de entrada nas APIs
+  - Tratamento de erros consistente com respostas JSON estruturadas
+  - Suporte completo a operações CRUD via fetch API
+
+- **Tipos TypeScript Centralizados**
+  - Adição de `CreateChamadoData` e `UpdateChamadoData` em `/types/index.ts`
+  - Remoção de definições duplicadas de tipos no hook
+  - Importações consistentes em todo o projeto
+  - Tipagem forte para operações CRUD
+
+### Melhorado
+- **Consistência de Arquitetura**
+  - Alinhamento da arquitetura de chamados com a de usuários
+  - Hook unificado gerenciando tanto dados quanto operações CRUD
+  - Padrão consistente de tratamento de exceções e feedback
+  - Eliminação do uso misto de contexto de entidades + hook
+
+- **Experiência do Usuário**
+  - Modal não fecha mais prematuramente durante operações
+  - Loading visual claro durante atualizações
+  - Feedback imediato de sucesso/erro via toast
+  - Prevenção de fechamento acidental durante operações (closeOnOverlayClick/Esc)
+
 ## [1.7.0] - 2025-06-29
 
 ### Adicionado
