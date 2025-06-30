@@ -1070,6 +1070,39 @@ export const Interactive: Story = {
 - **Observações de Finalização** - Campo para documentar trabalhos realizados
 - **Estados de Loading** - Feedback visual durante todas as operações assíncronas
 
+#### **🔄 Workflow de Status Completo** ✨ _Novo na v1.8.3_
+Sistema robusto de transições de status seguindo exatamente o briefing:
+
+**📊 Transições Controladas:**
+- ✅ **ABERTO** → **EM PROGRESSO** (apenas agente atribuído ou gestão)
+- ✅ **EM PROGRESSO** → **CONCLUÍDO** (apenas agente atribuído ou gestão)
+- ✅ **CONCLUÍDO** = Estado final (não editável)
+
+**🎯 Permissões Granulares:**
+- ✅ **Gestão**: pode editar qualquer chamado e alterar status (exceto finalizados)
+- ✅ **Agente**: pode alterar status apenas dos seus chamados atribuídos
+- ✅ **Pesquisador**: pode apenas visualizar e criar (não editar status)
+
+**🛡️ Validações:**
+- ✅ Não permite pular etapas no workflow (ex: Aberto → Concluído)
+- ✅ Opções de status dinâmicas baseadas no estado atual
+- ✅ Chamados finalizados são completamente imutáveis
+- ✅ Campos obrigatórios para finalização (observações mínimo 10 caracteres)
+- ✅ Interface específica por status com validações em tempo real
+
+**🎨 Interface:**
+- ✅ Labels padronizados usando ENUMs centralizados
+- ✅ Mensagens informativas contextuais para cada status
+- ✅ Aviso visual destacado para chamados finalizados
+- ✅ Campos condicionais que aparecem apenas quando necessários
+- ✅ Feedback em tempo real sobre transições possíveis
+
+**⚙️ Validações:**
+- ✅ Status "CONCLUÍDO" exige observações de finalização obrigatórias
+- ✅ Validação de comprimento mínimo para observações (10 caracteres)
+- ✅ Prevenção de submissão com dados inválidos
+- ✅ Controle de quem pode alterar cada campo baseado no perfil
+
 ### **📊 Dashboard Analítico**
 - Estatísticas em tempo real com cache otimizado
 - Distribuição por status/tipo

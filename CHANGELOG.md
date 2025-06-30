@@ -5,6 +5,37 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.8.3] - 2025-06-30
+
+### Adicionado
+- **Workflow de Status Completo para Chamados**
+  - Implementação do sistema de transições controladas: Aberto → Em Progresso → Concluído
+  - ENUMs centralizados para status com workflow de validação (`STATUS_WORKFLOW`, `STATUS_LABELS`)
+  - Funções utilitárias para validação de transições e requisitos de finalização
+  - Opções de status dinâmicas baseadas no estado atual do chamado
+  - Permissões granulares: Gestão pode alterar qualquer status, Agente apenas dos seus chamados
+  - Campos obrigatórios para finalização (observações com mínimo 10 caracteres)
+  - Interface inteligente com mensagens contextuais por status
+
+### Melhorado
+- **Validações de Formulário**
+  - Validação rigorosa para status "CONCLUÍDO" com campos obrigatórios
+  - Prevenção de edição em chamados finalizados (estado imutável)
+  - Interface específica por status com campos condicionais
+  - Feedback visual aprimorado para transições de status
+  
+- **Permissões e Segurança**
+  - Controle granular de quem pode alterar status (Gestão + Agente atribuído)
+  - Proteção contra pulo de etapas no workflow
+  - Chamados finalizados completamente protegidos contra edição
+  - Mensagens informativas sobre permissões por perfil
+
+- **Experience do Usuário**
+  - Labels padronizados usando ENUMs para consistência
+  - Aviso visual destacado para chamados finalizados
+  - Mensagens contextuais sobre próximas ações possíveis
+  - Interface responsiva e intuitiva para gestão de status
+
 ## [1.8.2] - 2025-06-30
 
 ### Corrigido

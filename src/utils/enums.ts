@@ -141,32 +141,65 @@ export const LABELS = {
   }
 } as const;
 
-// ========================================
-// ESQUEMAS DE CORES PARA UI
-// ========================================
+/**
+ * Workflow de transições de status permitidas
+ * Define quais status podem ser alterados para quais outros status
+ * @constant
+ */
+export const STATUS_WORKFLOW: Record<ChamadoStatus, ChamadoStatus[]> = {
+  [ChamadoStatus.ABERTO]: [ChamadoStatus.EM_PROGRESSO],
+  [ChamadoStatus.EM_PROGRESSO]: [ChamadoStatus.CONCLUIDO],
+  [ChamadoStatus.CONCLUIDO]: [] // Estado final - não pode ser alterado
+};
 
 /**
- * Cores para status de chamados (compatível com Tailwind CSS)
- * @const {object}
+ * Labels legíveis para os status
+ * @constant
+ */
+export const STATUS_LABELS = {
+  [ChamadoStatus.ABERTO]: 'Aberto',
+  [ChamadoStatus.EM_PROGRESSO]: 'Em Progresso',
+  [ChamadoStatus.CONCLUIDO]: 'Concluído'
+} as const;
+
+/**
+ * Cores dos status para interface
+ * @constant
  */
 export const STATUS_COLORS = {
-  /** Vermelho para chamados abertos (urgente) */
-  [ChamadoStatus.ABERTO]: '#ef4444', // red-500
-  /** Âmbar para chamados em progresso */
-  [ChamadoStatus.EM_PROGRESSO]: '#f59e0b', // amber-500
-  /** Verde para chamados concluídos */
-  [ChamadoStatus.CONCLUIDO]: '#10b981' // emerald-500
+  [ChamadoStatus.ABERTO]: '#ef4444', // Vermelho
+  [ChamadoStatus.EM_PROGRESSO]: '#f97316', // Laranja
+  [ChamadoStatus.CONCLUIDO]: '#22c55e' // Verde
 } as const;
 
 /**
- * Cores para níveis de prioridade (compatível com Tailwind CSS)
- * @const {object}
+ * Verifica se uma transição de status é válida
+ * @param {ChamadoStatus} statusAtual - Status atual do chamado
+ * @param {ChamadoStatus} novoStatus - Novo status desejado
+ * @returns {boolean} True se a transição é válida
  */
-export const PRIORIDADE_COLORS = {
-  /** Cinza para prioridade baixa */
-  [Prioridade.BAIXA]: '#6b7280', // gray-500
-  /** Âmbar para prioridade média */
-  [Prioridade.MEDIA]: '#f59e0b', // amber-500
-  /** Vermelho para prioridade alta */
-  [Prioridade.ALTA]: '#ef4444' // red-500
-} as const;
+export function isValidStatusTransition(
+  statusAtual: ChamadoStatus, 
+  novoStatus: ChamadoStatus
+): boolean {
+  const transicoesPossveis = STATUS_WORKFLOW[statusAtual];
+  return transicoesPossveis.includes(novoStatus);
+}
+
+/**
+ * Obtém os status possíveis para transição a partir do status atual
+ * @param {ChamadoStatus} statusAtual - Status atual do chamado
+ * @returns {ChamadoStatus[]} Array com os status possíveis
+ */
+export function getAvailableStatusTransitions(statusAtual: ChamadoStatus): ChamadoStatus[] {
+  return STATUS_WORKFLOW[statusAtual] || [];
+}
+
+/**
+ * Verifica se um status requer campos obrigatórios específicos
+ * @param {ChamadoStatus} status - Status a verificar
+ * @returns {boolean} True se requer campos de finalização
+ */
+export function statusRequiresFinalizationFields(status: ChamadoStatus): boolean {
+  return status === ChamadoStatus.CONCLUIDO;
+}

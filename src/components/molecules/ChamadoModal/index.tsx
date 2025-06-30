@@ -7,6 +7,12 @@ import { useAuth } from '@/context/auth';
 import type { FormFieldConfig } from '../FormContainer/types';
 import type { ChamadoModalProps, ChamadoFormData } from './types';
 import { isGestor, isAgente, getAgentes } from '@/utils/perfil';
+import { 
+  ChamadoStatus, 
+  STATUS_LABELS, 
+  getAvailableStatusTransitions,
+  statusRequiresFinalizationFields 
+} from '@/utils/enums';
 import {
   FormSection,
   StatusSection,
@@ -28,8 +34,9 @@ import {
  * - Criar novos chamados (Pesquisadores e Gestão)
  * - Editar chamados existentes (conforme permissões)
  * - Visualizar detalhes dos chamados
- * - Atualizar status (Agentes)
- * - Validação de campos em tempo real
+ * - Atualizar status (Gestores e Agentes atribuídos)
+ * - Workflow de status controlado (Aberto → Em Progresso → Concluído)
+ * - Validação de campos obrigatórios para finalização
  * - Integração com contexto de entidades
  * 
  * @decorator @modal - Componente de modal seguindo padrão do projeto
@@ -66,7 +73,10 @@ export default function ChamadoModal({
   const canEdit = useMemo(() => {
     if (!currentUser) return false;
     
-    // GESTÃO: acesso completo
+    // Chamados finalizados não podem ser editados
+    if (chamado?.status === ChamadoStatus.CONCLUIDO) return false;
+    
+    // GESTÃO: acesso completo (exceto chamados finalizados)
     if (isGestor(currentUser)) return true;
     
     // AGENTE: pode editar apenas chamados atribuídos a ele
@@ -82,8 +92,18 @@ export default function ChamadoModal({
   const canEditStatus = useMemo(() => {
     if (!currentUser || !chamado) return false;
     
-    // Apenas AGENTE pode alterar status dos seus chamados
-    return isAgente(currentUser) && chamado.agenteId === currentUser.id;
+    // Chamados finalizados não podem ter status alterado
+    if (chamado.status === ChamadoStatus.CONCLUIDO) return false;
+    
+    // GESTÃO: pode alterar status de qualquer chamado
+    if (isGestor(currentUser)) return true;
+    
+    // AGENTE: pode alterar status apenas dos seus chamados atribuídos
+    if (isAgente(currentUser)) {
+      return chamado.agenteId === currentUser.id;
+    }
+    
+    return false;
   }, [currentUser, chamado]);
 
   // Filtrar agentes e equipamentos com verificação de segurança
@@ -101,6 +121,29 @@ export default function ChamadoModal({
     }
     return equipamentos.filter(eq => eq.setorId === selectedSetor);
   }, [selectedSetor, equipamentos]);
+
+  // Opções de status baseadas no workflow
+  const statusOptions = useMemo(() => {
+    if (!chamado || !canEditStatus) {
+      return [];
+    }
+
+    const currentStatus = chamado.status as ChamadoStatus;
+    const availableTransitions = getAvailableStatusTransitions(currentStatus);
+    
+    // Incluir o status atual + transições possíveis
+    const allAvailableStatus = [currentStatus, ...availableTransitions];
+    
+    return allAvailableStatus.map(status => ({
+      value: status,
+      label: STATUS_LABELS[status]
+    }));
+  }, [chamado, canEditStatus]);
+
+  // Verificar se status atual requer campos de finalização
+  const requiresFinalizationFields = useMemo(() => {
+    return statusRequiresFinalizationFields(selectedStatus as ChamadoStatus);
+  }, [selectedStatus]);
 
   const modalTitle = isViewing ? 'Detalhes do Chamado' : 
                     isEditing ? 'Editar Chamado' : 'Novo Chamado';
@@ -198,6 +241,13 @@ export default function ChamadoModal({
     try {
       setIsSubmitting(true);
       
+      // Validação específica para status "concluído"
+      if (requiresFinalizationFields) {
+        if (!observacoesFinalizacao || observacoesFinalizacao.trim().length < 10) {
+          throw new Error('Observações de finalização são obrigatórias e devem ter pelo menos 10 caracteres');
+        }
+      }
+      
       const chamadoData: ChamadoFormData = {
         tipo: selectedTipo,
         prioridade: selectedPrioridade,
@@ -205,8 +255,8 @@ export default function ChamadoModal({
         setorId: selectedSetor,
         equipamentoId: selectedEquipamento || undefined,
         agenteId: selectedAgente || undefined,
-        observacoesFinalizacao: selectedStatus === 'concluido' ? observacoesFinalizacao : undefined,
-        pecasUtilizadas: selectedStatus === 'concluido' ? pecasUtilizadas : undefined,
+        observacoesFinalizacao: requiresFinalizationFields ? observacoesFinalizacao : undefined,
+        pecasUtilizadas: requiresFinalizationFields ? pecasUtilizadas : undefined,
         solicitanteId: currentUser?.id
       };
 
@@ -225,7 +275,8 @@ export default function ChamadoModal({
   }, [
     selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
     selectedEquipamento, selectedAgente, descricao, observacoesFinalizacao, 
-    pecasUtilizadas, currentUser, onSubmit, onClose, isEditing, canEditStatus
+    pecasUtilizadas, currentUser, onSubmit, onClose, isEditing, canEditStatus,
+    requiresFinalizationFields, chamado
   ]);
 
   /**
@@ -249,8 +300,7 @@ export default function ChamadoModal({
         <StatusGrid>
           <StatusCard $status={chamado.status}>
             <StatusLabel>Status</StatusLabel>
-            <StatusValue>{chamado.status === 'aberto' ? 'Aberto' : 
-                         chamado.status === 'em_progresso' ? 'Em Progresso' : 'Concluído'}</StatusValue>
+            <StatusValue>{STATUS_LABELS[chamado.status as ChamadoStatus] || chamado.status}</StatusValue>
           </StatusCard>
           <StatusCard $status="info">
             <StatusLabel>Solicitante</StatusLabel>
@@ -329,6 +379,21 @@ export default function ChamadoModal({
     >
       {renderChamadoInfo}
       
+      {/* Aviso para chamados finalizados */}
+      {chamado?.status === ChamadoStatus.CONCLUIDO && !isViewing && (
+        <div style={{
+          backgroundColor: '#f0f9ff',
+          border: '1px solid #0ea5e9',
+          borderRadius: '8px',
+          padding: '12px',
+          marginBottom: '16px',
+          color: '#0369a1',
+          fontSize: '14px'
+        }}>
+          <strong>ℹ️ Chamado Finalizado:</strong> Este chamado foi concluído e não pode mais ser editado.
+        </div>
+      )}
+      
       {!isViewing && (
         <FormContainer
           fields={getFormFields()}
@@ -370,20 +435,28 @@ export default function ChamadoModal({
               />
             </div>
 
-            {/* Status (apenas para agentes em edição) */}
+            {/* Status (para gestores e agentes em edição) */}
             {isEditing && canEditStatus && (
               <div style={{ marginBottom: '16px' }}>
                 <FieldLabel>Status do Chamado</FieldLabel>
                 <Select
-                  options={[
-                    { value: 'aberto', label: 'Aberto' },
-                    { value: 'em_progresso', label: 'Em Progresso' },
-                    { value: 'concluido', label: 'Concluído' }
-                  ]}
+                  options={statusOptions}
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   placeholder="Selecione o status"
                 />
+                {statusOptions.length === 1 && (
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#64748b', 
+                    marginTop: '4px' 
+                  }}>
+                    Status atual. {getAvailableStatusTransitions(selectedStatus as ChamadoStatus).length === 0 
+                      ? 'Chamado finalizado.' 
+                      : `Selecione uma nova etapa para continuar. ${isGestor(currentUser) ? '(Gestão)' : '(Agente responsável)'}`
+                    }
+                  </div>
+                )}
               </div>
             )}
 
@@ -452,22 +525,23 @@ export default function ChamadoModal({
             </div>
 
             {/* Observações de Finalização (apenas se status = concluído) */}
-            {selectedStatus === 'concluido' && (
+            {requiresFinalizationFields && (
               <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Observações da Finalização</FieldLabel>
+                <FieldLabel>Observações da Finalização *</FieldLabel>
                 <Textarea
                   value={observacoesFinalizacao}
                   onChange={setObservacoesFinalizacao}
-                  placeholder="Descreva o que foi feito na manutenção"
-                  rows={3}
+                  placeholder="Descreva detalhadamente o que foi feito na manutenção"
+                  rows={4}
                   maxLength={1000}
-                  helperText="Detalhe as ações realizadas durante a manutenção"
+                  required
+                  helperText="Campo obrigatório. Detalhe as ações realizadas durante a manutenção."
                 />
               </div>
             )}
 
             {/* Peças Utilizadas (apenas se status = concluído) */}
-            {selectedStatus === 'concluido' && (
+            {requiresFinalizationFields && (
               <div style={{ marginBottom: '16px' }}>
                 <FieldLabel>Peças Utilizadas</FieldLabel>
                 <div style={{ 
