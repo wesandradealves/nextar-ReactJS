@@ -5,6 +5,30 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.5] - 2025-06-29
+
+### Melhorado
+- **Animações CountUp na Página de Usuários**
+  - Implementação do react-countup nas estatísticas da página de usuários
+  - Animações suaves com durações escalonadas (1.0s a 1.8s) para cada métrica
+  - Separador de milhares configurado para melhor legibilidade
+  - Consistência visual com animações do dashboard principal
+  - Experiência do usuário aprimorada com feedback visual atrativo
+
+### Técnico
+- **Otimização Visual**
+  - Import do CountUp adicionado na página de usuários
+  - Configuração individual de duration para cada estatística
+  - Manutenção das cores específicas para status (ativos/inativos)
+  - Integração seamless com componentes styled existentes
+
+## [1.6.3] - 2025-06-29log
+
+Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
+
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+
 ## [1.6.4] - 2025-06-29
 
 ### Melhorado
