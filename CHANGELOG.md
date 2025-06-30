@@ -5,6 +5,23 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.6.2] - 2025-06-29
+
+### Corrigido
+- **Filtro de Busca no DataTable de Usuários**
+  - Correção do comportamento de busca: ao limpar o campo, agora retorna todos os usuários
+  - Filtro funcionava corretamente ao pesquisar, mas não retornava dados ao limpar
+  - Implementação de lógica condicional no hook `useUsers` para busca vazia
+  - Melhoria na UX: usuários podem ver todos os dados novamente após limpar busca
+  - Cache adequadamente invalidado durante operações de busca e limpeza
+
+### Técnico
+- **Hook useUsers Aprimorado**
+  - Condição `if (searchTerm && searchTerm.trim())` para aplicar filtros apenas quando necessário
+  - Quando `searchTerm` é vazio, todos os usuários são retornados da API
+  - Sincronização entre estado local `searchTerm` e parâmetros de query
+  - Comportamento consistente entre busca via API e filtros locais
+
 ## [1.6.1] - 2025-06-29
 
 ### Adicionado

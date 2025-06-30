@@ -61,7 +61,8 @@ export const SearchBox = ({
   }, [controlledValue, onChange]);
   
   const handleSearch = useCallback(() => {
-    if (!disabled && !loading && value.trim()) {
+    if (!disabled && !loading) {
+      // Permitir busca vazia para retornar todos os resultados
       onSearch?.(value.trim());
     }
   }, [disabled, loading, value, onSearch]);
@@ -73,7 +74,10 @@ export const SearchBox = ({
     
     onChange?.('');
     onClear?.();
-  }, [controlledValue, onChange, onClear]);
+    
+    // Executar busca vazia para retornar todos os resultados
+    onSearch?.('');
+  }, [controlledValue, onChange, onClear, onSearch]);
   
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -87,7 +91,7 @@ export const SearchBox = ({
       <SearchInput>
         <Input
           id={id}
-          type="search"
+          type="text"
           value={value}
           placeholder={placeholder}
           disabled={disabled || loading}
@@ -112,7 +116,7 @@ export const SearchBox = ({
             type="button"
             $variant="search"
             onClick={handleSearch}
-            disabled={disabled || loading || !value.trim()}
+            disabled={disabled || loading}
             title="Buscar"
           >
             {loading ? (

@@ -63,6 +63,7 @@ export const useUsers = () => {
   const [filters, setFilters] = useState<UserFilters>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]); // Todos os usuários para estatísticas
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiPagination, setApiPagination] = useState<{
@@ -133,7 +134,26 @@ export const useUsers = () => {
         return;
       }
 
-      // Buscar dados da API
+      // Primeiro, buscar TODOS os usuários para estatísticas (sem filtros)
+      const allUsersKey = 'users_all';
+      let allUsersData = cache.get<User[]>(allUsersKey);
+      
+      if (!allUsersData) {
+        const allUsersResponse = await fetch('/api/users?page=1&limit=1000'); // Buscar todos
+        if (allUsersResponse.ok) {
+          const allUsersResult = await allUsersResponse.json();
+          allUsersData = Array.isArray(allUsersResult) ? allUsersResult : allUsersResult.data || [];
+          // Cache por 5 minutos para estatísticas
+          cache.set(allUsersKey, allUsersData, 5 * 60 * 1000, ['users']);
+        } else {
+          allUsersData = [];
+        }
+      }
+      
+      // Atualizar dados completos para estatísticas
+      setAllUsers(allUsersData || []);
+
+      // Agora buscar dados filtrados/paginados
       const params = buildQueryParams();
       const queryString = new URLSearchParams(params).toString();
       const response = await fetch(`/api/users?${queryString}`);
@@ -246,7 +266,12 @@ export const useUsers = () => {
       page: 1, // Reset para primeira página
       search: search || undefined 
     }));
-  }, []);
+    
+    // Se a busca foi limpa, invalidar cache para garantir que todos os dados sejam carregados
+    if (!search || !search.trim()) {
+      cache.invalidateByTag('users');
+    }
+  }, [cache]);
 
   /**
    * Manipula mudança de filtros
@@ -534,7 +559,32 @@ export const useUsers = () => {
       page: 1, 
       search: undefined 
     }));
-  }, []);
+    // Invalidar cache para forçar nova busca
+    cache.invalidateByTag('users');
+  }, [cache]);
+
+  /**
+   * Estatísticas calculadas baseadas em TODOS os usuários (não filtrados)
+   */
+  const userStats = useMemo(() => {
+    if (!allUsers.length) return { 
+      total: 0, 
+      ativos: 0, 
+      inativos: 0, 
+      pesquisadores: 0, 
+      agentes: 0, 
+      gestores: 0 
+    };
+    
+    return {
+      total: allUsers.length,
+      ativos: allUsers.filter(u => u.ativo).length,
+      inativos: allUsers.filter(u => !u.ativo).length,
+      pesquisadores: allUsers.filter(u => u.perfil === PerfilUsuario.PESQUISADOR).length,
+      agentes: allUsers.filter(u => u.perfil === PerfilUsuario.AGENTE).length,
+      gestores: allUsers.filter(u => u.perfil === PerfilUsuario.GESTAO).length
+    };
+  }, [allUsers]);
 
   // Effect para carregar dados quando query/filtros mudam
   useEffect(() => {
@@ -544,6 +594,8 @@ export const useUsers = () => {
   return {
     // Dados
     users: data,
+    allUsers,
+    userStats,
     pagination,
     sorting,
     loading,

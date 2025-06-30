@@ -13,6 +13,18 @@ export const SearchInput = styled.div`
   
   input {
     padding-right: 80px !important;
+    
+    /* Remove o X nativo do input type="search" */
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    
+    /* Remove o X no Edge/IE */
+    &::-ms-clear {
+      display: none;
+    }
   }
 `;
 

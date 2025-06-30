@@ -57,6 +57,7 @@ export default function UsersPage() {
   // Hook de usuários com cache
   const {
     users,
+    userStats,
     pagination,
     sorting,
     loading,
@@ -106,22 +107,6 @@ export default function UsersPage() {
       console.error('Erro ao atualizar status do usuário');
     }
   }, [updateUser]);
-
-  /**
-   * Estatísticas dos usuários
-   */
-  const userStats = useMemo(() => {
-    if (!users.length) return { total: 0, ativos: 0, inativos: 0, pesquisadores: 0, agentes: 0, gestores: 0 };
-    
-    return {
-      total: users.length,
-      ativos: users.filter(u => u.ativo).length,
-      inativos: users.filter(u => !u.ativo).length,
-      pesquisadores: users.filter(u => u.perfil === PerfilUsuario.PESQUISADOR).length,
-      agentes: users.filter(u => u.perfil === PerfilUsuario.AGENTE).length,
-      gestores: users.filter(u => u.perfil === PerfilUsuario.GESTAO).length
-    };
-  }, [users]);
 
   /**
    * Configuração das colunas da tabela
