@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import Modal from '../Modal';
 import FormContainer from '../FormContainer';
-import { Button, Select, Textarea } from '../../atoms';
+import { Button, Select, Textarea, Input } from '../../atoms';
 import { useEntities } from '@/context/entities';
 import { useAuth } from '@/context/auth';
 import { useCache } from '@/context/cache';
@@ -71,6 +71,11 @@ export default function ChamadoModal({
   const [observacoesFinalizacao, setObservacoesFinalizacao] = useState<string>('');
   const [pecasUtilizadas, setPecasUtilizadas] = useState<Array<{ nome: string; quantidade: number }>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Estados para o formulário de peças utilizadas
+  const [nomePeca, setNomePeca] = useState<string>('');
+  const [quantidadePeca, setQuantidadePeca] = useState<string>('');
+  const [editingPecaIndex, setEditingPecaIndex] = useState<number | null>(null);
 
   const isEditing = Boolean(chamado);
   const isViewing = mode === 'view';
@@ -194,6 +199,10 @@ export default function ChamadoModal({
         setDataExecucao('');
         setObservacoesFinalizacao('');
         setPecasUtilizadas([]);
+        // Limpar formulário de peças
+        setNomePeca('');
+        setQuantidadePeca('');
+        setEditingPecaIndex(null);
       }
     }
   }, [isOpen, chamado?.id, chamado?.titulo, chamado?.descricao, chamado?.tipo, chamado?.prioridade, chamado?.status, chamado?.setorId, chamado?.equipamentoId, chamado?.agenteId, chamado?.dataExecucao, chamado?.observacoesFinalizacao, chamado?.pecasUtilizadas, mode]);
@@ -205,6 +214,80 @@ export default function ChamadoModal({
     const dataHash = `${titulo.substring(0,10)}-${descricao.substring(0,10)}-${mode}`;
     return `${baseKey}-${dataHash}`;
   }, [chamado?.id, titulo, descricao, mode]);
+
+  /**
+   * Funções para gerenciar peças utilizadas
+   */
+  const canEditPecas = useMemo(() => {
+    if (!currentUser) return false;
+    
+    // Se for gestor, pode sempre editar
+    if (isGestor(currentUser)) return true;
+    
+    // Se o chamado estiver concluído, só gestor pode editar
+    if (chamado?.status === ChamadoStatus.CONCLUIDO) return false;
+    
+    // Caso contrário, pode editar se estiver nos campos de finalização
+    return requiresFinalizationFields;
+  }, [currentUser, chamado?.status, requiresFinalizationFields]);
+
+  const handleAddPeca = useCallback(() => {
+    if (!nomePeca.trim() || !quantidadePeca.trim()) {
+      toast.error('Campos obrigatórios', 'Preencha o nome da peça e a quantidade');
+      return;
+    }
+
+    const quantidade = parseInt(quantidadePeca);
+    if (isNaN(quantidade) || quantidade <= 0) {
+      toast.error('Quantidade inválida', 'A quantidade deve ser um número maior que zero');
+      return;
+    }
+
+    const novaPeca = {
+      nome: nomePeca.trim(),
+      quantidade
+    };
+
+    if (editingPecaIndex !== null) {
+      // Editando peça existente
+      const pecasAtualizadas = [...pecasUtilizadas];
+      pecasAtualizadas[editingPecaIndex] = novaPeca;
+      setPecasUtilizadas(pecasAtualizadas);
+      setEditingPecaIndex(null);
+    } else {
+      // Adicionando nova peça
+      setPecasUtilizadas([...pecasUtilizadas, novaPeca]);
+    }
+
+    // Limpar formulário
+    setNomePeca('');
+    setQuantidadePeca('');
+  }, [nomePeca, quantidadePeca, editingPecaIndex, pecasUtilizadas, toast]);
+
+  const handleEditPeca = useCallback((index: number) => {
+    const peca = pecasUtilizadas[index];
+    setNomePeca(peca.nome);
+    setQuantidadePeca(peca.quantidade.toString());
+    setEditingPecaIndex(index);
+  }, [pecasUtilizadas]);
+
+  const handleRemovePeca = useCallback((index: number) => {
+    const pecasAtualizadas = pecasUtilizadas.filter((_, i) => i !== index);
+    setPecasUtilizadas(pecasAtualizadas);
+    
+    // Se estava editando esta peça, cancelar edição
+    if (editingPecaIndex === index) {
+      setEditingPecaIndex(null);
+      setNomePeca('');
+      setQuantidadePeca('');
+    }
+  }, [pecasUtilizadas, editingPecaIndex]);
+
+  const handleCancelEditPeca = useCallback(() => {
+    setEditingPecaIndex(null);
+    setNomePeca('');
+    setQuantidadePeca('');
+  }, []);
 
   /**
    * Configuração dos campos do formulário
@@ -676,8 +759,69 @@ export default function ChamadoModal({
                   padding: '12px',
                   backgroundColor: '#f8fafc'
                 }}>
+                  
+                  {/* Formulário para adicionar/editar peças */}
+                  {canEditPecas && (
+                    <div style={{ 
+                      marginBottom: '16px',
+                      padding: '12px',
+                      backgroundColor: 'white',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: '2fr 1fr auto', 
+                        gap: '8px',
+                        alignItems: 'end'
+                      }}>
+                        <div>
+                          <FieldLabel style={{ fontSize: '12px', marginBottom: '4px' }}>
+                            Nome da Peça
+                          </FieldLabel>
+                          <Input
+                            value={nomePeca}
+                            onChange={(e) => setNomePeca(e.target.value)}
+                            placeholder="Ex: Cabo coaxial RG-213"
+                          />
+                        </div>
+                        <div>
+                          <FieldLabel style={{ fontSize: '12px', marginBottom: '4px' }}>
+                            Quantidade
+                          </FieldLabel>
+                          <Input
+                            type="number"
+                            value={quantidadePeca}
+                            onChange={(e) => setQuantidadePeca(e.target.value)}
+                            placeholder="Ex: 2"
+                          />
+                        </div>
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <Button
+                            variant="primary"
+                            size="small"
+                            onClick={handleAddPeca}
+                            disabled={!nomePeca.trim() || !quantidadePeca.trim()}
+                          >
+                            {editingPecaIndex !== null ? 'Salvar' : 'Adicionar'}
+                          </Button>
+                          {editingPecaIndex !== null && (
+                            <Button
+                              variant="secondary"
+                              size="small"
+                              onClick={handleCancelEditPeca}
+                            >
+                              Cancelar
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Lista de peças utilizadas */}
                   {pecasUtilizadas.length === 0 ? (
-                    <p style={{ color: '#64748b', margin: 0 }}>
+                    <p style={{ color: '#64748b', margin: 0, textAlign: 'center', padding: '16px' }}>
                       Nenhuma peça foi utilizada nesta manutenção
                     </p>
                   ) : (
@@ -686,33 +830,59 @@ export default function ChamadoModal({
                         <div key={index} style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between',
+                          alignItems: 'center',
                           marginBottom: '8px',
-                          padding: '8px',
+                          padding: '12px',
                           backgroundColor: 'white',
-                          borderRadius: '4px',
+                          borderRadius: '6px',
                           border: '1px solid #e2e8f0'
                         }}>
-                          <span>{peca.nome}</span>
-                          <span>Qtd: {peca.quantidade}</span>
+                          <div style={{ flex: 1 }}>
+                            <span style={{ fontWeight: 500 }}>{peca.nome}</span>
+                            <span style={{ 
+                              marginLeft: '12px', 
+                              color: '#64748b',
+                              fontSize: '14px'
+                            }}>
+                              Qtd: {peca.quantidade}
+                            </span>
+                          </div>
+                          
+                          {canEditPecas && (
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                              <Button
+                                variant="outline"
+                                size="small"
+                                onClick={() => handleEditPeca(index)}
+                              >
+                                Editar
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="small"
+                                onClick={() => handleRemovePeca(index)}
+                              >
+                                Remover
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
                   )}
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      const nome = prompt('Nome da peça:');
-                      const quantidade = prompt('Quantidade:');
-                      if (nome && quantidade) {
-                        setPecasUtilizadas([...pecasUtilizadas, { 
-                          nome, 
-                          quantidade: parseInt(quantidade) 
-                        }]);
-                      }
-                    }}
-                  >
-                    Adicionar Peça
-                  </Button>
+
+                  {/* Informação sobre permissões */}
+                  {!canEditPecas && chamado?.status === ChamadoStatus.CONCLUIDO && !isGestor(currentUser) && (
+                    <div style={{
+                      textAlign: 'center',
+                      color: '#64748b',
+                      fontSize: '12px',
+                      fontStyle: 'italic',
+                      marginTop: '8px'
+                    }}>
+                      Chamado concluído. Apenas gestores podem editar as peças utilizadas.
+                    </div>
+                  )}
                 </div>
               </div>
             )}

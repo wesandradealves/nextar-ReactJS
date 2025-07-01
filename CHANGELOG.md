@@ -5,6 +5,72 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.9.3] - 2025-07-01
+
+### Adicionado
+- **Formulário Inline para Peças Utilizadas**
+  - Interface moderna para gerenciar peças utilizadas no modal de chamados
+  - Substituição do prompt/alert nativo por formulário inline usando componentes atoms
+  - Campos de nome da peça e quantidade com validação robusta
+  - Botões para adicionar, editar, salvar e cancelar peças
+  - Lista dinâmica de peças com ações individuais (editar/remover)
+  - Integração completa com o design system usando Input e Button atoms
+
+- **Sistema de Permissões para Peças Utilizadas**
+  - Controle granular de edição baseado no perfil do usuário e status do chamado
+  - Gestores podem editar/remover peças em chamados concluídos
+  - Agentes só podem editar/adicionar peças enquanto o chamado não está concluído
+  - Toast informativo quando tentativa de edição é bloqueada por permissões
+  - Mensagem clara orientando sobre limitações por perfil
+
+### Melhorado
+- **Experiência do Usuário (UX)**
+  - Remoção completa de alert/prompt nativos em favor de interface moderna
+  - Formulário responsivo e intuitivo para gestão de peças
+  - Feedback visual imediato para ações de adicionar, editar e remover
+  - Validação em tempo real com mensagens de erro específicas
+  - Interface consistente com o resto da aplicação
+
+- **Validação de Formulário de Peças**
+  - Campo nome da peça obrigatório (mínimo 2 caracteres)
+  - Quantidade deve ser um número positivo maior que zero
+  - Prevenção de submissão com dados inválidos
+  - Feedback visual para campos com erro
+  - Limpeza automática do formulário após operações bem-sucedidas
+
+- **Gestão de Estado de Peças**
+  - Estado local otimizado para adicionar, editar e remover peças
+  - Sincronização adequada com dados do chamado
+  - Prevenção de estados inconsistentes durante edição
+  - Limpeza de formulário ao abrir/fechar modal ou trocar chamado
+  - Cancelamento de edição retorna ao estado anterior
+
+### Corrigido
+- **Componente Input Types**
+  - Correção de propriedades TypeScript para evitar erros de lint
+  - Remoção de props não suportadas que causavam warnings
+  - Tipagem adequada para componentes atoms
+  - Compatibilidade com validação de formulários
+
+- **Fluxo de Edição de Peças**
+  - Resolução de bugs na alternância entre modo visualização e edição
+  - Correção de estado de formulário ao cancelar edição
+  - Sincronização adequada entre lista de peças e formulário
+  - Prevenção de perda de dados durante operações
+
+### Técnico
+- **Arquitetura de Componentes**
+  - Uso exclusivo de componentes atoms (Input, Button) para consistência
+  - Separação clara entre lógica de negócio e apresentação
+  - Estados de formulário bem definidos e controlados
+  - Funções de manipulação de peças organizadas e reutilizáveis
+
+- **Manutenibilidade**
+  - Código limpo e bem documentado para gestão de peças
+  - Padrões consistentes com o resto da aplicação
+  - Facilidade de manutenção e extensão futura
+  - Remoção de código legacy (prompt/alert nativos)
+
 ## [1.9.2] - 2025-06-30
 
 ### Adicionado
