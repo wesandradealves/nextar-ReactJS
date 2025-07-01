@@ -5,6 +5,82 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.0] - 2025-01-17
+
+### Adicionado
+- **CRUD Completo de Setores**
+  - Nova página de gestão de setores com interface moderna e responsiva
+  - Modal unificado para criação e edição de setores (SetorModal)
+  - Integração completa com APIs RESTful para operações CRUD
+  - Sistema de busca e filtros por categoria, status e termo de busca
+  - Paginação avançada com controle de itens por página
+  - Estatísticas em tempo real por categoria com animações
+  - Seleção múltipla e ações em lote (ativar/desativar/excluir)
+  - Validação de formulário com verificação de nome único
+  - Controle de permissões baseado no perfil do usuário
+
+- **APIs RESTful de Setores**
+  - Endpoint `/api/setores` para listagem e criação (GET/POST)
+  - Endpoint `/api/setores/[id]` para operações individuais (GET/PUT/DELETE)
+  - Suporte completo a paginação, busca, filtros e ordenação
+  - Validações robustas e tratamento de erros
+  - Verificação de unicidade de nomes de setores
+  - Integração com dados mock expandidos
+
+- **Hook Customizado useSetores**
+  - Cache inteligente para otimização de performance
+  - Funcionalidades de busca, filtros e paginação
+  - Estatísticas por categoria em tempo real
+  - Integração completa com APIs e gerenciamento de estado
+  - Padrão consistente com hooks existentes (useUsers, useChamados)
+
+- **Navegação e Menu**
+  - Nova entrada "Setores" no menu lateral de navegação
+  - Ícone específico e organização consistente
+  - Controle de acesso baseado em permissões
+
+### Melhorado
+- **Padronização de Ícones de Ações**
+  - Unificação dos ícones de ações em todas as páginas
+  - Ícone de olho (👁️) para visualizar
+  - Ícone de lápis (✏️) para editar
+  - Ícone de lixeira (🗑️) para excluir
+  - Aplicação consistente em chamados, usuários e setores
+
+- **Integração de Setores em Modais**
+  - Atualização do ChamadoModal para usar hook useSetores
+  - Carregamento otimizado de setores em formulários
+  - Consistência na gestão de dados entre módulos
+
+- **Interface e Experiência do Usuário**
+  - Seleção visual de categorias com cores específicas
+  - Toggle switch para controle de status ativo/inativo
+  - Formulários responsivos com validação em tempo real
+  - Feedback visual imediato para todas as ações
+  - Animações suaves e transições elegantes
+
+### Técnico
+- **Estrutura de Dados**
+  - Expansão dos dados mock de setores com todos os campos necessários
+  - Tipos TypeScript completos (Setor, CreateSetorData, UpdateSetorData, SetorFilters)
+  - Enum CATEGORIAS_CIENTIFICAS para padronização
+
+- **Componentes Reutilizáveis**
+  - SetorModal como componente independente e reutilizável
+  - TableAction para padronização de ações em tabelas
+  - FormContainer integrado com campos customizados
+
+### Corrigido
+- **Filtros de Categoria**
+  - Correção do filtro de categoria para usar nomes em vez de índices
+  - Funcionamento correto da busca por categoria
+  - Sincronização adequada entre filtros e dados
+
+- **Build e Linting**
+  - Resolução de todos os erros de TypeScript e ESLint
+  - Otimização de imports e exportações
+  - Padronização de código seguindo melhores práticas
+
 ## [1.9.3] - 2025-07-01
 
 ### Adicionado
