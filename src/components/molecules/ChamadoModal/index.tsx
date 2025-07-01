@@ -6,6 +6,7 @@ import { useEntities } from '@/context/entities';
 import { useAuth } from '@/context/auth';
 import { useCache } from '@/context/cache';
 import { useToast } from '@/hooks/useToast';
+import { useSetores } from '@/hooks/useSetores';
 import type { User } from '@/types';
 import type { FormFieldConfig } from '../FormContainer/types';
 import type { ChamadoModalProps, ChamadoFormData } from './types';
@@ -54,7 +55,8 @@ export default function ChamadoModal({
   mode = 'create'
 }: ChamadoModalProps) {
   const { user: currentUser } = useAuth();
-  const { usuarios, setores, equipamentos } = useEntities();
+  const { usuarios, equipamentos } = useEntities();
+  const { setores } = useSetores(); // Usar hook específico para setores
   const cache = useCache();
   const toast = useToast();
   

@@ -4,6 +4,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/context/auth';
 import { useEntities } from '@/context/entities';
 import { useChamados } from '@/hooks/useChamados';
+import { useSetores } from '@/hooks/useSetores';
 import { DataTable, ChamadoModal } from '@/components/molecules';
 import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
@@ -44,7 +45,8 @@ import { useMetadata } from '@/hooks/useMetadata';
  */
 export default function ChamadosPage() {
   const { user } = useAuth();
-  const { usuarios, setores, equipamentos } = useEntities();
+  const { usuarios, equipamentos } = useEntities();
+  const { setores } = useSetores(); // Usar hook específico para setores
 
   useMetadata({
     title: `Nextar - Chamados`,

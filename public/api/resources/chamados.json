@@ -124,12 +124,13 @@
     "prioridade": "alta",
     "titulo": "Where can I get some?",
     "descricao": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.",
-    "setorId": "2",
+    "setorId": "7",
     "equipamentoId": "2",
     "observacoes": "All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.",
     "solicitanteId": "0",
     "status": "aberto",
     "id": "10",
-    "dataAbertura": "2025-07-01T01:11:56.652Z"
+    "dataAbertura": "2025-07-01T01:11:56.652Z",
+    "dataAtualizacao": "2025-07-01T04:15:55.796Z"
   }
 ]
