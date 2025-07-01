@@ -539,6 +539,7 @@ export default function ChamadosPage() {
         <SearchBox
           placeholder="Buscar por descrição ou tipo..."
           value={filters.search}
+          onChange={(value) => handleFilterChange({ search: value })}
           onSearch={(value) => handleFilterChange({ search: value })}
         />
         
