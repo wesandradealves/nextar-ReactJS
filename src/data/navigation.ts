@@ -26,6 +26,13 @@ export const navigationItems: NavItem[] = [
     // Apenas gestão pode gerenciar usuários
     permissions: [PerfilUsuario.GESTAO]
   },
+  {
+    href: '/dashboard/setores',
+    label: 'Setores',
+    icon: '',
+    // Apenas gestão pode gerenciar setores
+    permissions: [PerfilUsuario.GESTAO]
+  },
   // {
   //   href: '/equipamentos',
   //   label: 'Equipamentos',
