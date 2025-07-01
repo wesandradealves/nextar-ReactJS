@@ -105,16 +105,19 @@
     "dataAbertura": "2025-06-29T14:45:00.000Z"
   },
   {
-    "tipo": "corretiva",
+    "tipo": "preventiva",
     "prioridade": "media",
-    "descricao": "Manutenção programada do anemômetro digital conforme cronograma.",
+    "descricao": "Teste de atualizaçao",
     "setorId": "2",
     "equipamentoId": "2",
     "solicitanteId": "0",
-    "status": "aberto",
+    "status": "em_progresso",
     "id": "9",
     "dataAbertura": "2025-06-30T13:19:48.589Z",
-    "dataAtualizacao": "2025-06-30T13:31:34.299Z"
+    "dataAtualizacao": "2025-07-01T03:36:41.732Z",
+    "titulo": "Manutenção programada do anemômetro digital conforme cronograma.",
+    "agenteId": "4",
+    "observacoes": "teste"
   },
   {
     "tipo": "corretiva",

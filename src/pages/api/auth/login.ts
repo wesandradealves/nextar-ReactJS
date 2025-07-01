@@ -30,7 +30,7 @@ import { verifyPassword } from '@/utils/crypto';
  * // Credenciais disponíveis para teste:
  * // admin@nextar.com / admin123 (Gestão)
  * // ana.silva@antartica.br / admin123 (Gestão) 
- * // carlos.oliveira@antartica.br / agente123 (Agente)
+ * // joao.costa@antartica.br / agente123 (Agente)
  * // maria.santos@antartica.br / pesq123 (Pesquisador)
  * ```
  */

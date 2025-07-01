@@ -15,36 +15,36 @@
     "id": "3",
     "nome": "Maria Santos",
     "email": "maria.santos@antartica.br",
-    "senha": "90f80b22f53a5d4d72f7b126ef4b1f44",
+    "senha": "88c96a9bdaee9e9b733751a180dcd298",
     "perfil": "pesquisador",
     "usuario": "maria.santos",
-    "setor": "TI",
+    "setor": "Pesquisa",
     "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-07-01T02:28:08.232Z"
+    "dataAtualizacao": "2025-07-01T03:39:44.094Z"
   },
   {
     "id": "4",
     "nome": "João Costa Teste",
     "email": "joao.costa@antartica.br",
-    "senha": "90f80b22f53a5d4d72f7b126ef4b1f44",
+    "senha": "64c02c20fc6540b184ae152181571990",
     "perfil": "agente",
     "usuario": "joao.costa",
-    "setor": "TI",
+    "setor": "Negócios",
     "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-07-01T02:28:20.086Z"
+    "dataAtualizacao": "2025-07-01T03:39:37.483Z"
   },
   {
     "nome": "Admin Nextar",
     "email": "admin@nextar.com",
     "usuario": "admin",
     "senha": "0192023a7bbd73250516f069df18b500",
-    "setor": "RH",
+    "setor": "TI",
     "perfil": "gestao",
     "id": "5",
     "ativo": true,
     "dataCriacao": "2025-06-29T23:57:42.270Z",
-    "dataAtualizacao": "2025-07-01T02:25:48.764Z"
+    "dataAtualizacao": "2025-07-01T03:39:17.874Z"
   }
 ]

@@ -120,7 +120,7 @@ export default function Login() {
               <small>
                 • ana.silva@antartica.br / admin123 (Gestão)
                 <br />
-                • carlos.oliveira@antartica.br / agente123 (Agente)
+                • joao.costa@antartica.br / agente123 (Agente)
                 <br />
                 • maria.santos@antartica.br / pesq123 (Pesquisador)
               </small>
