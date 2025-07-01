@@ -5,6 +5,66 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.9.0] - 2025-06-30
+
+### Adicionado
+- **Separação de Campos Título e Descrição nos Chamados**
+  - Implementação de campo `titulo` separado da `descricao` na modal de chamados
+  - Suporte completo para chamados legados (usando descrição como título)
+  - FormContainer atualizado com dois campos distintos: "Título do Chamado" e "Descrição Detalhada"
+  - Validação específica para cada campo (título: 5-100 chars, descrição: 10-500 chars)
+  - Exibição de ambos os campos na tabela de chamados com truncamento inteligente
+
+- **Sistema de Toast Notifications**
+  - Feedback visual aprimorado com toast notifications para todas as ações
+  - Mensagens específicas para validação de campos obrigatórios
+  - Notificações de sucesso para criação/edição de chamados
+  - Tratamento de erros com mensagens claras e acionáveis
+
+- **Validações Avançadas com Feedback Visual**
+  - Validação de campos obrigatórios antes do envio (tipo, prioridade, setor)
+  - Validação específica para observações de finalização (mínimo 10 caracteres)
+  - Prevenção de fechamento da modal em caso de erro para correção
+  - Mensagens de erro contextuais com orientações para o usuário
+
+### Melhorado
+- **Performance e Sincronização**
+  - Key dinâmica no FormContainer para forçar re-render quando necessário
+  - Otimização do cache com invalidação inteligente após operações
+  - Sincronização aprimorada entre estados locais e FormContainer
+  - Redução de re-renders desnecessários com dependências otimizadas
+
+- **Busca e Filtros**
+  - Filtro de busca atualizado para incluir campo `titulo` além de descrição e tipo
+  - Performance melhorada na busca com indexação de múltiplos campos
+  - Cache otimizado para filtros com invalidação por tags
+
+- **Tratamento de Dados Legados**
+  - Compatibilidade total com chamados antigos (sem campo título)
+  - Migração automática: descrição vira título, campo descrição fica vazio
+  - Lógica robusta para evitar duplicação de conteúdo
+  - Exibição inteligente na tabela baseada na presença do campo título
+
+### Corrigido
+- **Problemas de Cache e Estado**
+  - Correção de problemas de sincronização entre FormContainer e estados da modal
+  - Resolução de conflitos de cache ao alternar rapidamente entre chamados
+  - Invalidação adequada do cache após submissão bem-sucedida
+  - Prevenção de dados obsoletos na interface
+
+- **Fluxo de Validação**
+  - Correção do fluxo onde título voltava ao valor antigo após edição
+  - Resolução de problemas de validação não exibidos ao usuário
+  - Correção de dependências em hooks para evitar warnings do ESLint
+  - Tratamento adequado de erros com feedback visual
+
+### Quebras de Compatibilidade
+- **Estrutura de Dados de Chamados**
+  - Adição do campo `titulo` na interface de chamados
+  - Tipos TypeScript atualizados: `Chamado`, `CreateChamadoData`, `UpdateChamadoData`, `ChamadoFormData`
+  - Modal de chamados agora requer ambos os campos título e descrição
+  - API endpoints atualizados para suportar o novo campo
+
 ## [1.8.3] - 2025-06-30
 
 ### Adicionado
