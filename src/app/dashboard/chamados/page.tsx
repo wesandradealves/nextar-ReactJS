@@ -66,6 +66,15 @@ export default function ChamadosPage() {
   const [editingChamado, setEditingChamado] = useState<Chamado | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
 
+  // Estado de ordenação
+  const [sorting, setSorting] = useState<{
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+  }>({
+    sortBy: 'dataAbertura',
+    sortOrder: 'desc'
+  });
+
   // Filtrar agentes com verificação de segurança e otimização
   const usuariosArray = useMemo(() => {
     if (Array.isArray(usuarios)) {
@@ -154,6 +163,49 @@ export default function ChamadosPage() {
       await deleteChamado(chamado.id);
     }
   }, [deleteChamado]);
+
+  /**
+   * Handler para mudança de ordenação
+   * @param {string} column - Nome da coluna para ordenação
+   * @param {'asc' | 'desc'} order - Direção da ordenação
+   */
+  const handleSortChange = useCallback((column: string, order: 'asc' | 'desc') => {
+    setSorting({ sortBy: column, sortOrder: order });
+  }, []);
+
+  /**
+   * Aplica ordenação local aos chamados
+   * @decorator @memo - Otimizado para evitar re-ordenações desnecessárias
+   */
+  const sortedChamados = useMemo(() => {
+    if (!chamados || chamados.length === 0) return [];
+    
+    const sorted = [...chamados].sort((a, b) => {
+      const { sortBy, sortOrder } = sorting;
+      
+      let valueA: any = a[sortBy as keyof Chamado];
+      let valueB: any = b[sortBy as keyof Chamado];
+      
+      // Tratamento especial para datas
+      if (sortBy === 'dataAbertura') {
+        valueA = valueA ? new Date(valueA).getTime() : 0;
+        valueB = valueB ? new Date(valueB).getTime() : 0;
+      }
+      
+      // Tratamento para strings
+      if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+      if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+      
+      // Comparação
+      let comparison = 0;
+      if (valueA > valueB) comparison = 1;
+      if (valueA < valueB) comparison = -1;
+      
+      return sortOrder === 'desc' ? comparison * -1 : comparison;
+    });
+    
+    return sorted;
+  }, [chamados, sorting]);
 
   /**
    * Renderiza badge de status do chamado
@@ -314,18 +366,57 @@ export default function ChamadosPage() {
       width: '80px'
     },
     {
+      key: 'dataAbertura',
+      title: 'Criado em',
+      width: '120px',
+      sortable: true,
+      render: (value: unknown) => {
+        const date = value as string;
+        if (!date) return 'N/A';
+        
+        const dateObj = new Date(date);
+        const now = new Date();
+        const diffMs = now.getTime() - dateObj.getTime();
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        
+        // Mostrar formato relativo para datas recentes
+        if (diffDays === 0) {
+          if (diffHours === 0) {
+            const diffMinutes = Math.floor(diffMs / (1000 * 60));
+            return diffMinutes <= 1 ? 'Agora' : `${diffMinutes}min atrás`;
+          }
+          return diffHours === 1 ? '1h atrás' : `${diffHours}h atrás`;
+        } else if (diffDays === 1) {
+          return 'Ontem';
+        } else if (diffDays <= 7) {
+          return `${diffDays} dias atrás`;
+        }
+        
+        // Formato padrão para datas mais antigas
+        return dateObj.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: diffDays > 365 ? 'numeric' : '2-digit'
+        });
+      }
+    },
+    {
       key: 'tipo',
       title: 'Tipo',
+      sortable: true,
       render: (value: unknown) => getTipoBadge(value as string)
     },
     {
       key: 'status',
       title: 'Status',
+      sortable: true,
       render: (value: unknown) => getStatusBadge(value as string)
     },
     {
       key: 'prioridade',
       title: 'Prioridade',
+      sortable: true,
       render: (value: unknown) => getPrioridadeBadge(value as string)
     },
     {
@@ -377,14 +468,6 @@ export default function ChamadosPage() {
       render: (value: unknown) => {
         const agentId = value as string;
         return agentId ? getUserName(agentId) : 'Não atribuído';
-      }
-    },
-    {
-      key: 'dataAbertura',
-      title: 'Data Abertura',
-      render: (value: unknown) => {
-        const date = value as string;
-        return date ? new Date(date).toLocaleDateString('pt-BR') : 'N/A';
       }
     },
     {
@@ -513,9 +596,11 @@ export default function ChamadosPage() {
       </FiltersContainer>
 
       <DataTable
-        data={chamados}
+        data={sortedChamados}
         columns={columns}
         loading={loading}
+        sorting={sorting}
+        onSortChange={handleSortChange}
         emptyMessage="Nenhum chamado encontrado"
       />
 

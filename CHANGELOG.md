@@ -5,6 +5,39 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.9.1] - 2025-06-30
+
+### Adicionado
+- **Coluna "Criado em" na Tabela de Chamados**
+  - Nova coluna exibindo a data de criação dos chamados (`dataAbertura`)
+  - Formatação inteligente com tempo relativo para datas recentes:
+    - "Agora" ou "Xmin atrás" para criações muito recentes
+    - "Xh atrás" para criações do dia atual
+    - "Ontem" para criações do dia anterior
+    - "X dias atrás" para última semana
+    - Formato brasileiro padrão (DD/MM/AA ou DD/MM/AAAA) para datas mais antigas
+  - Largura otimizada (120px) para exibição consistente
+
+### Melhorado
+- **Ordenação Automática por Data de Criação**
+  - Chamados agora são automaticamente ordenados por data de criação (mais recentes primeiro)
+  - Ordenação aplicada localmente na interface após aplicação de filtros
+  - Performance otimizada com ordenação em memória e memoização
+  - Experiência de usuário aprimorada: chamados mais urgentes/recentes aparecem primeiro
+
+- **Sistema de Ordenação Clicável na Tabela**
+  - Coluna "Criado em" agora é ordenável com clique no cabeçalho
+  - Indicadores visuais de direção da ordenação (crescente/decrescente)
+  - Colunas "Tipo", "Status" e "Prioridade" também ordenáveis
+  - Estado de ordenação persistente durante navegação
+  - Ordenação inteligente por data (timestamp) para precisão temporal
+
+- **Experiência Visual na Listagem**
+  - Melhor percepção temporal dos chamados com coluna de data ordenável
+  - Facilitação da identificação de chamados recentes vs antigos
+  - Layout da tabela otimizado com nova coluna posicionada estrategicamente
+  - Controles de ordenação intuitivos e responsivos
+
 ## [1.9.0] - 2025-06-30
 
 ### Adicionado
