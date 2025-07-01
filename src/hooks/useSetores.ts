@@ -404,7 +404,7 @@ export const useSetores = () => {
 
     // Contagem por categoria
     const categoriaStats: Record<string, number> = {};
-    Object.keys(CATEGORIAS_CIENTIFICAS).forEach(categoria => {
+    CATEGORIAS_CIENTIFICAS.forEach(categoria => {
       categoriaStats[categoria] = allSetores.filter(setor => setor.categoria === categoria).length;
     });
 

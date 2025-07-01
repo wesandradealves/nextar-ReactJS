@@ -443,13 +443,13 @@ export default function SetoresPage() {
           >
             Todos
           </FilterButton>
-          {Object.entries(CATEGORIAS_CIENTIFICAS).map(([key, value]) => (
+          {CATEGORIAS_CIENTIFICAS.map((categoria) => (
             <FilterButton
-              key={key}
-              $active={filters.categoria === key}
-              onClick={() => filterByCategoria(key)}
+              key={categoria}
+              $active={filters.categoria === categoria}
+              onClick={() => filterByCategoria(categoria)}
             >
-              {value}
+              {categoria}
             </FilterButton>
           ))}
           <FilterButton
