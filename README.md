@@ -1070,9 +1070,6 @@ export const Interactive: Story = {
 - **Observações de Finalização** - Campo para documentar trabalhos realizados
 - **Estados de Loading** - Feedback visual durante todas as operações assíncronas
 
-#### **🔄 Workflow de Status Completo** ✨ _Novo na v1.8.3_
-Sistema robusto de transições de status seguindo exatamente o briefing:
-
 **📊 Transições Controladas:**
 - ✅ **ABERTO** → **EM PROGRESSO** (apenas agente atribuído ou gestão)
 - ✅ **EM PROGRESSO** → **CONCLUÍDO** (apenas agente atribuído ou gestão)
@@ -1102,13 +1099,6 @@ Sistema robusto de transições de status seguindo exatamente o briefing:
 - ✅ Validação de comprimento mínimo para observações (10 caracteres)
 - ✅ Prevenção de submissão com dados inválidos
 - ✅ Controle de quem pode alterar cada campo baseado no perfil
-
-### **📊 Dashboard Analítico**
-- Estatísticas em tempo real com cache otimizado
-- Distribuição por status/tipo
-- Métricas por agente
-- Visualizações gráficas com animações (react-countup)
-- Sistema de cache multicamadas para performance
 
 ---
 
