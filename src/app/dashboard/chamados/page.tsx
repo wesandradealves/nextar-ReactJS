@@ -184,13 +184,13 @@ export default function ChamadosPage() {
     const sorted = [...chamados].sort((a, b) => {
       const { sortBy, sortOrder } = sorting;
       
-      let valueA: any = a[sortBy as keyof Chamado];
-      let valueB: any = b[sortBy as keyof Chamado];
+      let valueA: unknown = a[sortBy as keyof Chamado];
+      let valueB: unknown = b[sortBy as keyof Chamado];
       
       // Tratamento especial para datas
       if (sortBy === 'dataAbertura') {
-        valueA = valueA ? new Date(valueA).getTime() : 0;
-        valueB = valueB ? new Date(valueB).getTime() : 0;
+        valueA = valueA ? new Date(valueA as string).getTime() : 0;
+        valueB = valueB ? new Date(valueB as string).getTime() : 0;
       }
       
       // Tratamento para strings
@@ -199,8 +199,8 @@ export default function ChamadosPage() {
       
       // Comparação
       let comparison = 0;
-      if (valueA > valueB) comparison = 1;
-      if (valueA < valueB) comparison = -1;
+      if ((valueA as string | number) > (valueB as string | number)) comparison = 1;
+      if ((valueA as string | number) < (valueB as string | number)) comparison = -1;
       
       return sortOrder === 'desc' ? comparison * -1 : comparison;
     });

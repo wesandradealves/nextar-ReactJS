@@ -288,7 +288,7 @@ export function useChamados(currentUser: User | null) {
       // Relançar a exceção para que o modal capture
       throw error;
     }
-  }, [data, cache, toast]);
+  }, [data, cache, toast, refreshData]);
 
   /**
    * Deleta um chamado

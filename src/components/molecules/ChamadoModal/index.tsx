@@ -205,7 +205,7 @@ export default function ChamadoModal({
         setEditingPecaIndex(null);
       }
     }
-  }, [isOpen, chamado?.id, chamado?.titulo, chamado?.descricao, chamado?.tipo, chamado?.prioridade, chamado?.status, chamado?.setorId, chamado?.equipamentoId, chamado?.agenteId, chamado?.dataExecucao, chamado?.observacoesFinalizacao, chamado?.pecasUtilizadas, mode]);
+  }, [isOpen, chamado, mode]);
 
   // Key única para forçar re-render do FormContainer quando dados importantes mudam
   const formKey = useMemo(() => {
@@ -473,7 +473,7 @@ export default function ChamadoModal({
     selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
     selectedEquipamento, selectedAgente, dataExecucao, observacoesFinalizacao, 
     pecasUtilizadas, currentUser, onSubmit, handleClose, isEditing, canEditStatus,
-    requiresFinalizationFields, shouldShowDataExecucao, chamado, cache, titulo, descricao, toast
+    requiresFinalizationFields, chamado, cache, toast
   ]);
 
   /**

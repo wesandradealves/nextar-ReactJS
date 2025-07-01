@@ -5,6 +5,7 @@ import CountUp from 'react-countup';
 import { useAuth } from '@/context/auth';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable } from '@/components/molecules';
+import { SetorModal } from '@/components/molecules';
 import { Button } from '@/components/atoms';
 import type { Setor, TableColumn, TableAction, CreateSetorData, UpdateSetorData } from '@/types';
 import { PerfilUsuario, CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
@@ -310,13 +311,11 @@ export default function SetoresPage() {
     // Outras ações seriam implementadas aqui
   }, [selectedSetores, deleteSetor]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingSetor(undefined);
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSubmitSetor = useCallback(async (data: CreateSetorData | UpdateSetorData, setorId?: string) => {
     if (setorId && editingSetor) {
       // Editar setor existente
@@ -502,10 +501,14 @@ export default function SetoresPage() {
         }
       />
 
-      {/* TODO: Modal de criação/edição de setores será implementado em seguida */}
-      {isModalOpen && (
-        <div>Modal placeholder - será implementado na próxima etapa</div>
-      )}
+      {/* Modal de criação/edição de setores */}
+      <SetorModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitSetor}
+        setor={editingSetor}
+        isLoading={loading}
+      />
     </SetoresPageContainer>
   );
 }

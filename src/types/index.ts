@@ -605,6 +605,8 @@ export interface CreateSetorData {
   categoria: string;
   /** Descrição detalhada do setor (opcional) */
   descricao?: string;
+  /** Status ativo/inativo do setor */
+  ativo: boolean;
 }
 
 /**
