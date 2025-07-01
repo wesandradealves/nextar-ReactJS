@@ -9,7 +9,7 @@ import { DataTable, ChamadoModal } from '@/components/molecules';
 import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
-import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
+import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, TableAction } from '@/types';
 import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
@@ -472,44 +472,52 @@ export default function ChamadosPage() {
         const agentId = value as string;
         return agentId ? getUserName(agentId) : 'Não atribuído';
       }
-    },
-    {
-      key: 'actions',
-      title: 'Ações',
-      render: (value: unknown, item: Chamado) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <Button 
-            variant="outline" 
-            size="small"
-            onClick={() => handleViewChamado(item)}
-          >
-            Ver
-          </Button>
-          {(user?.perfil === PerfilUsuario.GESTAO || 
-            (user?.perfil === PerfilUsuario.AGENTE && item.agenteId === user.id) ||
-            (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
-            <Button 
-              variant="primary" 
-              size="small"
-              onClick={() => handleEditChamado(item)}
-            >
-              Editar
-            </Button>
-          )}
-          {(user?.perfil === PerfilUsuario.GESTAO || 
-            (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
-            <Button 
-              variant="danger" 
-              size="small"
-              onClick={() => handleDeleteChamado(item)}
-            >
-              Excluir
-            </Button>
-          )}
-        </div>
-      )
     }
   ];
+
+  /**
+   * Ações disponíveis para cada chamado
+   */
+  const actions: TableAction<Chamado>[] = useMemo(() => {
+    const chamadoActions: TableAction<Chamado>[] = [
+      {
+        key: 'view',
+        title: 'Visualizar',
+        icon: '👁️',
+        variant: 'secondary',
+        onClick: handleViewChamado
+      }
+    ];
+
+    // Adicionar ação de editar se o usuário tem permissão
+    chamadoActions.push({
+      key: 'edit',
+      title: 'Editar',
+      icon: '✏️',
+      variant: 'primary',
+      onClick: handleEditChamado,
+      disabled: (chamado: Chamado) => !(
+        user?.perfil === PerfilUsuario.GESTAO || 
+        (user?.perfil === PerfilUsuario.AGENTE && chamado.agenteId === user.id) ||
+        (user?.perfil === PerfilUsuario.PESQUISADOR && chamado.solicitanteId === user.id)
+      )
+    });
+
+    // Adicionar ação de excluir se o usuário tem permissão
+    chamadoActions.push({
+      key: 'delete',
+      title: 'Excluir',
+      icon: '🗑️',
+      variant: 'danger',
+      onClick: handleDeleteChamado,
+      disabled: (chamado: Chamado) => !(
+        user?.perfil === PerfilUsuario.GESTAO || 
+        (user?.perfil === PerfilUsuario.PESQUISADOR && chamado.solicitanteId === user.id)
+      )
+    });
+
+    return chamadoActions;
+  }, [user, handleViewChamado, handleEditChamado, handleDeleteChamado]);
 
   /**
    * Verifica se o usuário atual pode criar chamados
@@ -602,6 +610,7 @@ export default function ChamadosPage() {
       <DataTable
         data={sortedChamados}
         columns={columns}
+        actions={actions}
         loading={loading}
         sorting={sorting}
         onSortChange={handleSortChange}

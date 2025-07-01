@@ -23,10 +23,10 @@
     "id": "3",
     "nome": "Centro de Comunicações",
     "categoria": "Comunicações",
-    "descricao": "Responsável pelas comunicações internas e externas da base",
-    "ativo": false,
+    "descricao": "Responsável pelas comunicações internas ",
+    "ativo": true,
     "dataCriacao": "2024-01-05T09:00:00.000Z",
-    "dataAtualizacao": "2025-07-01T04:00:12.903Z",
+    "dataAtualizacao": "2025-07-01T04:16:59.931Z",
     "equipamentosCount": 15
   },
   {
