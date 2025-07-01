@@ -4,9 +4,12 @@ import FormContainer from '../FormContainer';
 import { Button, Select, Textarea } from '../../atoms';
 import { useEntities } from '@/context/entities';
 import { useAuth } from '@/context/auth';
+import { useCache } from '@/context/cache';
+import { useToast } from '@/hooks/useToast';
+import type { User } from '@/types';
 import type { FormFieldConfig } from '../FormContainer/types';
 import type { ChamadoModalProps, ChamadoFormData } from './types';
-import { isGestor, isAgente, getAgentes } from '@/utils/perfil';
+import { isGestor, isAgente } from '@/utils/perfil';
 import { 
   ChamadoStatus, 
   STATUS_LABELS, 
@@ -48,11 +51,12 @@ export default function ChamadoModal({
   onClose,
   onSubmit,
   chamado,
-  mode = 'create',
-  onModeChange
+  mode = 'create'
 }: ChamadoModalProps) {
   const { user: currentUser } = useAuth();
   const { usuarios, setores, equipamentos } = useEntities();
+  const cache = useCache();
+  const toast = useToast();
   
   // Estados do formulário
   const [selectedTipo, setSelectedTipo] = useState<string>('');
@@ -61,6 +65,7 @@ export default function ChamadoModal({
   const [selectedSetor, setSelectedSetor] = useState<string>('');
   const [selectedEquipamento, setSelectedEquipamento] = useState<string>('');
   const [selectedAgente, setSelectedAgente] = useState<string>('');
+  const [titulo, setTitulo] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [observacoesFinalizacao, setObservacoesFinalizacao] = useState<string>('');
   const [pecasUtilizadas, setPecasUtilizadas] = useState<Array<{ nome: string; quantidade: number }>>([]);
@@ -68,25 +73,6 @@ export default function ChamadoModal({
 
   const isEditing = Boolean(chamado);
   const isViewing = mode === 'view';
-
-  // Verificar permissões baseadas no briefing
-  const canEdit = useMemo(() => {
-    if (!currentUser) return false;
-    
-    // Chamados finalizados não podem ser editados
-    if (chamado?.status === ChamadoStatus.CONCLUIDO) return false;
-    
-    // GESTÃO: acesso completo (exceto chamados finalizados)
-    if (isGestor(currentUser)) return true;
-    
-    // AGENTE: pode editar apenas chamados atribuídos a ele
-    if (isAgente(currentUser)) {
-      return chamado?.agenteId === currentUser.id;
-    }
-    
-    // PESQUISADOR: pode apenas visualizar e criar (não editar)
-    return false;
-  }, [currentUser, chamado]);
 
   // Verificar se pode alterar status
   const canEditStatus = useMemo(() => {
@@ -108,11 +94,15 @@ export default function ChamadoModal({
 
   // Filtrar agentes e equipamentos com verificação de segurança
   const usuariosArray = useMemo(() => {
-    return Array.isArray(usuarios) ? usuarios : (usuarios as any)?.data || [];
+    if (Array.isArray(usuarios)) {
+      return usuarios;
+    }
+    const usuariosData = (usuarios as Record<string, unknown>)?.data;
+    return Array.isArray(usuariosData) ? usuariosData : [];
   }, [usuarios]);
 
   const agentes = useMemo(() => {
-    return usuariosArray.filter((u: any) => u.perfil === 'agente');
+    return usuariosArray.filter((u: User) => u.perfil === 'agente');
   }, [usuariosArray]);
 
   const equipamentosDoSetor = useMemo(() => {
@@ -148,7 +138,16 @@ export default function ChamadoModal({
   const modalTitle = isViewing ? 'Detalhes do Chamado' : 
                     isEditing ? 'Editar Chamado' : 'Novo Chamado';
 
-  // Reset form quando modal abrir/fechar
+  /**
+   * Manipula fechamento da modal com limpeza de cache
+   */
+  const handleClose = useCallback(() => {
+    // Limpar cache relacionado a chamados para garantir dados atualizados
+    cache.invalidateByTag('chamados');
+    onClose();
+  }, [cache, onClose]);
+
+  // Reset form quando modal abrir/fechar ou chamado mudar
   useEffect(() => {
     if (isOpen) {
       if (chamado && (mode === 'edit' || mode === 'view')) {
@@ -158,7 +157,18 @@ export default function ChamadoModal({
         setSelectedSetor(chamado.setorId || '');
         setSelectedEquipamento(chamado.equipamentoId || '');
         setSelectedAgente(chamado.agenteId || '');
-        setDescricao(chamado.descricao || '');
+        
+        // Lógica corrigida para título e descrição
+        if (chamado.titulo && chamado.titulo.trim()) {
+          // Se tem título separado, usar título e descrição separados
+          setTitulo(chamado.titulo.trim());
+          setDescricao(chamado.descricao?.trim() || '');
+        } else {
+          // Caso antigo: usar descrição como título e deixar descrição vazia
+          setTitulo(chamado.descricao?.trim() || '');
+          setDescricao('');
+        }
+        
         setObservacoesFinalizacao(chamado.observacoesFinalizacao || '');
         setPecasUtilizadas(chamado.pecasUtilizadas || []);
       } else {
@@ -169,12 +179,21 @@ export default function ChamadoModal({
         setSelectedSetor('');
         setSelectedEquipamento('');
         setSelectedAgente('');
+        setTitulo('');
         setDescricao('');
         setObservacoesFinalizacao('');
         setPecasUtilizadas([]);
       }
     }
-  }, [isOpen, chamado, mode]);
+  }, [isOpen, chamado?.id, chamado?.titulo, chamado?.descricao, chamado?.tipo, chamado?.prioridade, chamado?.status, chamado?.setorId, chamado?.equipamentoId, chamado?.agenteId, chamado?.observacoesFinalizacao, chamado?.pecasUtilizadas, mode]);
+
+  // Key única para forçar re-render do FormContainer quando dados importantes mudam
+  const formKey = useMemo(() => {
+    // Usar dados estáveis para a key, evitando re-renders desnecessários
+    const baseKey = `chamado-form-${chamado?.id || 'new'}`;
+    const dataHash = `${titulo.substring(0,10)}-${descricao.substring(0,10)}-${mode}`;
+    return `${baseKey}-${dataHash}`;
+  }, [chamado?.id, titulo, descricao, mode]);
 
   /**
    * Configuração dos campos do formulário
@@ -183,12 +202,24 @@ export default function ChamadoModal({
   const getFormFields = useCallback((): FormFieldConfig[] => {
     const baseFields: FormFieldConfig[] = [
       {
-        id: 'descricao',
-        label: 'Descrição do Problema',
+        id: 'titulo',
+        label: 'Título do Chamado',
         type: 'text',
-        placeholder: 'Descreva o problema ou manutenção necessária...',
+        placeholder: 'Ex: Problema na impressora do laboratório',
         required: true,
-        defaultValue: chamado?.descricao || '',
+        defaultValue: titulo,
+        validation: {
+          minLength: 5,
+          maxLength: 100
+        }
+      },
+      {
+        id: 'descricao',
+        label: 'Descrição Detalhada',
+        type: 'text',
+        placeholder: 'Descreva detalhadamente o problema ou manutenção necessária...',
+        required: true,
+        defaultValue: descricao,
         validation: {
           minLength: 10,
           maxLength: 500
@@ -210,7 +241,7 @@ export default function ChamadoModal({
     }
 
     return baseFields;
-  }, [chamado, isViewing]);
+  }, [chamado, isViewing, titulo, descricao]);
 
   /**
    * Opções de setor para dropdown
@@ -237,24 +268,44 @@ export default function ChamadoModal({
    * Manipula submissão do formulário
    * @decorator @async - Operação assíncrona com loading
    */
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (formData: Record<string, string>) => {
     try {
       setIsSubmitting(true);
+      
+      // Validações básicas
+      if (!selectedTipo) {
+        toast.error('Erro de Validação', 'Selecione o tipo de manutenção');
+        return;
+      }
+      
+      if (!selectedPrioridade) {
+        toast.error('Erro de Validação', 'Selecione a prioridade do chamado');
+        return;
+      }
+      
+      if (!selectedSetor) {
+        toast.error('Erro de Validação', 'Selecione o setor responsável');
+        return;
+      }
       
       // Validação específica para status "concluído"
       if (requiresFinalizationFields) {
         if (!observacoesFinalizacao || observacoesFinalizacao.trim().length < 10) {
-          throw new Error('Observações de finalização são obrigatórias e devem ter pelo menos 10 caracteres');
+          const errorMessage = 'Observações de finalização são obrigatórias e devem ter pelo menos 10 caracteres';
+          toast.error('Erro de Validação', errorMessage);
+          return;
         }
       }
       
       const chamadoData: ChamadoFormData = {
         tipo: selectedTipo,
         prioridade: selectedPrioridade,
-        descricao,
+        titulo: formData.titulo, // Usar dados do formulário, não estado local
+        descricao: formData.descricao, // Usar dados do formulário, não estado local
         setorId: selectedSetor,
         equipamentoId: selectedEquipamento || undefined,
         agenteId: selectedAgente || undefined,
+        observacoes: formData.observacoes || undefined,
         observacoesFinalizacao: requiresFinalizationFields ? observacoesFinalizacao : undefined,
         pecasUtilizadas: requiresFinalizationFields ? pecasUtilizadas : undefined,
         solicitanteId: currentUser?.id
@@ -266,17 +317,36 @@ export default function ChamadoModal({
       }
 
       await onSubmit(chamadoData, chamado?.id);
-      onClose();
-    } catch {
-      // Erro já tratado pelo hook
+      
+      // Limpar cache após submissão bem-sucedida
+      cache.invalidateByTag('chamados');
+      
+      // Mostrar toast de sucesso
+      toast.success(
+        isEditing ? 'Chamado atualizado!' : 'Chamado criado!',
+        isEditing ? 'As alterações foram salvas com sucesso' : 'O novo chamado foi registrado no sistema'
+      );
+      
+      handleClose();
+    } catch (error) {
+      console.error('❌ Erro no handleSubmit:', error);
+      
+      // Mostrar toast de erro para problemas de API
+      const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro inesperado';
+      toast.error(
+        'Erro ao salvar chamado',
+        errorMessage
+      );
+      
+      // Não fechar a modal em caso de erro para permitir correção
     } finally {
       setIsSubmitting(false);
     }
   }, [
     selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
-    selectedEquipamento, selectedAgente, descricao, observacoesFinalizacao, 
-    pecasUtilizadas, currentUser, onSubmit, onClose, isEditing, canEditStatus,
-    requiresFinalizationFields, chamado
+    selectedEquipamento, selectedAgente, observacoesFinalizacao, 
+    pecasUtilizadas, currentUser, onSubmit, handleClose, isEditing, canEditStatus,
+    requiresFinalizationFields, chamado, cache, titulo, descricao, toast
   ]);
 
   /**
@@ -287,8 +357,8 @@ export default function ChamadoModal({
   const renderChamadoInfo = useMemo(() => {
     if (!chamado || !isViewing) return null;
 
-    const solicitante = usuariosArray.find((u: any) => u.id === chamado.solicitanteId)?.nome || 'N/A';
-    const agente = chamado.agenteId ? usuariosArray.find((u: any) => u.id === chamado.agenteId)?.nome || 'Não atribuído' : 'Não atribuído';
+    const solicitante = usuariosArray.find((u: User) => u.id === chamado.solicitanteId)?.nome || 'N/A';
+    const agente = chamado.agenteId ? usuariosArray.find((u: User) => u.id === chamado.agenteId)?.nome || 'Não atribuído' : 'Não atribuído';
     const setor = Array.isArray(setores) ? 
       setores.find(s => s.id === chamado.setorId)?.nome : 'N/A';
     const equipamento = chamado.equipamentoId && Array.isArray(equipamentos) ? 
@@ -337,7 +407,7 @@ export default function ChamadoModal({
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <Button
             variant="secondary"
-            onClick={onClose}
+            onClick={handleClose}
             disabled={isSubmitting}
           >
             Fechar
@@ -350,7 +420,7 @@ export default function ChamadoModal({
       <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
         <Button 
           variant="secondary" 
-          onClick={onClose}
+          onClick={handleClose}
           disabled={isSubmitting}
         >
           Cancelar
@@ -370,7 +440,7 @@ export default function ChamadoModal({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={modalTitle}
       size="large"
       footer={renderFooter()}
@@ -396,6 +466,7 @@ export default function ChamadoModal({
       
       {!isViewing && (
         <FormContainer
+          key={formKey} // Key única para forçar re-render
           fields={getFormFields()}
           onSubmit={handleSubmit}
           submitDisabled={isSubmitting}
@@ -498,7 +569,7 @@ export default function ChamadoModal({
                 <Select
                   options={[
                     { value: '', label: 'Sem agente atribuído' },
-                    ...agentes.map((agente: any) => ({
+                    ...agentes.map((agente: User) => ({
                       value: agente.id,
                       label: agente.nome
                     }))
@@ -509,20 +580,6 @@ export default function ChamadoModal({
                 />
               </div>
             )}
-
-            {/* Descrição */}
-            <div style={{ marginBottom: '16px' }}>
-              <FieldLabel>Descrição do Problema *</FieldLabel>
-              <Textarea
-                value={descricao}
-                onChange={setDescricao}
-                placeholder="Descreva o problema ou manutenção necessária"
-                required
-                rows={4}
-                maxLength={500}
-                helperText="Seja o mais específico possível sobre o problema"
-              />
-            </div>
 
             {/* Observações de Finalização (apenas se status = concluído) */}
             {requiresFinalizationFields && (

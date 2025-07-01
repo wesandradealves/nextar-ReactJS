@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useCache } from '@/context/cache';
 import { useToast } from '@/hooks/useToast';
 import type { Chamado, User, CreateChamadoData, UpdateChamadoData } from '@/types';
@@ -103,6 +103,7 @@ export function useChamados(currentUser: User | null) {
       if (filtersToUse.search) {
         filteredData = filteredData.filter((chamado: Chamado) =>
           chamado.descricao?.toLowerCase().includes(filtersToUse.search.toLowerCase()) ||
+          chamado.titulo?.toLowerCase().includes(filtersToUse.search.toLowerCase()) ||
           chamado.tipo?.toLowerCase().includes(filtersToUse.search.toLowerCase())
         );
       }
@@ -134,7 +135,7 @@ export function useChamados(currentUser: User | null) {
     } finally {
       setLoading(false);
     }
-  }, [currentUser, cache, toast]);
+  }, [currentUser, cache, toast, filters]);
 
   /**
    * Atualiza filtros
@@ -200,8 +201,13 @@ export function useChamados(currentUser: User | null) {
 
       const newChamado = await response.json() as Chamado;
       
-      // Invalidar cache e refrescar dados
-      refreshData();
+      // Invalidar todo o cache de chamados para garantir consistência
+      cache.invalidateByTag('chamados');
+      
+      // Refrescar dados após pequeno delay para garantir que a API processou
+      setTimeout(() => {
+        refreshData();
+      }, 200);
       
       // Toast de sucesso
       toast.success(
@@ -224,11 +230,11 @@ export function useChamados(currentUser: User | null) {
       // Relançar a exceção para que o modal capture
       throw error;
     }
-  }, [refreshData, toast]);
+  }, [refreshData, toast, cache]);
 
   /**
    * Atualiza um chamado existente
-   * Seguindo o padrão do useUsers
+   * Seguindo exatamente o padrão do useUsers
    */
   const updateChamado = useCallback(async (chamadoId: string, chamadoData: UpdateChamadoData): Promise<boolean> => {
     try {
@@ -245,8 +251,21 @@ export function useChamados(currentUser: User | null) {
         throw new Error(errorData.message || 'Erro ao atualizar chamado');
       }
 
-      // Invalidar cache e refrescar dados
-      refreshData();
+      const updatedChamado = await response.json() as Chamado;
+      
+      // Atualização otimista do estado local (igual ao useUsers)
+      const updatedData = data.map((chamado: Chamado) => 
+        chamado.id === chamadoId ? updatedChamado : chamado
+      );
+      setData(updatedData);
+      
+      // Limpar cache relacionado
+      cache.invalidateByTag('chamados');
+      
+      // Forçar atualização dos dados para garantir sincronização
+      setTimeout(() => {
+        refreshData();
+      }, 200);
       
       // Toast de sucesso
       toast.success(
@@ -269,7 +288,7 @@ export function useChamados(currentUser: User | null) {
       // Relançar a exceção para que o modal capture
       throw error;
     }
-  }, [refreshData, toast]);
+  }, [data, cache, toast]);
 
   /**
    * Deleta um chamado

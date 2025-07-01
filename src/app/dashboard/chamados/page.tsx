@@ -11,6 +11,7 @@ import { Badge } from '@/components/atoms/Badge';
 import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
 import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
+import { useMetadata } from '@/hooks/useMetadata';
 
 /**
  * Página de Listagem de Chamados de Manutenção
@@ -44,6 +45,11 @@ import { Container, Header, FiltersContainer } from './styles';
 export default function ChamadosPage() {
   const { user } = useAuth();
   const { usuarios, setores, equipamentos } = useEntities();
+
+  useMetadata({
+    title: `Nextar - Chamados`,
+    ogTitle: `Nextar - Chamados`
+  });
   
   const {
     chamados,
@@ -52,8 +58,7 @@ export default function ChamadosPage() {
     handleFilterChange,
     createChamado,
     updateChamado,
-    deleteChamado,
-    refreshData
+    deleteChamado
   } = useChamados(user);
 
   // Estados do modal
@@ -63,11 +68,15 @@ export default function ChamadosPage() {
 
   // Filtrar agentes com verificação de segurança e otimização
   const usuariosArray = useMemo(() => {
-    return Array.isArray(usuarios) ? usuarios : (usuarios as any)?.data || [];
+    if (Array.isArray(usuarios)) {
+      return usuarios;
+    }
+    const usuariosData = (usuarios as Record<string, unknown>)?.data;
+    return Array.isArray(usuariosData) ? usuariosData : [];
   }, [usuarios]);
 
   const agentes = useMemo(() => {
-    return usuariosArray.filter((u: any) => u.perfil === 'agente');
+    return usuariosArray.filter((u: User) => u.perfil === 'agente');
   }, [usuariosArray]);
 
   /**
@@ -103,14 +112,12 @@ export default function ChamadosPage() {
   }, []);
 
   const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
-    console.log('handleSubmitChamado chamado:', { data, chamadoId, isEditing: !!chamadoId });
-    
     if (chamadoId) {
       // Editar chamado existente
-      console.log('Editando chamado:', chamadoId);
       await updateChamado(chamadoId, {
         tipo: data.tipo as TipoManutencao,
         prioridade: data.prioridade as Prioridade,
+        titulo: data.titulo,
         descricao: data.descricao,
         setorId: data.setorId,
         equipamentoId: data.equipamentoId,
@@ -122,10 +129,10 @@ export default function ChamadosPage() {
       });
     } else {
       // Criar novo chamado
-      console.log('Criando novo chamado');
       await createChamado({
         tipo: data.tipo as TipoManutencao,
         prioridade: data.prioridade as Prioridade,
+        titulo: data.titulo,
         descricao: data.descricao,
         setorId: data.setorId,
         equipamentoId: data.equipamentoId,
@@ -322,13 +329,26 @@ export default function ChamadosPage() {
       render: (value: unknown) => getPrioridadeBadge(value as string)
     },
     {
+      key: 'titulo',
+      title: 'Título',
+      render: (value: unknown, item: Chamado) => {
+        const titulo = (item.titulo || item.descricao) as string;
+        return (
+          <span title={titulo}>
+            {titulo && titulo.length > 40 ? `${titulo.substring(0, 40)}...` : titulo || 'N/A'}
+          </span>
+        );
+      }
+    },
+    {
       key: 'descricao',
       title: 'Descrição',
-      render: (value: unknown) => {
-        const desc = value as string;
+      render: (value: unknown, item: Chamado) => {
+        // Se tem título, mostra descrição separada; senão mostra o mesmo conteúdo
+        const desc = (item.titulo ? item.descricao : (item.descricao || 'N/A')) as string;
         return (
           <span title={desc}>
-            {desc && desc.length > 50 ? `${desc.substring(0, 50)}...` : desc || 'N/A'}
+            {desc && desc.length > 30 ? `${desc.substring(0, 30)}...` : desc || 'N/A'}
           </span>
         );
       }

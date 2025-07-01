@@ -84,6 +84,8 @@ export interface Chamado {
   status: ChamadoStatus;
   /** Prioridade do chamado */
   prioridade: Prioridade;
+  /** Título resumido do chamado */
+  titulo?: string;
   /** Descrição detalhada do problema/serviço */
   descricao: string;
   /** ID do setor solicitante */
@@ -527,6 +529,8 @@ export interface CreateChamadoData {
   tipo: TipoManutencao;
   /** Prioridade do chamado */
   prioridade: Prioridade;
+  /** Título do chamado */
+  titulo?: string;
   /** Descrição do problema */
   descricao: string;
   /** ID do setor */
@@ -552,6 +556,8 @@ export interface UpdateChamadoData {
   tipo?: TipoManutencao;
   /** Prioridade do chamado */
   prioridade?: Prioridade;
+  /** Título do chamado */
+  titulo?: string;
   /** Descrição do problema */
   descricao?: string;
   /** ID do setor */

@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-import { User, Setor, Equipamento, Chamado } from '@/types';
+import { User, Setor, Equipamento, Chamado, UpdateChamadoData } from '@/types';
 import api from './api';
 
 /**
@@ -157,12 +157,12 @@ export class ResourcesService {
   /**
    * Atualiza um chamado existente
    * @param {string} id - ID do chamado a ser atualizado
-   * @param {Partial<Chamado>} updates - Dados a serem atualizados
+   * @param {UpdateChamadoData} updates - Dados a serem atualizados
    * @returns {Promise<Chamado>} Chamado atualizado
    * @throws {Error} Se a atualização falhar
    */
-  async updateChamado(id: string, updates: Partial<Chamado>): Promise<Chamado> {
-    const response = await api.put('/api/chamados', updates, { params: { id } });
+  async updateChamado(id: string, updates: UpdateChamadoData): Promise<Chamado> {
+    const response = await api.put(`/api/chamados/${id}`, updates);
     return response.data;
   }
 

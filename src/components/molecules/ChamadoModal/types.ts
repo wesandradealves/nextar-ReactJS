@@ -26,6 +26,7 @@ export interface ChamadoModalProps {
 export interface ChamadoFormData {
   tipo: string;
   prioridade: string;
+  titulo?: string;
   descricao: string;
   setorId: string;
   equipamentoId?: string;
