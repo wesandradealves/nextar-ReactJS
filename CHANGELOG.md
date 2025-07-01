@@ -5,6 +5,58 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.9.2] - 2025-06-30
+
+### Adicionado
+- **Data de Execução Obrigatória ao Finalizar Chamados**
+  - Campo "Data de Execução" obrigatório quando o status do chamado é alterado para "Concluído"
+  - Interface de seleção de data com validações robustas:
+    - Data não pode ser no futuro
+    - Data não pode ser anterior à data de abertura do chamado
+    - Campo obrigatório durante finalização
+  - Exibição da data de execução na visualização de detalhes do chamado
+  - Integração completa com o fluxo de finalização existente
+
+### Melhorado
+- **Validação de Finalização de Chamados**
+  - Validação aprimorada para campos obrigatórios ao concluir um chamado
+  - Mensagens de erro específicas e claras para cada tipo de validação
+  - Experiência do usuário melhorada com feedback imediato
+  - Prevenção de dados inconsistentes (datas inválidas, execução sem data)
+
+- **Interface de Finalização**
+  - Campo de data estilizado de forma consistente com o design system
+  - Texto de ajuda contextual para orientar o usuário
+  - Ordenação lógica dos campos: Data de Execução → Observações → Peças
+  - Validação em tempo real com feedback visual
+
+### Corrigido
+- **Fluxo de Dados na Finalização**
+  - Propagação correta da data de execução através das camadas da aplicação
+  - Sincronização adequada entre estado local e dados de formulário
+  - Atualização das interfaces TypeScript para incluir `dataExecucao`
+  - Preservação da data de execução ao visualizar chamados finalizados
+
+### Técnico
+- **Atualização de Tipos TypeScript**
+  - Interface `UpdateChamadoData` expandida com campo `dataExecucao`
+  - Interface `ChamadoFormData` atualizada para suportar data de execução
+  - Validação de tipos consistente em todo o fluxo de dados
+  - Compatibilidade com dados legados (chamados sem data de execução)
+
+- **Validação de Business Rules**
+  - Implementação de regras de negócio para datas de execução
+  - Prevenção de inconsistências temporais nos dados
+  - Integração com sistema de toast para feedback de erro
+  - Manutenção da experiência do usuário durante validação
+
+### Quebras de Compatibilidade
+- **Campo Obrigatório na Finalização**
+  - Data de execução agora é obrigatória ao finalizar chamados (status "concluído")
+  - Chamados não podem mais ser finalizados sem informar quando foram executados
+  - Interfaces de API atualizadas para incluir validação da data de execução
+  - Fluxo de finalização requer campo adicional obrigatório
+
 ## [1.9.1] - 2025-06-30
 
 ### Adicionado

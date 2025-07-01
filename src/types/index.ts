@@ -570,6 +570,8 @@ export interface UpdateChamadoData {
   observacoes?: string;
   /** Status do chamado */
   status?: ChamadoStatus;
+  /** Data de execução do serviço (obrigatória ao finalizar) */
+  dataExecucao?: string;
   /** Observações de finalização */
   observacoesFinalizacao?: string;
   /** Peças utilizadas na manutenção */

@@ -67,6 +67,7 @@ export default function ChamadoModal({
   const [selectedAgente, setSelectedAgente] = useState<string>('');
   const [titulo, setTitulo] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
+  const [dataExecucao, setDataExecucao] = useState<string>('');
   const [observacoesFinalizacao, setObservacoesFinalizacao] = useState<string>('');
   const [pecasUtilizadas, setPecasUtilizadas] = useState<Array<{ nome: string; quantidade: number }>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -135,6 +136,11 @@ export default function ChamadoModal({
     return statusRequiresFinalizationFields(selectedStatus as ChamadoStatus);
   }, [selectedStatus]);
 
+  // Verificar se deve mostrar campo de data de execução
+  const shouldShowDataExecucao = useMemo(() => {
+    return requiresFinalizationFields || (isEditing && chamado?.dataExecucao);
+  }, [requiresFinalizationFields, isEditing, chamado?.dataExecucao]);
+
   const modalTitle = isViewing ? 'Detalhes do Chamado' : 
                     isEditing ? 'Editar Chamado' : 'Novo Chamado';
 
@@ -169,6 +175,10 @@ export default function ChamadoModal({
           setDescricao('');
         }
         
+        // Converter dataExecucao do formato ISO para YYYY-MM-DD (formato do input date)
+        const dataExec = chamado.dataExecucao ? 
+          new Date(chamado.dataExecucao).toISOString().split('T')[0] : '';
+        setDataExecucao(dataExec);
         setObservacoesFinalizacao(chamado.observacoesFinalizacao || '');
         setPecasUtilizadas(chamado.pecasUtilizadas || []);
       } else {
@@ -181,11 +191,12 @@ export default function ChamadoModal({
         setSelectedAgente('');
         setTitulo('');
         setDescricao('');
+        setDataExecucao('');
         setObservacoesFinalizacao('');
         setPecasUtilizadas([]);
       }
     }
-  }, [isOpen, chamado?.id, chamado?.titulo, chamado?.descricao, chamado?.tipo, chamado?.prioridade, chamado?.status, chamado?.setorId, chamado?.equipamentoId, chamado?.agenteId, chamado?.observacoesFinalizacao, chamado?.pecasUtilizadas, mode]);
+  }, [isOpen, chamado?.id, chamado?.titulo, chamado?.descricao, chamado?.tipo, chamado?.prioridade, chamado?.status, chamado?.setorId, chamado?.equipamentoId, chamado?.agenteId, chamado?.dataExecucao, chamado?.observacoesFinalizacao, chamado?.pecasUtilizadas, mode]);
 
   // Key única para forçar re-render do FormContainer quando dados importantes mudam
   const formKey = useMemo(() => {
@@ -295,6 +306,28 @@ export default function ChamadoModal({
           toast.error('Erro de Validação', errorMessage);
           return;
         }
+        
+        if (!dataExecucao || dataExecucao.trim() === '') {
+          toast.error('Erro de Validação', 'Data de execução é obrigatória ao finalizar um chamado');
+          return;
+        }
+        
+        // Validar se a data de execução não é futura
+        const hoje = new Date();
+        const dataExec = new Date(dataExecucao);
+        if (dataExec > hoje) {
+          toast.error('Erro de Validação', 'A data de execução não pode ser no futuro');
+          return;
+        }
+        
+        // Validar se a data de execução não é anterior à data de abertura
+        if (chamado?.dataAbertura) {
+          const dataAbertura = new Date(chamado.dataAbertura);
+          if (dataExec < dataAbertura) {
+            toast.error('Erro de Validação', 'A data de execução não pode ser anterior à data de abertura do chamado');
+            return;
+          }
+        }
       }
       
       const chamadoData: ChamadoFormData = {
@@ -306,6 +339,8 @@ export default function ChamadoModal({
         equipamentoId: selectedEquipamento || undefined,
         agenteId: selectedAgente || undefined,
         observacoes: formData.observacoes || undefined,
+        dataExecucao: (requiresFinalizationFields || isEditing) && dataExecucao ? 
+          new Date(dataExecucao).toISOString() : undefined,
         observacoesFinalizacao: requiresFinalizationFields ? observacoesFinalizacao : undefined,
         pecasUtilizadas: requiresFinalizationFields ? pecasUtilizadas : undefined,
         solicitanteId: currentUser?.id
@@ -344,7 +379,7 @@ export default function ChamadoModal({
     }
   }, [
     selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
-    selectedEquipamento, selectedAgente, observacoesFinalizacao, 
+    selectedEquipamento, selectedAgente, dataExecucao, observacoesFinalizacao, 
     pecasUtilizadas, currentUser, onSubmit, handleClose, isEditing, canEditStatus,
     requiresFinalizationFields, chamado, cache, titulo, descricao, toast
   ]);
@@ -392,6 +427,12 @@ export default function ChamadoModal({
             <StatusLabel>Data Abertura</StatusLabel>
             <StatusValue>{chamado.dataAbertura ? new Date(chamado.dataAbertura).toLocaleDateString('pt-BR') : 'N/A'}</StatusValue>
           </StatusCard>
+          {chamado.dataExecucao && (
+            <StatusCard $status="info">
+              <StatusLabel>Data Execução</StatusLabel>
+              <StatusValue>{new Date(chamado.dataExecucao).toLocaleDateString('pt-BR')}</StatusValue>
+            </StatusCard>
+          )}
         </StatusGrid>
       </StatusSection>
     );
@@ -581,20 +622,54 @@ export default function ChamadoModal({
               </div>
             )}
 
+            {/* Data de Execução (obrigatória ao finalizar ou editável se já existe) */}
+            {shouldShowDataExecucao && (
+              <div style={{ marginBottom: '16px' }}>
+                <FieldLabel>Data de Execução {requiresFinalizationFields ? '*' : ''}</FieldLabel>
+                <input
+                  type="date"
+                  value={dataExecucao}
+                  onChange={(e) => setDataExecucao(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]} // Não permite datas futuras
+                  required={requiresFinalizationFields}
+                  style={{ 
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontFamily: 'inherit'
+                  }}
+                />
+                <div style={{ 
+                  fontSize: '12px', 
+                  color: '#64748b', 
+                  marginTop: '4px' 
+                }}>
+                  {requiresFinalizationFields 
+                    ? 'Campo obrigatório. Informe a data em que o serviço foi executado.'
+                    : 'Data em que o serviço foi executado (opcional).'
+                  }
+                </div>
+              </div>
+            )}
+
             {/* Observações de Finalização (apenas se status = concluído) */}
             {requiresFinalizationFields && (
-              <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Observações da Finalização *</FieldLabel>
-                <Textarea
-                  value={observacoesFinalizacao}
-                  onChange={setObservacoesFinalizacao}
-                  placeholder="Descreva detalhadamente o que foi feito na manutenção"
-                  rows={4}
-                  maxLength={1000}
-                  required
-                  helperText="Campo obrigatório. Detalhe as ações realizadas durante a manutenção."
-                />
-              </div>
+              <>
+                <div style={{ marginBottom: '16px' }}>
+                  <FieldLabel>Observações da Finalização *</FieldLabel>
+                  <Textarea
+                    value={observacoesFinalizacao}
+                    onChange={setObservacoesFinalizacao}
+                    placeholder="Descreva detalhadamente o que foi feito na manutenção"
+                    rows={4}
+                    maxLength={1000}
+                    required
+                    helperText="Campo obrigatório. Detalhe as ações realizadas durante a manutenção."
+                  />
+                </div>
+              </>
             )}
 
             {/* Peças Utilizadas (apenas se status = concluído) */}

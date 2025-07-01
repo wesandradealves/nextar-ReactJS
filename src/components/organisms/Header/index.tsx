@@ -2,14 +2,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Logo } from '@/components/atoms';
-import { SearchBox, UserCard, Navigation } from '@/components/molecules';
+import { UserCard, Navigation } from '@/components/molecules';
 import { navigationItems } from '@/data/navigation';
 import {
   HeaderContainer,
   HeaderContentWrapper,
   LeftSection,
   RightSection,
-  SearchSection,
   UserSection,
   UserMenu,
   UserMenuButton,
@@ -117,16 +116,6 @@ export const Header = ({
           </LeftSection>
           
           <RightSection>
-            <SearchSection>
-              <SearchBox
-                value={searchTerm}
-                placeholder="Buscar chamados, equipamentos..."
-                onChange={setSearchTerm}
-                onSearch={handleSearch}
-                disabled={isLoggingOut}
-              />
-            </SearchSection>
-            
             <UserSection>
               <UserMenu ref={userMenuRef}>
                 <UserMenuButton 
@@ -144,12 +133,6 @@ export const Header = ({
                   <MenuItem onClick={handleProfileClick} disabled={isLoggingOut}>
                     Meu Perfil
                   </MenuItem>
-                  {/* <MenuItem onClick={() => setIsUserMenuOpen(false)} disabled={isLoggingOut}>
-                    Configurações
-                  </MenuItem>
-                  <MenuItem onClick={() => setIsUserMenuOpen(false)} disabled={isLoggingOut}>
-                    Ajuda
-                  </MenuItem> */}
                   <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
                     Sair
                   </MenuItem>

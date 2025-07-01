@@ -32,6 +32,7 @@ export interface ChamadoFormData {
   equipamentoId?: string;
   agenteId?: string;
   observacoes?: string;
+  dataExecucao?: string;
   observacoesFinalizacao?: string;
   pecasUtilizadas?: Array<{ nome: string; quantidade: number }>;
   status?: string;

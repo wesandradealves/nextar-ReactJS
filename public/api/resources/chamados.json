@@ -10,7 +10,8 @@
     "agenteId": "4",
     "equipamentoId": "2",
     "dataAbertura": "2025-06-27T14:00:00.000Z",
-    "dataAtualizacao": "2025-07-01T01:07:58.928Z",
+    "dataExecucao": "2025-06-28T10:30:00.000Z",
+    "dataAtualizacao": "2025-07-01T02:48:59.871Z",
     "observacoes": "Morbi et neque ultrices, tristique nulla et, lobortis ligula. Duis leo ligula, rhoncus venenatis magna ac, accumsan tristique mauris. ",
     "titulo": "Chamado 2",
     "observacoesFinalizacao": "Sed vel eros vitae magna commodo cursus sit amet vitae mi. Etiam ultrices egestas risus eget vestibulum. Mauris eu pulvinar quam. Phasellus dapibus lectus ut posuere feugiat. Vestibulum rhoncus velit ex, ut tempus lorem fermentum vitae. In tempor consectetur orci, nec posuere justo vehicula a. Quisque vitae ex nec nunc sagittis tincidunt id ut nulla. Proin suscipit, mi nec sagittis semper, neque erat volutpat leo, nec molestie dui felis aliquam dui. Duis vel pharetra lectus. Aliquam pretium lobortis mauris sit amet hendrerit. In eu nisl eget ex iaculis congue.\n\n",
@@ -40,23 +41,26 @@
       }
     ],
     "titulo": "Chamado 3",
-    "dataAtualizacao": "2025-07-01T01:08:26.163Z",
+    "dataAtualizacao": "2025-07-01T02:49:47.046Z",
     "observacoes": "Aliquam viverra malesuada arcu, sit amet cursus neque tincidunt a. Pellentesque id lorem ac eros luctus vestibulum. Aliquam eleifend mi nec vehicula ullamcorper. Vivamus lobortis ante vitae blandit posuere. Cras mollis nunc nec ipsum molestie, id consequat diam posuere."
   },
   {
     "id": "4",
     "tipo": "preventiva",
-    "status": "em_progresso",
+    "status": "concluido",
     "prioridade": "baixa",
-    "descricao": "In nisl mauris, condimentum ut diam quis, ullamcorper lobortis quam. Phasellus volutpat turpis eget pellentesque ultricies. Phasellus sit amet varius eros. ",
+    "descricao": "In nisl mauris, condimentum ut diam quis, ullamcorper lobortis quam. Phasellus volutpat turpis eget pellentesque ultricies. Phasellus sit amet varius eros.",
     "setorId": "4",
     "solicitanteId": "1",
     "equipamentoId": "4",
     "dataAbertura": "2025-06-28T09:00:00.000Z",
+    "dataExecucao": "2025-06-29T15:45:00.000Z",
     "agenteId": "4",
-    "dataAtualizacao": "2025-07-01T01:09:25.977Z",
+    "dataAtualizacao": "2025-07-01T02:48:52.186Z",
     "titulo": "Verificação e calibração do perfurador de gelo antes da temporada de campo.",
-    "observacoes": "In nunc elit, tincidunt in vestibulum ut, efficitur sit amet arcu. Sed et nibh et tellus gravida rutrum. Nulla facilisi. Integer arcu elit, ornare ut commodo in, volutpat quis nulla. "
+    "observacoes": "In nunc elit, tincidunt in vestibulum ut, efficitur sit amet arcu. Sed et nibh et tellus gravida rutrum. Nulla facilisi. Integer arcu elit, ornare ut commodo in, volutpat quis nulla. ",
+    "observacoesFinalizacao": "In nunc elit, tincidunt in vestibulum ut, efficitur sit amet arcu. Sed et nibh et tellus gravida rutrum. Nulla facilisi. Integer arcu elit, ornare ut commodo in, volutpat quis nulla. ",
+    "pecasUtilizadas": []
   },
   {
     "id": "5",

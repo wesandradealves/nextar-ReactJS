@@ -21,7 +21,7 @@
     "setor": "TI",
     "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T23:57:49.807Z"
+    "dataAtualizacao": "2025-07-01T02:28:08.232Z"
   },
   {
     "id": "4",
@@ -29,11 +29,11 @@
     "email": "joao.costa@antartica.br",
     "senha": "90f80b22f53a5d4d72f7b126ef4b1f44",
     "perfil": "agente",
-    "usuario": "joao.silva",
+    "usuario": "joao.costa",
     "setor": "TI",
     "ativo": true,
     "dataCriacao": "2025-06-29T00:00:00.000Z",
-    "dataAtualizacao": "2025-06-29T23:57:49.359Z"
+    "dataAtualizacao": "2025-07-01T02:28:20.086Z"
   },
   {
     "nome": "Admin Nextar",
@@ -45,6 +45,6 @@
     "id": "5",
     "ativo": true,
     "dataCriacao": "2025-06-29T23:57:42.270Z",
-    "dataAtualizacao": "2025-06-30T12:03:11.760Z"
+    "dataAtualizacao": "2025-07-01T02:25:48.764Z"
   }
 ]
