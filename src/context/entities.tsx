@@ -201,10 +201,17 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
    * Cria um novo setor
    * @param setor - Dados do setor (sem id)
    */
-  const createSetor = (setor: Omit<Setor, 'id'>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const createSetor = (setorData: any) => {
     const newSetor: Setor = {
-      ...setor,
       id: Date.now().toString(),
+      nome: setorData.nome,
+      categoria: setorData.categoria,
+      ativo: setorData.ativo,
+      descricao: setorData.descricao,
+      dataCriacao: setorData.dataCriacao || new Date().toISOString(),
+      dataAtualizacao: setorData.dataAtualizacao,
+      equipamentosCount: setorData.equipamentosCount || 0
     };
     setSetores(prev => [...prev, newSetor]);
   };

@@ -8,6 +8,7 @@ export { DataTable } from './DataTable';
 export { default as Modal } from './Modal';
 export { default as UserModal } from './UserModal';
 export { default as ChamadoModal } from './ChamadoModal';
+export { default as SetorModal } from './SetorModal';
 
 // Exportações dos tipos
 export type { FormFieldProps } from './FormField/types';

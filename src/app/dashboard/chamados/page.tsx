@@ -4,11 +4,12 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/context/auth';
 import { useEntities } from '@/context/entities';
 import { useChamados } from '@/hooks/useChamados';
+import { useSetores } from '@/hooks/useSetores';
 import { DataTable, ChamadoModal } from '@/components/molecules';
 import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
-import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus } from '@/types';
+import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, TableAction } from '@/types';
 import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
@@ -44,7 +45,8 @@ import { useMetadata } from '@/hooks/useMetadata';
  */
 export default function ChamadosPage() {
   const { user } = useAuth();
-  const { usuarios, setores, equipamentos } = useEntities();
+  const { usuarios, equipamentos } = useEntities();
+  const { setores } = useSetores(); // Usar hook específico para setores
 
   useMetadata({
     title: `Nextar - Chamados`,
@@ -184,13 +186,13 @@ export default function ChamadosPage() {
     const sorted = [...chamados].sort((a, b) => {
       const { sortBy, sortOrder } = sorting;
       
-      let valueA: any = a[sortBy as keyof Chamado];
-      let valueB: any = b[sortBy as keyof Chamado];
+      let valueA: unknown = a[sortBy as keyof Chamado];
+      let valueB: unknown = b[sortBy as keyof Chamado];
       
       // Tratamento especial para datas
       if (sortBy === 'dataAbertura') {
-        valueA = valueA ? new Date(valueA).getTime() : 0;
-        valueB = valueB ? new Date(valueB).getTime() : 0;
+        valueA = valueA ? new Date(valueA as string).getTime() : 0;
+        valueB = valueB ? new Date(valueB as string).getTime() : 0;
       }
       
       // Tratamento para strings
@@ -199,8 +201,8 @@ export default function ChamadosPage() {
       
       // Comparação
       let comparison = 0;
-      if (valueA > valueB) comparison = 1;
-      if (valueA < valueB) comparison = -1;
+      if ((valueA as string | number) > (valueB as string | number)) comparison = 1;
+      if ((valueA as string | number) < (valueB as string | number)) comparison = -1;
       
       return sortOrder === 'desc' ? comparison * -1 : comparison;
     });
@@ -470,44 +472,52 @@ export default function ChamadosPage() {
         const agentId = value as string;
         return agentId ? getUserName(agentId) : 'Não atribuído';
       }
-    },
-    {
-      key: 'actions',
-      title: 'Ações',
-      render: (value: unknown, item: Chamado) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <Button 
-            variant="outline" 
-            size="small"
-            onClick={() => handleViewChamado(item)}
-          >
-            Ver
-          </Button>
-          {(user?.perfil === PerfilUsuario.GESTAO || 
-            (user?.perfil === PerfilUsuario.AGENTE && item.agenteId === user.id) ||
-            (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
-            <Button 
-              variant="primary" 
-              size="small"
-              onClick={() => handleEditChamado(item)}
-            >
-              Editar
-            </Button>
-          )}
-          {(user?.perfil === PerfilUsuario.GESTAO || 
-            (user?.perfil === PerfilUsuario.PESQUISADOR && item.solicitanteId === user.id)) && (
-            <Button 
-              variant="danger" 
-              size="small"
-              onClick={() => handleDeleteChamado(item)}
-            >
-              Excluir
-            </Button>
-          )}
-        </div>
-      )
     }
   ];
+
+  /**
+   * Ações disponíveis para cada chamado
+   */
+  const actions: TableAction<Chamado>[] = useMemo(() => {
+    const chamadoActions: TableAction<Chamado>[] = [
+      {
+        key: 'view',
+        title: 'Visualizar',
+        icon: '👁️',
+        variant: 'secondary',
+        onClick: handleViewChamado
+      }
+    ];
+
+    // Adicionar ação de editar se o usuário tem permissão
+    chamadoActions.push({
+      key: 'edit',
+      title: 'Editar',
+      icon: '✏️',
+      variant: 'primary',
+      onClick: handleEditChamado,
+      disabled: (chamado: Chamado) => !(
+        user?.perfil === PerfilUsuario.GESTAO || 
+        (user?.perfil === PerfilUsuario.AGENTE && chamado.agenteId === user.id) ||
+        (user?.perfil === PerfilUsuario.PESQUISADOR && chamado.solicitanteId === user.id)
+      )
+    });
+
+    // Adicionar ação de excluir se o usuário tem permissão
+    chamadoActions.push({
+      key: 'delete',
+      title: 'Excluir',
+      icon: '🗑️',
+      variant: 'danger',
+      onClick: handleDeleteChamado,
+      disabled: (chamado: Chamado) => !(
+        user?.perfil === PerfilUsuario.GESTAO || 
+        (user?.perfil === PerfilUsuario.PESQUISADOR && chamado.solicitanteId === user.id)
+      )
+    });
+
+    return chamadoActions;
+  }, [user, handleViewChamado, handleEditChamado, handleDeleteChamado]);
 
   /**
    * Verifica se o usuário atual pode criar chamados
@@ -600,6 +610,7 @@ export default function ChamadosPage() {
       <DataTable
         data={sortedChamados}
         columns={columns}
+        actions={actions}
         loading={loading}
         sorting={sorting}
         onSortChange={handleSortChange}

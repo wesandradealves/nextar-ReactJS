@@ -48,6 +48,18 @@ export interface Setor {
   nome: string;
   /** Categoria científica (Biologia, Meteorologia, etc.) */
   categoria: string;
+  /** Descrição detalhada do setor (opcional) */
+  descricao?: string;
+  /** Status ativo/inativo do setor */
+  ativo: boolean;
+  /** Data de criação do setor */
+  dataCriacao: string;
+  /** Data da última atualização */
+  dataAtualizacao?: string;
+  /** Número de equipamentos no setor (calculado) */
+  equipamentosCount?: number;
+  /** Index signature para compatibilidade com DataTable */
+  [key: string]: unknown;
 }
 
 /**
@@ -576,4 +588,51 @@ export interface UpdateChamadoData {
   observacoesFinalizacao?: string;
   /** Peças utilizadas na manutenção */
   pecasUtilizadas?: Array<{ nome: string; quantidade: number }>;
+}
+
+// ========================================
+// TIPOS PARA SETORES
+// ========================================
+
+/**
+ * Dados para criação de novo setor
+ * @interface CreateSetorData
+ */
+export interface CreateSetorData {
+  /** Nome do setor */
+  nome: string;
+  /** Categoria científica do setor */
+  categoria: string;
+  /** Descrição detalhada do setor (opcional) */
+  descricao?: string;
+  /** Status ativo/inativo do setor */
+  ativo: boolean;
+}
+
+/**
+ * Dados para atualização de setor existente
+ * @interface UpdateSetorData
+ */
+export interface UpdateSetorData {
+  /** Nome do setor */
+  nome?: string;
+  /** Categoria científica do setor */
+  categoria?: string;
+  /** Descrição detalhada do setor */
+  descricao?: string;
+  /** Status ativo/inativo do setor */
+  ativo?: boolean;
+}
+
+/**
+ * Filtros para consulta de setores
+ * @interface SetorFilters
+ */
+export interface SetorFilters {
+  /** Filtrar por categoria científica */
+  categoria?: string;
+  /** Filtrar por status ativo/inativo */
+  ativo?: boolean;
+  /** Busca textual por nome ou descrição */
+  searchTerm?: string;
 }

@@ -44,7 +44,6 @@ export const Header = ({
 }: HeaderProps) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const userMenuRef = useRef<HTMLDivElement>(null);
   
   // Fecha o menu de usuário ao clicar fora
@@ -70,11 +69,6 @@ export const Header = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  const handleSearch = (value: string) => {
-    console.log('🔍 Buscando:', value);
-    // Aqui seria implementada a lógica de busca global
-  };
   
   const handleProfileClick = () => {
     setIsUserMenuOpen(false);

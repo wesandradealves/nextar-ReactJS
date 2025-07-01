@@ -2,26 +2,81 @@
   {
     "id": "1",
     "nome": "Laboratório de Biologia Marinha",
-    "categoria": "Biologia"
+    "categoria": "Biologia",
+    "descricao": "Laboratório especializado em pesquisas de organismos marinhos antárticos",
+    "ativo": true,
+    "dataCriacao": "2024-01-15T10:00:00.000Z",
+    "dataAtualizacao": "2024-01-15T10:00:00.000Z",
+    "equipamentosCount": 12
   },
   {
     "id": "2",
     "nome": "Estação Meteorológica",
-    "categoria": "Meteorologia"
+    "categoria": "Meteorologia",
+    "descricao": "Coleta e análise de dados meteorológicos da região antártica",
+    "ativo": true,
+    "dataCriacao": "2024-01-10T08:30:00.000Z",
+    "dataAtualizacao": "2024-02-20T14:15:00.000Z",
+    "equipamentosCount": 8
   },
   {
     "id": "3",
     "nome": "Centro de Comunicações",
-    "categoria": "Comunicações"
+    "categoria": "Comunicações",
+    "descricao": "Responsável pelas comunicações internas ",
+    "ativo": true,
+    "dataCriacao": "2024-01-05T09:00:00.000Z",
+    "dataAtualizacao": "2025-07-01T04:16:59.931Z",
+    "equipamentosCount": 15
   },
   {
     "id": "4",
     "nome": "Laboratório de Glaciologia",
-    "categoria": "Glaciologia"
+    "categoria": "Glaciologia",
+    "descricao": "Estudo das formações de gelo e mudanças climáticas",
+    "ativo": true,
+    "dataCriacao": "2024-01-20T11:30:00.000Z",
+    "dataAtualizacao": "2024-04-05T13:20:00.000Z",
+    "equipamentosCount": 6
   },
   {
     "id": "5",
     "nome": "Setor Médico",
-    "categoria": "Medicina"
+    "categoria": "Medicina",
+    "descricao": "Atendimento médico e emergencial para a equipe da base",
+    "ativo": true,
+    "dataCriacao": "2024-01-08T07:00:00.000Z",
+    "dataAtualizacao": "2024-01-08T07:00:00.000Z",
+    "equipamentosCount": 20
+  },
+  {
+    "id": "6",
+    "nome": "Laboratório de Geologia",
+    "categoria": "Geologia",
+    "descricao": "Análise de rochas e formações geológicas antárticas",
+    "ativo": true,
+    "dataCriacao": "2024-02-01T10:15:00.000Z",
+    "dataAtualizacao": "2024-03-15T12:30:00.000Z",
+    "equipamentosCount": 9
+  },
+  {
+    "id": "7",
+    "nome": "Centro de Oceanografia",
+    "categoria": "Oceanografia",
+    "descricao": "Pesquisas sobre correntes oceânicas e vida marinha",
+    "ativo": true,
+    "dataCriacao": "2024-01-25T14:00:00.000Z",
+    "dataAtualizacao": "2025-07-01T03:57:17.865Z",
+    "equipamentosCount": 0
+  },
+  {
+    "id": "8",
+    "nome": "Laboratório de Química",
+    "categoria": "Química",
+    "descricao": "Análises químicas de amostras coletadas na região",
+    "ativo": true,
+    "dataCriacao": "2024-02-10T13:45:00.000Z",
+    "dataAtualizacao": "2024-04-20T11:10:00.000Z",
+    "equipamentosCount": 11
   }
 ]
