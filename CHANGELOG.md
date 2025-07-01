@@ -38,6 +38,13 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Layout da tabela otimizado com nova coluna posicionada estrategicamente
   - Controles de ordenação intuitivos e responsivos
 
+### Corrigido
+- **Campo de Busca na Tabela de Chamados**
+  - Correção do problema onde não era possível digitar no campo de busca
+  - Adicionada prop `onChange` faltante no SearchBox para permitir entrada de texto
+  - Campo de busca agora funciona corretamente para filtrar por descrição, título e tipo
+  - Evento de teclado corrigido para permitir busca com Enter
+
 ## [1.9.0] - 2025-06-30
 
 ### Adicionado
