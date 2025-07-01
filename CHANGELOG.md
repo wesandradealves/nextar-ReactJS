@@ -24,11 +24,19 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Experiência do usuário melhorada com feedback imediato
   - Prevenção de dados inconsistentes (datas inválidas, execução sem data)
 
+- **Controle de Edição por Perfil de Usuário**
+  - Gestores agora podem editar chamados concluídos para correções administrativas
+  - Agentes são bloqueados de editar chamados finalizados com toast informativo
+  - Mensagem clara orientando agentes a contactar gestão para ajustes
+  - Flexibilidade administrativa mantendo controle de qualidade
+  - **Toast informativo para chamados finalizados**: Aviso claro quando usuário tenta editar chamado já concluído
+
 - **Interface de Finalização**
   - Campo de data estilizado de forma consistente com o design system
   - Texto de ajuda contextual para orientar o usuário
   - Ordenação lógica dos campos: Data de Execução → Observações → Peças
   - Validação em tempo real com feedback visual
+  - **Remoção de avisos visuais estáticos** em favor de feedback dinâmico via toast
 
 ### Corrigido
 - **Fluxo de Dados na Finalização**
@@ -36,6 +44,8 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Sincronização adequada entre estado local e dados de formulário
   - Atualização das interfaces TypeScript para incluir `dataExecucao`
   - Preservação da data de execução ao visualizar chamados finalizados
+  - **Correção crítica**: Campo `dataExecucao` agora é corretamente incluído no payload de atualização
+  - **Bug fix**: Resolvido problema onde alterações na data de execução não eram salvas na API
 
 ### Técnico
 - **Atualização de Tipos TypeScript**

@@ -132,6 +132,7 @@ export default function ChamadosPage() {
         equipamentoId: data.equipamentoId,
         agenteId: data.agenteId,
         observacoes: data.observacoes,
+        dataExecucao: data.dataExecucao,
         observacoesFinalizacao: data.observacoesFinalizacao,
         pecasUtilizadas: data.pecasUtilizadas,
         status: data.status as ChamadoStatus

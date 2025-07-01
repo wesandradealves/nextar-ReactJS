@@ -283,6 +283,15 @@ export default function ChamadoModal({
     try {
       setIsSubmitting(true);
       
+      // Verificar se é um chamado concluído sendo editado (apenas agentes são bloqueados)
+      if (isEditing && chamado?.status === ChamadoStatus.CONCLUIDO && !isGestor(currentUser)) {
+        toast.warning(
+          'Chamado Finalizado',
+          'Este chamado já foi concluído e não pode mais ser alterado. Para fazer ajustes, entre em contato com a gestão.'
+        );
+        return;
+      }
+      
       // Validações básicas
       if (!selectedTipo) {
         toast.error('Erro de Validação', 'Selecione o tipo de manutenção');
@@ -339,8 +348,8 @@ export default function ChamadoModal({
         equipamentoId: selectedEquipamento || undefined,
         agenteId: selectedAgente || undefined,
         observacoes: formData.observacoes || undefined,
-        dataExecucao: (requiresFinalizationFields || isEditing) && dataExecucao ? 
-          new Date(dataExecucao).toISOString() : undefined,
+        // Incluir dataExecucao sempre que tiver valor (seja criando ou editando)
+        dataExecucao: dataExecucao ? new Date(dataExecucao).toISOString() : undefined,
         observacoesFinalizacao: requiresFinalizationFields ? observacoesFinalizacao : undefined,
         pecasUtilizadas: requiresFinalizationFields ? pecasUtilizadas : undefined,
         solicitanteId: currentUser?.id
@@ -381,7 +390,7 @@ export default function ChamadoModal({
     selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
     selectedEquipamento, selectedAgente, dataExecucao, observacoesFinalizacao, 
     pecasUtilizadas, currentUser, onSubmit, handleClose, isEditing, canEditStatus,
-    requiresFinalizationFields, chamado, cache, titulo, descricao, toast
+    requiresFinalizationFields, shouldShowDataExecucao, chamado, cache, titulo, descricao, toast
   ]);
 
   /**
@@ -489,21 +498,6 @@ export default function ChamadoModal({
       closeOnEsc={!isSubmitting}
     >
       {renderChamadoInfo}
-      
-      {/* Aviso para chamados finalizados */}
-      {chamado?.status === ChamadoStatus.CONCLUIDO && !isViewing && (
-        <div style={{
-          backgroundColor: '#f0f9ff',
-          border: '1px solid #0ea5e9',
-          borderRadius: '8px',
-          padding: '12px',
-          marginBottom: '16px',
-          color: '#0369a1',
-          fontSize: '14px'
-        }}>
-          <strong>ℹ️ Chamado Finalizado:</strong> Este chamado foi concluído e não pode mais ser editado.
-        </div>
-      )}
       
       {!isViewing && (
         <FormContainer

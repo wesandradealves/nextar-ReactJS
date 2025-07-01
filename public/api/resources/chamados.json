@@ -28,7 +28,7 @@
     "agenteId": "4",
     "equipamentoId": "7",
     "dataAbertura": "2025-06-25T10:15:00.000Z",
-    "dataExecucao": "2025-06-26T16:30:00.000Z",
+    "dataExecucao": "2025-06-30T00:00:00.000Z",
     "observacoesFinalizacao": "Substituído cabo coaxial danificado e realizado teste de transmissão.",
     "pecasUtilizadas": [
       {
@@ -41,7 +41,7 @@
       }
     ],
     "titulo": "Chamado 3",
-    "dataAtualizacao": "2025-07-01T02:49:47.046Z",
+    "dataAtualizacao": "2025-07-01T03:13:45.168Z",
     "observacoes": "Aliquam viverra malesuada arcu, sit amet cursus neque tincidunt a. Pellentesque id lorem ac eros luctus vestibulum. Aliquam eleifend mi nec vehicula ullamcorper. Vivamus lobortis ante vitae blandit posuere. Cras mollis nunc nec ipsum molestie, id consequat diam posuere."
   },
   {
@@ -56,7 +56,7 @@
     "dataAbertura": "2025-06-28T09:00:00.000Z",
     "dataExecucao": "2025-06-29T15:45:00.000Z",
     "agenteId": "4",
-    "dataAtualizacao": "2025-07-01T02:48:52.186Z",
+    "dataAtualizacao": "2025-07-01T03:02:26.130Z",
     "titulo": "Verificação e calibração do perfurador de gelo antes da temporada de campo.",
     "observacoes": "In nunc elit, tincidunt in vestibulum ut, efficitur sit amet arcu. Sed et nibh et tellus gravida rutrum. Nulla facilisi. Integer arcu elit, ornare ut commodo in, volutpat quis nulla. ",
     "observacoesFinalizacao": "In nunc elit, tincidunt in vestibulum ut, efficitur sit amet arcu. Sed et nibh et tellus gravida rutrum. Nulla facilisi. Integer arcu elit, ornare ut commodo in, volutpat quis nulla. ",
