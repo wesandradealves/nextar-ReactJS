@@ -28,12 +28,15 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 O **NextAR** é um sistema de manutenção completo projetado para gerenciar equipamentos, chamados de manutenção e recursos humanos em uma estação científica da Antártica. O sistema oferece:
 
 - **CRUD completo** para usuários, setores, equipamentos e chamados
+- **Gestão avançada de setores científicos** ✨ _Novo na v2.0_ - com 10 categorias especializadas
 - **Sistema de autenticação** baseado em perfis (Pesquisador, Agente, Gestão)
 - **Gestão avançada de usuários** com alteração de senhas por administradores
 - **Dashboard analítico** com estatísticas e métricas
+- **APIs RESTful completas** com paginação, filtros e busca
+- **Cache multicamadas** para otimização de performance
 - **Dados mockados** em JSON para desenvolvimento
-- **APIs internas** do Next.js
 - **Tipagem forte** com TypeScript e ENUMs
+- **Interface moderna** com componentes reutilizáveis e Atomic Design
 
 ---
 
@@ -1036,9 +1039,86 @@ export const Interactive: Story = {
 - **Segurança** - Logs de alteração identificam o administrador responsável
 - **UX Otimizada** - Textos explicativos específicos para operações administrativas
 
-### **🏢 Gestão de Setores**
-- Cadastro por categoria científica
-- 10 categorias pré-definidas (Biologia, Meteorologia, etc.)
+### **🏢 Gestão de Setores** ✨ _Novo na v2.0_
+- **Página `/dashboard/setores`** - Interface completa para gestão de setores científicos
+- **CRUD Completo** - Criar, listar, editar e excluir setores com feedback visual
+- **Modal Unificado (SetorModal)** - Interface única para criação e edição de setores
+- **10 Categorias Científicas** - Biologia, Meteorologia, Geologia, Oceanografia, Glaciologia, Física Atmosférica, Química Ambiental, Astronomia, Logística e Tecnologia
+- **Sistema de Filtros** - Por categoria, status (ativo/inativo) e busca textual
+- **Paginação Avançada** - Controle de 10, 25, 50 ou 100 itens por página
+- **Estatísticas em Tempo Real** - Contadores animados por categoria
+- **Seleção Múltipla** - Ações em lote para ativar, desativar ou excluir múltiplos setores
+- **Validação Robusta** - Nome único obrigatório e verificação de duplicatas
+- **Hook Dedicado (useSetores)** - Cache inteligente, filtros e integração com APIs
+- **Interface Responsiva** - Funciona perfeitamente em mobile e desktop
+- **Controle de Status** - Toggle visual para ativar/desativar setores
+- **Seleção Visual de Categoria** - Interface colorida com badges específicas por categoria
+- **Permissões Granulares** - Acesso baseado no perfil do usuário (Gestão tem controle total)
+
+#### **🔄 APIs RESTful de Setores**
+- **GET `/api/setores`** - Listagem com paginação, busca, filtros e ordenação
+- **POST `/api/setores`** - Criação com validação de nome único
+- **GET `/api/setores/[id]`** - Busca individual por ID
+- **PUT `/api/setores/[id]`** - Edição com validação de nome único (exceto próprio)
+- **DELETE `/api/setores/[id]`** - Exclusão com verificação de dependências
+
+#### **🎯 Funcionalidades Avançadas**
+- **Cache Inteligente** - TTL de 1 hora com invalidação automática em mudanças
+- **Busca em Tempo Real** - Filtro instantâneo por nome, categoria ou status
+- **Ordenação Dinâmica** - Por nome, categoria, status ou data de criação
+- **Estatísticas por Categoria** - Contadores visuais com animações suaves
+- **Integração Completa** - Usado em modais de chamados e equipamentos
+- **Feedback Visual** - Toasts informativos para todas as operações
+- **Validação de Frontend e Backend** - Dupla camada de validação para segurança
+- **Gestão de Estado Otimizada** - Sem re-renders desnecessários
+
+#### **🎨 Interface e UX**
+- **Design Moderno** - Cards responsivos com badges coloridas por categoria
+- **Cores Específicas por Categoria** - Cada categoria científica tem sua identidade visual
+- **Animações Suaves** - Transições elegantes e feedback visual imediato
+- **Formulário Intuitivo** - Seleção visual de categoria e toggle de status
+- **DataTable Avançado** - Mesma interface dos usuários e chamados
+- **Ações Padronizadas** - Ícones consistentes: 👁️ (visualizar), ✏️ (editar), 🗑️ (excluir)
+
+#### **🔒 Controle de Permissões**
+- **Perfil GESTÃO** - Acesso completo (criar, editar, excluir, ativar/desativar)
+- **Perfil AGENTE** - Apenas visualização e uso em formulários
+- **Perfil PESQUISADOR** - Apenas visualização
+- **Validação de API** - Verificação de permissões em todas as operações
+
+#### **📊 Dados e Estrutura**
+- **Campos Completos** - Nome, categoria, descrição, status ativo, data de criação
+- **Categorias ENUMs** - Lista centralizada em `src/utils/enums.ts`
+- **Tipos TypeScript** - `Setor`, `CreateSetorData`, `UpdateSetorData`, `SetorFilters`
+- **Dados Mock Expandidos** - Arquivo `public/api/resources/setores.json` completo
+- **Integração com Outros Módulos** - Usado em chamados e equipamentos
+
+**Exemplo de uso:**
+```tsx
+// Hook para gestão de setores
+const { 
+  data: setores, 
+  loading, 
+  error, 
+  pagination, 
+  filters, 
+  search,
+  stats,
+  selectedItems,
+  refetch 
+} = useSetores();
+
+// Filtrar por categoria
+const filtrarPorCategoria = (categoria: string) => {
+  filters.categoria = categoria;
+  refetch();
+};
+
+// Ações em lote
+const ativarSetoresSelecionados = () => {
+  batchUpdate(selectedItems, { ativo: true });
+};
+```
 
 ### **🔧 Gestão de Equipamentos**
 - Vinculação a setores
@@ -1507,11 +1587,32 @@ Body: { nome?: string, email?: string, telefone?: string, observacoes? }
 Response: { user: User }
 ```
 
-### **Setores**
+### **Setores** ✨ _Novo na v2.0_
 ```
 GET    /api/setores
+Query: page?, limit?, search?, categoria?, ativo?, sortBy?, sortOrder?
+Response: { 
+  data: Setor[], 
+  pagination: { page, limit, total, totalPages },
+  sorting: { sortBy, sortOrder },
+  stats: { total, ativo, inativo, porCategoria: object }
+}
+
 POST   /api/setores
-Body: { nome: string, categoria: string }
+Body: { nome: string, categoria: string, descricao?: string, ativo?: boolean }
+Response: { setor: Setor }
+
+GET    /api/setores/[id]
+Response: { setor: Setor }
+
+PUT    /api/setores/[id]
+Body: { nome?: string, categoria?: string, descricao?: string, ativo?: boolean }
+Response: { setor: Setor }
+Note: Validação de nome único (exceto o próprio setor sendo editado)
+
+DELETE /api/setores/[id]
+Response: { message: string }
+Note: Verifica dependências antes de excluir
 ```
 
 ### **Equipamentos**
