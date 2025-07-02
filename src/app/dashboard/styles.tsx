@@ -168,3 +168,11 @@ export const ActionNote = styled.p`
   margin: 0;
   font-style: italic;
 `;
+
+// Novos componentes styled para substituir tags HTML cruas
+export const PageTitle = styled.h2``;
+export const PageDescription = styled.p``;
+export const SectionContainer = styled.div``;
+export const GridContainer = styled.div``;
+export const ChartContainer = styled.div``;
+export const ChartTitle = styled.h3``;

@@ -1,5 +1,4 @@
 "use client";
-
 import { ButtonElement, ButtonContent, LoadingSpinner } from './styles';
 import type { ButtonProps } from './types';
 
@@ -15,7 +14,7 @@ import type { ButtonProps } from './types';
  * 
  * // Botão com loading
  * <Button loading={true}>Carregando...</Button>
- * 
+ *
  * // Botão com ícone
  * <Button icon={<Icon />} iconPosition="left">Com Ícone</Button>
  * ```
@@ -39,7 +38,6 @@ export const Button = ({
       onClick(event);
     }
   };
-
   return (
     <ButtonElement
       type={type}

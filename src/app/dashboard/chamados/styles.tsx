@@ -28,3 +28,16 @@ export const FiltersContainer = styled.div`
     padding: 16px;
   }
 `;
+
+// Componentes para substituir tags HTML cruas
+export const TableContainer = styled.div``;
+export const ActionButton = styled.button``;
+export const FilterLabel = styled.label``;
+export const PageDescription = styled.p``;
+export const EmptyState = styled.div``;
+export const EmptyTitle = styled.h3``;
+export const EmptyText = styled.p``;
+export const FilterGrid = styled.div``;
+export const TableHeader = styled.div``;
+export const HeaderTitle = styled.h2``;
+export const HeaderActions = styled.div``;

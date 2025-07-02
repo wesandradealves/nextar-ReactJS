@@ -13,7 +13,6 @@ import {
   WelcomeSection,
   WelcomeTitle,
   WelcomeText,
-  StatsGrid,
   StatCard,
   StatTitle,
   StatValue,
@@ -23,6 +22,14 @@ import {
   // ActionGrid,
   // ActionButton,
   // ActionNote
+  
+  // Novos componentes styled
+  PageTitle,
+  PageDescription,
+  SectionContainer,
+  GridContainer,
+  ChartContainer,
+  ChartTitle
 } from './styles';
 
 /**
@@ -58,20 +65,22 @@ export default function Dashboard() {
   const isGestao = user?.perfil === PerfilUsuario.GESTAO;
 
   return (
-    <DashboardContainer>
-      <Content>
-        <WelcomeSection>
-          <WelcomeTitle className='text-2xl leading-none xl:text-4xl'>Bem-vindo ao Sistema de Manutenção da Antártica</WelcomeTitle>
-          <WelcomeText>
+    <DashboardContainer className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Content className="container mx-auto px-4 py-8 max-w-7xl">
+        <SectionContainer className="text-center mb-10">
+          <PageTitle className="text-blue-800 dark:text-blue-300 text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+            Bem-vindo ao Sistema de Manutenção da Antártica
+          </PageTitle>
+          <PageDescription className="text-gray-600 dark:text-gray-300 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
             Sistema integrado para gestão de equipamentos, chamados e recursos humanos
             em ambiente científico extremo.
-          </WelcomeText>
-        </WelcomeSection>
+          </PageDescription>
+        </SectionContainer>
 
-        <StatsGrid>
-          <StatCard>
-            <StatTitle>🔧 Chamados</StatTitle>
-            <StatValue>
+        <GridContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
+            <StatTitle className="text-blue-700 dark:text-blue-300">🔧 Chamados</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white">
               <CountUp
                 end={stats.chamadosAbertos}
                 duration={1.2}
@@ -83,9 +92,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard>
-            <StatTitle>⚙️ Equipamentos</StatTitle>
-            <StatValue>
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
+            <StatTitle className="text-green-700 dark:text-green-300">⚙️ Equipamentos</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white">
               <CountUp
                 end={stats.totalEquipamentos}
                 duration={1.5}
@@ -97,9 +106,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard>
-            <StatTitle>👥 Usuários</StatTitle>
-            <StatValue>
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
+            <StatTitle className="text-purple-700 dark:text-purple-300">👥 Usuários</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white">
               <CountUp
                 end={stats.usuariosAtivos}
                 duration={1.0}
@@ -111,9 +120,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard>
-            <StatTitle>✅ Resolvidos</StatTitle>
-            <StatValue>
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
+            <StatTitle className="text-indigo-700 dark:text-indigo-300">✅ Resolvidos</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white">
               <CountUp
                 end={stats.chamadosResolvidos}
                 duration={1.8}
@@ -124,14 +133,17 @@ export default function Dashboard() {
               <Badge variant="primary" size="small">Este mês</Badge>
             </StatLabel>
           </StatCard>
-        </StatsGrid>
+        </GridContainer>
 
         {/* Gráficos do Dashboard */}
         {(isGestao || distribucaoAgente.length > 0) && (
-          <DashboardCharts 
-            distribucaoTipo={distribucaoTipo}
-            distribucaoAgente={distribucaoAgente}
-          />
+          <ChartContainer className="mt-8 p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <ChartTitle className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">📊 Análise de Dados</ChartTitle>
+            <DashboardCharts 
+              distribucaoTipo={distribucaoTipo}
+              distribucaoAgente={distribucaoAgente}
+            />
+          </ChartContainer>
         )}
 
         {/* <QuickActions>
