@@ -14,6 +14,7 @@ import { TipoManutencao, Prioridade, ChamadoStatus, PerfilUsuario } from '../../
 import { useAuth } from '../../../context/auth';
 import { useSetores } from '../../../hooks/useSetores';
 import { useUsers } from '../../../hooks/useUsers';
+import { useEquipamentos } from '../../../hooks/useEquipamentos';
 import { useToast } from '../../../hooks/useToast';
 
 /**
@@ -59,6 +60,7 @@ export default function ChamadoModal({
   const { user: currentUser } = useAuth();
   const { allSetores } = useSetores();
   const { allUsers } = useUsers();
+  const { allEquipamentos } = useEquipamentos();
   const { error: showError } = useToast();
 
   const [currentMode, setCurrentMode] = useState<'view' | 'edit' | 'create'>(mode);
@@ -424,13 +426,14 @@ export default function ChamadoModal({
             onChange={(e) => handleFieldChange('equipamentoId', e.target.value)}
             disabled={isViewing}
             options={[
-              // Equipamentos
-              { value: 'EQ001', label: 'Microscópio Biológico' },
-              { value: 'EQ002', label: 'Estação Meteorológica' },
-              { value: 'EQ003', label: 'Espectrômetro' },
-              { value: 'EQ004', label: 'Gerador de Energia' },
-              { value: 'EQ005', label: 'Sistema de Aquecimento' },
-              // Locais/Instalações
+              // Equipamentos reais do sistema (ativos)
+              ...allEquipamentos
+                .filter(equipamento => equipamento.ativo)
+                .map(equipamento => ({
+                  value: equipamento.id,
+                  label: `${equipamento.nome} (${equipamento.codigo})`
+                })),
+              // Locais/Instalações fixas
               { value: 'LOC001', label: 'Laboratório Principal' },
               { value: 'LOC002', label: 'Alojamentos' },
               { value: 'LOC003', label: 'Área de Comunicações' },
