@@ -5,6 +5,23 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.5] - 2025-07-02
+
+### Corrigido
+- **Correção Crítica de Sincronização API-UI no CRUD de Equipamentos**
+  - Corrigida invalidação de cache com adição de tags `['equipamentos']` em todas operações
+  - Resolvidos loops infinitos de re-renderização causados por dependências excessivas no useEffect
+  - Eliminado erro "fetch failed to fetch" ao usar funcionalidade de ordenação da tabela
+  - Melhorado tratamento de erros no modal e página de equipamentos
+  - Garantida atualização instantânea da interface após operações CRUD
+  
+### Melhorado
+- **Performance e Experiência do Usuário**
+  - Ativação/desativação via checkbox agora atualiza UI imediatamente
+  - Edição via modal funciona sem erros de sincronização
+  - Cache inteligente com invalidação e recarregamento automático
+  - Feedback visual consistente em todas operações
+
 ## [2.0.4] - 2025-07-02
 
 ### Adicionado
