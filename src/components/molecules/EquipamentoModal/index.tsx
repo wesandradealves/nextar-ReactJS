@@ -12,11 +12,82 @@ import {
   ToggleText 
 } from '../FormModal';
 import { FormSelection } from '../FormSelection';
-import { Input, DateInput } from '../../atoms';
+import { Input, DateInput, Badge } from '../../atoms';
 import Textarea from '../../atoms/Textarea';
 import type { CreateEquipamentoData, UpdateEquipamentoData, Equipamento } from '@/types';
 import { useToast } from '../../../hooks/useToast';
 import { useSetores } from '../../../hooks/useSetores';
+import { useHistorico } from '../../../hooks/useHistorico';
+import { TipoManutencao, ChamadoStatus } from '../../../utils/enums';
+import styled from 'styled-components';
+
+// Styled components para o histórico
+const HistoricoContainer = styled.div`
+  margin-top: 1rem;
+`;
+
+const HistoricoItem = styled.div`
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  background: #fafafa;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const HistoricoHeader = styled.div`
+  display: flex;
+  justify-content: between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+`;
+
+const HistoricoTitle = styled.h4`
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+`;
+
+const HistoricoMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+`;
+
+const HistoricoDate = styled.span`
+  font-size: 0.8rem;
+  color: #666;
+`;
+
+const HistoricoDescription = styled.p`
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+`;
+
+const HistoricoEmpty = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+`;
 
 /**
  * Props do EquipamentoModal
@@ -32,6 +103,8 @@ export interface EquipamentoModalProps {
   onSubmit: (data: CreateEquipamentoData | UpdateEquipamentoData, id?: string) => Promise<void>;
   /** Se está salvando */
   isLoading?: boolean;
+  /** Modo de visualização: view, edit ou create */
+  mode?: 'view' | 'edit' | 'create';
 }
 
 /**
@@ -52,10 +125,18 @@ export default function EquipamentoModal({
   onClose,
   equipamento,
   onSubmit,
-  isLoading = false
+  isLoading = false,
+  mode = 'create'
 }: EquipamentoModalProps) {
   const { error: showError } = useToast();
   const { allSetores } = useSetores();
+  
+  // Hook para histórico de manutenções específico do equipamento
+  const {
+    chamados: historicoManutencoes,
+    loading: historicoLoading,
+    setFilters: setHistoricoFilters
+  } = useHistorico();
   
   const [formData, setFormData] = useState({
     nome: '',
@@ -67,7 +148,21 @@ export default function EquipamentoModal({
     ativo: true
   });
   
-  const isEditing = !!equipamento;
+  const isEditing = mode === 'edit';
+  const isViewing = mode === 'view';
+  const isCreating = mode === 'create';
+
+  // Carregar histórico quando o equipamento for definido e modal aberto
+  useEffect(() => {
+    if (equipamento?.id && isOpen && (isViewing || isEditing)) {
+      // Filtrar histórico para este equipamento específico
+      setHistoricoFilters({
+        equipamentoId: equipamento.id,
+        dataInicio: '', // Remover limite de data para ver todo histórico
+        dataFim: ''
+      });
+    }
+  }, [equipamento?.id, isOpen, isViewing, isEditing, setHistoricoFilters]);
 
   // Carrega dados do equipamento para edição
   useEffect(() => {
@@ -273,16 +368,44 @@ export default function EquipamentoModal({
                      formData.setorId && 
                      formData.proximaManutencao;
 
+  const getModalConfig = () => {
+    switch (mode) {
+      case 'view':
+        return {
+          title: 'Visualizar Equipamento',
+          subtitle: 'Informações detalhadas e histórico de manutenções',
+          confirmText: 'Fechar',
+          isConfirmDisabled: false
+        };
+      case 'edit':
+        return {
+          title: 'Editar Equipamento',
+          subtitle: 'Atualize as informações do equipamento',
+          confirmText: 'Salvar Alterações',
+          isConfirmDisabled: !isFormValid
+        };
+      default: // create
+        return {
+          title: 'Novo Equipamento',
+          subtitle: 'Preencha os dados do novo equipamento',
+          confirmText: 'Criar Equipamento',
+          isConfirmDisabled: !isFormValid
+        };
+    }
+  };
+
+  const modalConfig = getModalConfig();
+
   return (
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Editar Equipamento' : 'Novo Equipamento'}
-      subtitle={isEditing ? 'Atualize as informações do equipamento' : 'Preencha os dados do novo equipamento'}
-      confirmText={isEditing ? 'Salvar Alterações' : 'Criar Equipamento'}
-      onConfirm={handleSave}
+      title={modalConfig.title}
+      subtitle={modalConfig.subtitle}
+      confirmText={modalConfig.confirmText}
+      onConfirm={isViewing ? onClose : handleSave}
       isLoading={isLoading}
-      isConfirmDisabled={!isFormValid}
+      isConfirmDisabled={modalConfig.isConfirmDisabled}
       size="large"
     >
       <FieldGroup>
@@ -292,6 +415,7 @@ export default function EquipamentoModal({
             placeholder="Nome do equipamento"
             value={formData.nome}
             onChange={(e) => handleFieldChange('nome', e.target.value)}
+            disabled={isViewing}
           />
         </div>
 
@@ -300,11 +424,13 @@ export default function EquipamentoModal({
             placeholder="Código (ex: BIO001A)"
             value={formData.codigo}
             onChange={(e) => handleFieldChange('codigo', e.target.value.toUpperCase())}
+            disabled={isViewing}
           />
           <Input
             placeholder="Modelo do equipamento"
             value={formData.modelo}
             onChange={(e) => handleFieldChange('modelo', e.target.value)}
+            disabled={isViewing}
           />
         </div>
       </FieldGroup>
@@ -315,6 +441,7 @@ export default function EquipamentoModal({
           options={setorOptions}
           value={formData.setorId}
           onChange={handleSetorChange}
+          disabled={isViewing}
         />
 
         <div>
@@ -323,6 +450,7 @@ export default function EquipamentoModal({
             value={formData.proximaManutencao}
             onChange={(value) => handleFieldChange('proximaManutencao', value)}
             required
+            disabled={isViewing}
           />
         </div>
       </FieldGroup>
@@ -336,6 +464,7 @@ export default function EquipamentoModal({
             onChange={(value: string) => handleFieldChange('observacoes', value)}
             rows={3}
             maxLength={500}
+            disabled={isViewing}
           />
         </div>
       </FieldGroup>
@@ -358,6 +487,70 @@ export default function EquipamentoModal({
           </ToggleInfo>
         </ToggleContainer>
       </FieldGroup>
+
+      {/* Seção de Histórico - apenas para visualização e edição */}
+      {(isViewing || isEditing) && equipamento && (
+        <FieldGroup>
+          <SectionTitle>Histórico de Manutenções ({equipamento.manutencaosCount || 0})</SectionTitle>
+          <HistoricoContainer>
+            {historicoLoading ? (
+              <LoadingSpinner>
+                Carregando histórico de manutenções...
+              </LoadingSpinner>
+            ) : historicoManutencoes.length > 0 ? (
+              historicoManutencoes.map((chamado) => (
+                <HistoricoItem key={chamado.id}>
+                  <HistoricoHeader>
+                    <HistoricoTitle>{chamado.titulo || 'Manutenção'}</HistoricoTitle>
+                    <HistoricoMeta>
+                      <HistoricoDate>
+                        {chamado.dataExecucao ? 
+                          new Date(chamado.dataExecucao).toLocaleDateString('pt-BR') :
+                          new Date(chamado.dataAbertura).toLocaleDateString('pt-BR')
+                        }
+                      </HistoricoDate>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Badge variant={chamado.tipo === TipoManutencao.PREVENTIVA ? 'success' : 'warning'} size="small">
+                          {chamado.tipo === TipoManutencao.PREVENTIVA ? 'Preventiva' : 'Corretiva'}
+                        </Badge>
+                        <Badge 
+                          variant={
+                            chamado.status === ChamadoStatus.CONCLUIDO ? 'success' :
+                            chamado.status === ChamadoStatus.EM_PROGRESSO ? 'warning' : 'primary'
+                          } 
+                          size="small"
+                        >
+                          {chamado.status === ChamadoStatus.CONCLUIDO ? 'Concluído' :
+                           chamado.status === ChamadoStatus.EM_PROGRESSO ? 'Em Progresso' : 'Aberto'}
+                        </Badge>
+                      </div>
+                    </HistoricoMeta>
+                  </HistoricoHeader>
+                  {chamado.descricao && (
+                    <HistoricoDescription>
+                      {chamado.descricao}
+                    </HistoricoDescription>
+                  )}
+                  {chamado.agenteNome && (
+                    <HistoricoDescription>
+                      <strong>Agente:</strong> {chamado.agenteNome}
+                    </HistoricoDescription>
+                  )}
+                  {chamado.observacoesFinalizacao && (
+                    <HistoricoDescription>
+                      <strong>Observações:</strong> {String(chamado.observacoesFinalizacao)}
+                    </HistoricoDescription>
+                  )}
+                </HistoricoItem>
+              ))
+            ) : (
+              <HistoricoEmpty>
+                Nenhuma manutenção registrada para este equipamento.
+              </HistoricoEmpty>
+            )}
+          </HistoricoContainer>
+        </FieldGroup>
+      )}
     </FormModal>
   );
 }

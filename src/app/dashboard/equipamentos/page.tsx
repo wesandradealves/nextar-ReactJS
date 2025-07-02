@@ -60,6 +60,7 @@ export default function EquipamentosPage() {
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEquipamento, setEditingEquipamento] = useState<Equipamento | undefined>(undefined);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
 
   // Hook de equipamentos com cache
   const {
@@ -292,38 +293,72 @@ export default function EquipamentosPage() {
    * Handlers do modal
    */
   const handleCreateEquipamento = useCallback(() => {
+    setModalMode('create');
     setEditingEquipamento(undefined);
     setIsModalOpen(true);
   }, []);
 
-  const handleEditEquipamento = useCallback((equipamento: Equipamento) => {
+  /**
+   * Abre modal para visualizar equipamento
+   */
+  const handleViewEquipamento = useCallback((equipamento: Equipamento) => {
+    setModalMode('view');
     setEditingEquipamento(equipamento);
     setIsModalOpen(true);
+  }, []);
+
+  /**
+   * Abre modal para editar equipamento
+   */
+  const handleEditEquipamento = useCallback((equipamento: Equipamento) => {
+    setModalMode('edit');
+    setEditingEquipamento(equipamento);
+    setIsModalOpen(true);
+  }, []);
+
+  /**
+   * Fecha modal e limpa estados
+   */
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingEquipamento(undefined);
+    setModalMode('create');
   }, []);
 
   /**
    * Ações disponíveis para cada equipamento
    */
   const actions: TableAction<Equipamento>[] = useMemo(() => {
-    if (!hasManagePermission) return [];
+    const baseActions = [
+      {
+        key: 'view',
+        title: 'Visualizar',
+        icon: '👁️',
+        variant: 'secondary' as const,
+        onClick: handleViewEquipamento
+      }
+    ];
+
+    if (!hasManagePermission) return baseActions;
 
     return [
+      ...baseActions,
       {
         key: 'edit',
         title: 'Editar',
         icon: '✏️',
-        variant: 'primary',
+        variant: 'primary' as const,
         onClick: handleEditEquipamento
       },
       {
         key: 'delete',
         title: 'Excluir',
         icon: '🗑️',
-        variant: 'danger',
+        variant: 'danger' as const,
         onClick: handleDeleteEquipamento
       }
     ];
-  }, [hasManagePermission, handleDeleteEquipamento, handleEditEquipamento]);
+  }, [hasManagePermission, handleDeleteEquipamento, handleEditEquipamento, handleViewEquipamento]);
 
   /**
    * Manipula seleção de equipamentos
@@ -360,11 +395,6 @@ export default function EquipamentosPage() {
     // Outras ações seriam implementadas aqui
   }, [selectedEquipamentos, deleteEquipamento]);
 
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
-    setEditingEquipamento(undefined);
-  }, []);
-
   const handleSubmitEquipamento = useCallback(async (data: CreateEquipamentoData | UpdateEquipamentoData, equipamentoId?: string) => {
     try {
       if (equipamentoId && editingEquipamento) {
@@ -380,31 +410,19 @@ export default function EquipamentosPage() {
     }
   }, [editingEquipamento, updateEquipamento, createEquipamento]);
 
-  // Verificar permissões de acesso
-  if (!hasManagePermission) {
-    return (
-      <EquipamentosPageContainer>
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '60px 20px',
-          color: '#64748b'
-        }}>
-          <h2>Acesso Negado</h2>
-          <p>Você não tem permissão para acessar esta página.</p>
-          <p>Apenas usuários com perfil de Gestão podem gerenciar equipamentos.</p>
-        </div>
-      </EquipamentosPageContainer>
-    );
-  }
-
   return (
     <EquipamentosPageContainer>
       {/* Header da página */}
       <PageHeader>
         <div>
-          <PageTitle>Gestão de Equipamentos</PageTitle>
+          <PageTitle>
+            {hasManagePermission ? 'Gestão de Equipamentos' : 'Equipamentos'}
+          </PageTitle>
           <PageSubtitle>
-            Gerencie equipamentos, códigos e cronograma de manutenções
+            {hasManagePermission ? 
+              'Gerencie equipamentos, códigos e cronograma de manutenções' :
+              'Visualize equipamentos e histórico de manutenções'
+            }
           </PageSubtitle>
         </div>
         
@@ -549,6 +567,7 @@ export default function EquipamentosPage() {
         onSubmit={handleSubmitEquipamento}
         equipamento={editingEquipamento}
         isLoading={loading}
+        mode={modalMode}
       />
     </EquipamentosPageContainer>
   );

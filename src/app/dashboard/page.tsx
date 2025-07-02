@@ -18,11 +18,11 @@ import {
   StatTitle,
   StatValue,
   StatLabel,
-  QuickActions,
-  ActionTitle,
-  ActionGrid,
-  ActionButton,
-  ActionNote
+  // QuickActions,
+  // ActionTitle,
+  // ActionGrid,
+  // ActionButton,
+  // ActionNote
 } from './styles';
 
 /**
@@ -129,52 +129,31 @@ export default function Dashboard() {
           </StatCard>
         </StatsGrid>
 
-        <QuickActions>
+        {/* <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>
           <ActionGrid>
-            {/* Ver Chamados - Todos os perfis podem ver */}
             <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
               📋 Ver Chamados
             </ActionButton>
             
-            {/* Novo Chamado - Pesquisadores e Gestores podem criar */}
             {canCreateChamados && (
               <></>
-              // <ActionButton onClick={() => handleNavigate('/dashboard/chamados/novo')}>
-              //   ➕ Novo Chamado
-              // </ActionButton>
             )}
             
-            {/* Gestão de Usuários - Apenas GESTAO */}
             {isGestao && (
               <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
                 👥 Gerenciar Usuários
               </ActionButton>
             )}
             
-            {/* Equipamentos - GESTAO e AGENTE */}
-            {/* {(isGestao || isAgente) && (
-              <ActionButton onClick={() => handleNavigate('/dashboard/equipamentos')}>
-                🔧 Equipamentos
-              </ActionButton>
-            )} */}
-            
-            {/* Meu Perfil - Todos os perfis */}
             <ActionButton onClick={() => handleNavigate('/dashboard/profile')}>
               👤 Meu Perfil
             </ActionButton>
-            
-            {/* Relatórios - GESTAO e AGENTE */}
-            {/* {(isGestao || isAgente) && (
-              <ActionButton onClick={() => handleNavigate('/dashboard/relatorios')}>
-                📊 Relatórios
-              </ActionButton>
-            )} */}
           </ActionGrid>
           <ActionNote>
             * Algumas funcionalidades ainda em desenvolvimento
           </ActionNote>
-        </QuickActions>
+        </QuickActions> */}
       </Content>
     </DashboardContainer>
   );
