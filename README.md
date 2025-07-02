@@ -1805,10 +1805,31 @@ NODE_ENV=production
 
 ### **Docker (opcional)**
 ```dockerfile
-# Dockerfile já configurado
+# Usando Dockerfile diretamente
 docker build -t nextar .
 docker run -p 3000:3000 nextar
 ```
+
+### **Docker Compose (recomendado)**
+```bash
+# Executando com docker-compose
+docker-compose up
+
+# Executando em background
+docker-compose up -d
+
+# Parando os containers
+docker-compose down
+
+# Reconstruindo após alterações
+docker-compose up --build
+```
+
+O docker-compose.yml já está configurado para:
+- Mapear a porta 3001 do host para a porta 3000 do container
+- Configurar variáveis de ambiente a partir do arquivo .env
+- Montar volumes para desenvolvimento com hot reload
+- Otimizar cache de dependências
 
 ---
 
