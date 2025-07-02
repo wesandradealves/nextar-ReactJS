@@ -1,35 +1,133 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import UserModal from './index';
-import { useState } from 'react';
+import { FormModal, FieldGroup, SectionTitle } from '../FormModal';
+import { FormSelection } from '../FormSelection';
+import { Input } from '../../atoms/Input';
 import { PerfilUsuario } from '../../../utils/enums';
 
-// Mock do contexto de autenticação
-const mockAuthContext = {
-  user: {
-    id: '1',
-    nome: 'Admin User',
-    email: 'admin@exemplo.com',
-    perfil: PerfilUsuario.GESTAO,
-    ativo: true
-  },
-  token: 'mock-token',
-  isAuthenticated: true,
-  login: async () => {},
-  logout: () => {},
-  loading: false
+// Componente simplificado para demonstração no Storybook
+const UserModalDemo = ({
+  isOpen,
+  onClose,
+  user,
+  isSaving = false
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  user?: any;
+  isSaving?: boolean;
+}) => {
+  const isEditing = !!user;
+  
+  const perfilOptions = [
+    {
+      id: PerfilUsuario.GESTAO,
+      label: 'Gestão',
+      description: 'Acesso total ao sistema',
+      color: '#3b82f6',
+      icon: '👑'
+    },
+    {
+      id: PerfilUsuario.AGENTE,
+      label: 'Agente',
+      description: 'Execução de manutenções',
+      color: '#10b981',
+      icon: '🔧'
+    }
+  ];
+
+  return (
+    <FormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isEditing ? 'Editar Usuário' : 'Novo Usuário'}
+      subtitle={isEditing ? 'Atualize as informações do usuário' : 'Preencha os dados do novo usuário'}
+      confirmText={isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
+      onConfirm={() => {
+        console.log('Usuário salvo!');
+        onClose();
+      }}
+      isLoading={isSaving}
+      size="large"
+    >
+      <FieldGroup>
+        <SectionTitle>Informações Básicas</SectionTitle>
+        <div>
+          <Input
+            placeholder="Nome completo"
+            value={user?.nome || ''}
+            onChange={() => {}}
+          />
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <Input
+            placeholder="Email"
+            type="email"
+            value={user?.email || ''}
+            onChange={() => {}}
+          />
+          <Input
+            placeholder="Nome de usuário"
+            value={user?.usuario || ''}
+            onChange={() => {}}
+          />
+        </div>
+
+        <div>
+          <Input
+            placeholder="Setor"
+            value={user?.setor || ''}
+            onChange={() => {}}
+          />
+        </div>
+      </FieldGroup>
+
+      <FieldGroup>
+        <SectionTitle>Perfil do Usuário</SectionTitle>
+        <FormSelection
+          options={perfilOptions}
+          value={user?.perfil || PerfilUsuario.AGENTE}
+          onChange={() => {}}
+        />
+      </FieldGroup>
+
+      {!isEditing && (
+        <FieldGroup>
+          <SectionTitle>Senha</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <Input
+              placeholder="Senha"
+              type="password"
+              onChange={() => {}}
+            />
+            <Input
+              placeholder="Confirmar senha"
+              type="password"
+              onChange={() => {}}
+            />
+          </div>
+        </FieldGroup>
+      )}
+
+      {user && (
+        <div style={{
+          padding: '12px',
+          backgroundColor: '#f9fafb',
+          borderRadius: '6px',
+          fontSize: '14px',
+          color: '#6b7280'
+        }}>
+          <strong>Status:</strong> {user.ativo ? '✅ Ativo' : '❌ Inativo'} • 
+          <strong> Criado em:</strong> {new Date(user.dataCriacao).toLocaleDateString('pt-BR')}
+        </div>
+      )}
+    </FormModal>
+  );
 };
 
-// Mock do toast
-const mockToast = {
-  success: (message: string) => console.log('Success:', message),
-  error: (message: string) => console.log('Error:', message),
-  warning: (message: string) => console.log('Warning:', message),
-  info: (message: string) => console.log('Info:', message)
-};
-
-const meta: Meta<typeof UserModal> = {
+const meta: Meta<typeof UserModalDemo> = {
   title: 'Molecules/UserModal',
-  component: UserModal,
+  component: UserModalDemo,
   parameters: {
     layout: 'centered',
     docs: {
@@ -42,34 +140,18 @@ Modal para criação e edição de usuários do sistema.
 - Seleção visual de perfil
 - Validações integradas
 - Campos de senha para criação
-- Alteração de senha para gestores
 - Estados ativo/inativo
 
 **Perfis disponíveis:**
 - **Gestão**: Acesso total ao sistema
 - **Agente**: Execução de manutenções
 
-**Uso:**
-\`\`\`tsx
-<UserModal
-  isOpen={true}
-  onClose={() => {}}
-  onSave={async (userData) => {}}
-  user={user} // opcional para edição
-/>
-\`\`\`
+**Nota**: Este é um componente demo simplificado para o Storybook.
+O componente real requer contextos de autenticação e toast.
         `
       }
     }
   },
-  decorators: [
-    (Story) => (
-      <div>
-        {/* Mock providers for dependencies */}
-        <Story />
-      </div>
-    )
-  ],
   argTypes: {
     isOpen: {
       control: 'boolean',
@@ -88,60 +170,12 @@ Modal para criação e edição de usuários do sistema.
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const UserModalTemplate = (args: any) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const handleSave = async (userData: any) => {
-    setIsSaving(true);
-    console.log('Saving user:', userData);
-    
-    // Simular API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSaving(false);
-    setIsOpen(false);
-    console.log('User saved successfully!');
-  };
-
-  const handleChangePassword = async (userId: string, newPassword: string) => {
-    console.log('Changing password for user:', userId);
-    console.log('New password:', newPassword);
-    
-    // Simular API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Password changed successfully!');
-  };
-  
-  return (
-    <>
-      <button onClick={() => setIsOpen(true)} style={{
-        padding: '8px 16px',
-        backgroundColor: '#3b82f6',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer'
-      }}>
-        {args.user ? 'Editar Usuário' : 'Novo Usuário'}
-      </button>
-      
-      <UserModal
-        {...args}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSave={handleSave}
-        onChangePassword={handleChangePassword}
-        isSaving={isSaving}
-      />
-    </>
-  );
-};
-
 export const NovoUsuario: Story = {
-  render: UserModalTemplate,
   args: {
-    user: undefined
+    isOpen: true,
+    onClose: () => {},
+    user: undefined,
+    isSaving: false
   },
   parameters: {
     docs: {
@@ -153,153 +187,91 @@ export const NovoUsuario: Story = {
 };
 
 export const EditarGestor: Story = {
-  render: UserModalTemplate,
   args: {
+    isOpen: true,
+    onClose: () => {},
     user: {
       id: '1',
-      nome: 'Ana Costa',
-      email: 'ana.costa@estacao.com',
-      usuario: 'ana.costa',
+      nome: 'João Silva',
+      email: 'joao.silva@empresa.com',
+      usuario: 'joao.silva',
+      setor: 'TI',
       perfil: PerfilUsuario.GESTAO,
-      setor: 'Administração',
       ativo: true,
-      dataCriacao: '2024-01-15T08:30:00.000Z',
-      dataAtualizacao: '2025-06-20T14:22:00.000Z'
-    }
+      dataCriacao: '2024-01-15T10:30:00Z'
+    },
+    isSaving: false
   },
   parameters: {
     docs: {
       description: {
-        story: 'Edição de usuário gestor. Campos de senha não são obrigatórios na edição.'
+        story: 'Edição de usuário com perfil de gestão. Campos de senha não são exibidos na edição.'
       }
     }
   }
 };
 
 export const EditarAgente: Story = {
-  render: UserModalTemplate,
   args: {
+    isOpen: true,
+    onClose: () => {},
     user: {
       id: '2',
-      nome: 'Carlos Silva',
-      email: 'carlos.silva@estacao.com',
-      usuario: 'carlos.silva',
-      perfil: PerfilUsuario.AGENTE,
+      nome: 'Maria Santos',
+      email: 'maria.santos@empresa.com',
+      usuario: 'maria.santos',
       setor: 'Manutenção',
+      perfil: PerfilUsuario.AGENTE,
       ativo: true,
-      dataCriacao: '2024-02-01T10:15:00.000Z',
-      dataAtualizacao: '2025-06-18T09:45:00.000Z'
-    }
+      dataCriacao: '2024-02-10T14:20:00Z'
+    },
+    isSaving: false
   },
   parameters: {
     docs: {
       description: {
-        story: 'Edição de usuário agente com perfil de manutenção.'
+        story: 'Edição de usuário com perfil de agente.'
       }
     }
   }
 };
 
 export const UsuarioInativo: Story = {
-  render: UserModalTemplate,
   args: {
+    isOpen: true,
+    onClose: () => {},
     user: {
       id: '3',
-      nome: 'João Santos',
-      email: 'joao.santos@estacao.com',
-      usuario: 'joao.santos',
+      nome: 'Pedro Costa',
+      email: 'pedro.costa@empresa.com',
+      usuario: 'pedro.costa',
+      setor: 'Almoxarifado',
       perfil: PerfilUsuario.AGENTE,
-      setor: 'Logística',
       ativo: false,
-      dataCriacao: '2023-12-10T16:00:00.000Z',
-      dataAtualizacao: '2025-05-20T11:30:00.000Z'
-    }
+      dataCriacao: '2023-11-05T09:15:00Z'
+    },
+    isSaving: false
   },
   parameters: {
     docs: {
       description: {
-        story: 'Usuário inativo que pode ser reativado através do toggle.'
+        story: 'Usuário inativo. O status é exibido no rodapé do modal.'
       }
     }
   }
 };
 
-export const SalvandoUsuario: Story = {
-  render: UserModalTemplate,
+export const Salvando: Story = {
   args: {
-    user: {
-      id: '4',
-      nome: 'Maria Oliveira',
-      email: 'maria.oliveira@estacao.com',
-      usuario: 'maria.oliveira',
-      perfil: PerfilUsuario.GESTAO,
-      setor: 'Coordenação',
-      ativo: true,
-      dataCriacao: '2024-03-15T12:45:00.000Z',
-      dataAtualizacao: '2025-07-01T16:20:00.000Z'
-    },
+    isOpen: true,
+    onClose: () => {},
+    user: undefined,
     isSaving: true
   },
   parameters: {
     docs: {
       description: {
-        story: 'Modal em estado de salvamento com loading.'
-      }
-    }
-  }
-};
-
-export const UsuarioCompleto: Story = {
-  render: UserModalTemplate,
-  args: {
-    user: {
-      id: '5',
-      nome: 'Dr. Roberto Fernandes',
-      email: 'roberto.fernandes@estacao.com',
-      usuario: 'roberto.fernandes',
-      perfil: PerfilUsuario.GESTAO,
-      setor: 'Pesquisa e Desenvolvimento',
-      ativo: true,
-      dataCriacao: '2024-01-08T14:20:00.000Z',
-      dataAtualizacao: '2025-07-02T08:15:00.000Z'
-    }
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Exemplo de usuário com informações completas e setor específico.'
-      }
-    }
-  }
-};
-
-// Story especial para demonstrar validações
-export const ExemplosValidacao: Story = {
-  render: (args: any) => {
-    return (
-      <div style={{ padding: '20px' }}>
-        <h3>Exemplos de Validação</h3>
-        <div style={{ marginBottom: '20px' }}>
-          <p><strong>Para testar as validações, tente:</strong></p>
-          <ul style={{ paddingLeft: '20px' }}>
-            <li>Deixar campos obrigatórios vazios</li>
-            <li>Nome com menos de 2 caracteres</li>
-            <li>Email inválido (sem @ ou domínio)</li>
-            <li>Senhas diferentes na confirmação</li>
-            <li>Senha com menos de 6 caracteres</li>
-          </ul>
-        </div>
-        <UserModalTemplate {...args} />
-      </div>
-    );
-  },
-  args: {
-    user: undefined
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demonstração das validações do formulário de usuário.'
+        story: 'Estado de carregamento durante o salvamento do usuário.'
       }
     }
   }
