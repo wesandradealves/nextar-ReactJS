@@ -299,16 +299,18 @@ export const FormList: React.FC<FormListProps> = ({
               ))}
             </InlineFieldGrid>
             
-            <Button
-              variant="outline"
-              size="small"
-              onClick={addItem}
-              disabled={!newItemFields.every(field => 
-                field.required ? newItemData[field.key]?.trim() : true
-              )}
-            >
-              {addButtonText}
-            </Button>
+            <div style={{ height: '100%', display: 'flex', alignItems: 'stretch' }}>
+              <Button
+                variant="outline"
+                size="small"
+                onClick={addItem}
+                disabled={!newItemFields.every(field => 
+                  field.required ? newItemData[field.key]?.trim() : true
+                )}
+              >
+                {addButtonText}
+              </Button>
+            </div>
           </InlineFormContainer>
         )}
         

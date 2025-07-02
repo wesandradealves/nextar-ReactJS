@@ -10,7 +10,6 @@ import { Button, Select } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
 import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, TableAction } from '@/types';
-import type { ChamadoFormData } from '@/components/molecules/ChamadoModal/types';
 import { Container, Header, FiltersContainer } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
 
@@ -118,43 +117,26 @@ export default function ChamadosPage() {
     setModalMode('create');
   }, []);
 
-  const handleModeChange = useCallback((mode: 'create' | 'edit' | 'view') => {
-    setModalMode(mode);
-  }, []);
-
-  const handleSubmitChamado = useCallback(async (data: ChamadoFormData, chamadoId?: string) => {
-    if (chamadoId) {
+  const handleSubmitChamado = useCallback(async (data: Partial<Chamado>) => {
+    if (editingChamado) {
       // Editar chamado existente
-      await updateChamado(chamadoId, {
-        tipo: data.tipo as TipoManutencao,
-        prioridade: data.prioridade as Prioridade,
-        titulo: data.titulo,
-        descricao: data.descricao,
-        setorId: data.setorId,
-        equipamentoId: data.equipamentoId,
-        agenteId: data.agenteId,
-        observacoes: data.observacoes,
-        dataExecucao: data.dataExecucao,
-        observacoesFinalizacao: data.observacoesFinalizacao,
-        pecasUtilizadas: data.pecasUtilizadas,
-        status: data.status as ChamadoStatus
-      });
+      await updateChamado(editingChamado.id, data);
     } else {
       // Criar novo chamado
       await createChamado({
         tipo: data.tipo as TipoManutencao,
         prioridade: data.prioridade as Prioridade,
-        titulo: data.titulo,
-        descricao: data.descricao,
-        setorId: data.setorId,
-        equipamentoId: data.equipamentoId,
+        titulo: data.titulo || '',
+        descricao: data.descricao || '',
+        setorId: data.setorId || '',
+        equipamentoId: data.equipamentoId || '',
         agenteId: data.agenteId,
-        observacoes: data.observacoes,
+        observacoes: typeof data.observacoes === 'string' ? data.observacoes : '',
         solicitanteId: data.solicitanteId || user?.id || '',
         status: ChamadoStatus.ABERTO
       });
     }
-  }, [createChamado, updateChamado, user]);
+  }, [createChamado, updateChamado, editingChamado, user]);
 
   /**
    * Handler para deletar chamado
@@ -621,11 +603,10 @@ export default function ChamadosPage() {
       <ChamadoModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleSubmitChamado}
+        onSave={handleSubmitChamado}
         chamado={editingChamado}
-        isLoading={loading}
+        isSaving={loading}
         mode={modalMode}
-        onModeChange={handleModeChange}
       />
     </Container>
   );

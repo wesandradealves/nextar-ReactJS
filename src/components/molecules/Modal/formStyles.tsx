@@ -325,9 +325,9 @@ export const ListItemActions = styled.div`
  */
 export const InlineFormContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   gap: 12px;
-  align-items: end;
+  align-items: stretch;
   padding: 16px;
   background-color: #f8fafc;
   border-radius: 8px;

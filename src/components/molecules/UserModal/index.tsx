@@ -16,6 +16,7 @@ import { Input } from '../../atoms/Input';
 import { User } from '../../../types';
 import { PerfilUsuario } from '../../../utils/enums';
 import { useAuth } from '../../../context/auth';
+import { useToast } from '../../../hooks/useToast';
 
 /**
  * Props do UserModal
@@ -58,6 +59,7 @@ export default function UserModal({
   isSaving = false
 }: UserModalProps) {
   const { user: currentUser } = useAuth();
+  const { error: showError } = useToast();
   
   const [formData, setFormData] = useState({
     nome: '',
@@ -72,7 +74,6 @@ export default function UserModal({
   });
 
   const [showPasswordFields, setShowPasswordFields] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
   
   const isEditing = !!user;
   const isManager = currentUser?.perfil === PerfilUsuario.GESTAO;
@@ -107,29 +108,31 @@ export default function UserModal({
     // Para criação, não mostrar campos de senha inicialmente
     // Para edição, manter como estava (false)
     setShowPasswordFields(false);
-    setErrors({});
   }, [user, isOpen]);
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
     if (!formData.nome.trim()) {
-      newErrors.nome = 'Nome é obrigatório';
+      showError('Nome é obrigatório');
+      return false;
     } else if (formData.nome.trim().length < 3) {
-      newErrors.nome = 'Nome deve ter pelo menos 3 caracteres';
+      showError('Nome deve ter pelo menos 3 caracteres');
+      return false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
+      showError('Email é obrigatório');
+      return false;
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        newErrors.email = 'Email inválido';
+        showError('Email inválido');
+        return false;
       }
     }
 
     if (!formData.setor.trim()) {
-      newErrors.setor = 'Setor é obrigatório';
+      showError('Setor é obrigatório');
+      return false;
     }
 
     // Validação de senha
@@ -139,20 +142,23 @@ export default function UserModal({
     
     if (shouldValidatePassword) {
       if (!passwordData.newPassword.trim()) {
-        newErrors.newPassword = 'Senha é obrigatória';
+        showError('Senha é obrigatória');
+        return false;
       } else if (passwordData.newPassword.length < 6) {
-        newErrors.newPassword = 'Senha deve ter pelo menos 6 caracteres';
+        showError('Senha deve ter pelo menos 6 caracteres');
+        return false;
       }
 
       if (!passwordData.confirmPassword.trim()) {
-        newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+        showError('Confirmação de senha é obrigatória');
+        return false;
       } else if (passwordData.newPassword !== passwordData.confirmPassword) {
-        newErrors.confirmPassword = 'Senhas não conferem';
+        showError('Senhas não conferem');
+        return false;
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSave = async () => {
@@ -187,20 +193,10 @@ export default function UserModal({
 
   const handleFieldChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Remove erro quando usuário começa a digitar
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
   };
 
   const handlePasswordChange = (field: 'newPassword' | 'confirmPassword', value: string) => {
     setPasswordData(prev => ({ ...prev, [field]: value }));
-    
-    // Remove erro quando usuário começa a digitar
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
   };
 
   const profileOptions = [
@@ -230,7 +226,6 @@ export default function UserModal({
   const isFormValid = formData.nome.trim() && 
                      formData.email.trim() && 
                      formData.setor.trim() &&
-                     !Object.keys(errors).length &&
                      // Para criação, validar se senha está preenchida
                      (isEditing || passwordData.newPassword.trim());
 
@@ -253,15 +248,6 @@ export default function UserModal({
             value={formData.nome}
             onChange={(e) => handleFieldChange('nome', e.target.value)}
           />
-          {errors.nome && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#ef4444', 
-              marginTop: '4px' 
-            }}>
-              {errors.nome}
-            </div>
-          )}
         </div>
 
         <div>
@@ -271,15 +257,6 @@ export default function UserModal({
             value={formData.email}
             onChange={(e) => handleFieldChange('email', e.target.value)}
           />
-          {errors.email && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#ef4444', 
-              marginTop: '4px' 
-            }}>
-              {errors.email}
-            </div>
-          )}
         </div>
       </FieldGroup>
 
@@ -300,15 +277,6 @@ export default function UserModal({
             value={formData.setor}
             onChange={(e) => handleFieldChange('setor', e.target.value)}
           />
-          {errors.setor && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#ef4444', 
-              marginTop: '4px' 
-            }}>
-              {errors.setor}
-            </div>
-          )}
         </div>
       </FieldGroup>
 
@@ -326,15 +294,6 @@ export default function UserModal({
                   value={passwordData.newPassword}
                   onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                 />
-                {errors.newPassword && (
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: '#ef4444', 
-                    marginTop: '4px' 
-                  }}>
-                    {errors.newPassword}
-                  </div>
-                )}
               </div>
 
               <div>
@@ -344,15 +303,6 @@ export default function UserModal({
                   value={passwordData.confirmPassword}
                   onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
                 />
-                {errors.confirmPassword && (
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: '#ef4444', 
-                    marginTop: '4px' 
-                  }}>
-                    {errors.confirmPassword}
-                  </div>
-                )}
               </div>
             </>
           ) : (
@@ -384,15 +334,6 @@ export default function UserModal({
                       value={passwordData.newPassword}
                       onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                     />
-                    {errors.newPassword && (
-                      <div style={{ 
-                        fontSize: '12px', 
-                        color: '#ef4444', 
-                        marginTop: '4px' 
-                      }}>
-                        {errors.newPassword}
-                      </div>
-                    )}
                   </div>
 
                   <div>
@@ -402,15 +343,6 @@ export default function UserModal({
                       value={passwordData.confirmPassword}
                       onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
                     />
-                    {errors.confirmPassword && (
-                      <div style={{ 
-                        fontSize: '12px', 
-                        color: '#ef4444', 
-                        marginTop: '4px' 
-                      }}>
-                        {errors.confirmPassword}
-                      </div>
-                    )}
                   </div>
                 </>
               )}

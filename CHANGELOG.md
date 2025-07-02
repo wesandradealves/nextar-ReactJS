@@ -5,6 +5,62 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.3] - 2025-07-02
+
+### Corrigido
+- **Lint e Build**
+  - Removido prop `onModeChange` não utilizado da interface `ChamadoModalProps`
+  - Removido import `useToast` não utilizado em `SetorModal`
+  - Removido função `handleModeChange` não utilizada em `page.tsx`
+  - Corrigidos todos os erros de TypeScript e ESLint
+  - Build e lint executados com sucesso sem erros
+
+### Refatorado
+- **ChamadoModal Completamente Padronizada**
+  - Migração completa para estrutura atomic design usando FormModal
+  - Remoção de componentes legacy (FormContainer customizado)
+  - Interface consistente com UserModal e SetorModal
+  - FormSelection para tipo, prioridade e status com cores e ícones específicos
+  - FormList integrada para gestão de peças utilizadas
+  - Validações integradas com feedback visual imediato
+  - Layout responsivo e experiência do usuário melhorada
+
+- **Workflow de Status Aprimorado**
+  - Controle de transições de status baseado em regras de negócio
+  - Workflow: Aberto → Em Progresso → Concluído
+  - Permissões granulares: Gestores (qualquer chamado) e Agentes (apenas atribuídos)
+  - Campos de finalização obrigatórios ao concluir chamado
+  - Proteção contra edição de chamados finalizados (exceto gestores)
+
+- **Gestão de Peças Utilizadas Modernizada**
+  - Substituição de formulário inline customizado por FormList padronizada
+  - Interface consistente com padrão atomic design
+  - Validações integradas para nome e quantidade de peças
+  - Melhor experiência de usuário para adicionar/editar/remover peças
+  - Estados visuais claros para diferentes permissões
+
+### Melhorado
+- **Consistência Visual Total**
+  - Todas as 3 modais principais agora seguem o mesmo padrão
+  - Estilos unificados usando formStyles.tsx
+  - Componentes reutilizáveis em toda aplicação
+  - Redução significativa de código duplicado
+  - Manutenibilidade aprimorada com estrutura padronizada
+
+- **Permissões e Validações**
+  - Sistema robusto de permissões por perfil de usuário
+  - Validações específicas para campos de finalização
+  - Feedback claro sobre limitações de edição
+  - Proteção de dados com regras de negócio bem definidas
+
+### Técnico
+- **Arquitetura Limpa**
+  - Remoção de código legacy e componentes obsoletos
+  - Estrutura consistente entre todas as modais de CRUD
+  - Imports organizados seguindo atomic design
+  - TypeScript tipado rigorosamente
+  - Performance otimizada com componentes memoizados
+
 ## [2.0.2] - 2025-07-02
 
 ### Corrigido

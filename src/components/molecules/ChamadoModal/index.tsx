@@ -1,896 +1,567 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import Modal from '../Modal';
-import FormContainer from '../FormContainer';
-import { Button, Select, Textarea, Input } from '../../atoms';
-import { useEntities } from '@/context/entities';
-import { useAuth } from '@/context/auth';
-import { useCache } from '@/context/cache';
-import { useToast } from '@/hooks/useToast';
-import { useSetores } from '@/hooks/useSetores';
-import type { User } from '@/types';
-import type { FormFieldConfig } from '../FormContainer/types';
-import type { ChamadoModalProps, ChamadoFormData } from './types';
-import { isGestor, isAgente } from '@/utils/perfil';
-import { 
-  ChamadoStatus, 
-  STATUS_LABELS, 
-  getAvailableStatusTransitions,
-  statusRequiresFinalizationFields 
-} from '@/utils/enums';
+import React, { useEffect, useState } from 'react';
 import {
-  FormSection,
-  StatusSection,
-  StatusTitle,
-  StatusGrid,
-  StatusCard,
-  StatusLabel,
-  StatusValue,
-  FieldLabel
-} from './styles';
+  FormModal,
+  FieldGroup,
+  SectionTitle
+} from '../FormModal';
+import { FormSelection } from '../FormSelection';
+import { FormList } from '../FormList';
+import { Input } from '../../atoms/Input';
+import { Select } from '../../atoms/Select';
+import Textarea from '../../atoms/Textarea';
+import { Chamado } from '../../../types';
+import { TipoManutencao, Prioridade, ChamadoStatus, PerfilUsuario } from '../../../utils/enums';
+import { useAuth } from '../../../context/auth';
+import { useSetores } from '../../../hooks/useSetores';
+import { useUsers } from '../../../hooks/useUsers';
+import { useToast } from '../../../hooks/useToast';
 
 /**
- * Modal de Criação/Edição/Visualização de Chamado
- * Utiliza FormContainer para validação e Modal para apresentação
- * Segue o padrão estabelecido pelo UserModal
+ * Props do ChamadoModal
+ */
+export interface ChamadoModalProps {
+  /** Se o modal está aberto */
+  isOpen: boolean;
+  /** Função para fechar o modal */
+  onClose: () => void;
+  /** Chamado para edição (undefined para criação) */
+  chamado?: Chamado;
+  /** Callback para salvar chamado */
+  onSave: (chamadoData: Partial<Chamado>) => Promise<void>;
+  /** Se está salvando */
+  isSaving?: boolean;
+  /** Modo inicial do modal */
+  mode?: 'view' | 'edit' | 'create';
+}
+
+/**
+ * Modal para criação, edição e visualização de chamados
  * 
+ * @version 2.0.3
  * @description
- * Modal responsável por:
- * - Criar novos chamados (Pesquisadores e Gestão)
- * - Editar chamados existentes (conforme permissões)
- * - Visualizar detalhes dos chamados
- * - Atualizar status (Gestores e Agentes atribuídos)
- * - Workflow de status controlado (Aberto → Em Progresso → Concluído)
- * - Validação de campos obrigatórios para finalização
- * - Integração com contexto de entidades
- * 
- * @decorator @modal - Componente de modal seguindo padrão do projeto
- * @decorator @form - Integração com FormContainer para validação
- * @decorator @permissions - Respeita permissões por perfil de usuário
+ * Modal padronizada usando os novos componentes:
+ * - FormModal para estrutura base
+ * - FormSelection para seleções visuais (tipo, prioridade, status)
+ * - FormList para gerenciar peças utilizadas
+ * - Validações integradas
+ * - Layout responsivo
+ * - Workflow de status controlado
+ * - Permissões baseadas no perfil do usuário
  */
 export default function ChamadoModal({
   isOpen,
   onClose,
-  onSubmit,
   chamado,
+  onSave,
+  isSaving = false,
   mode = 'create'
 }: ChamadoModalProps) {
   const { user: currentUser } = useAuth();
-  const { usuarios, equipamentos } = useEntities();
-  const { setores } = useSetores(); // Usar hook específico para setores
-  const cache = useCache();
-  const toast = useToast();
-  
-  // Estados do formulário
-  const [selectedTipo, setSelectedTipo] = useState<string>('');
-  const [selectedPrioridade, setSelectedPrioridade] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('aberto');
-  const [selectedSetor, setSelectedSetor] = useState<string>('');
-  const [selectedEquipamento, setSelectedEquipamento] = useState<string>('');
-  const [selectedAgente, setSelectedAgente] = useState<string>('');
-  const [titulo, setTitulo] = useState<string>('');
-  const [descricao, setDescricao] = useState<string>('');
-  const [dataExecucao, setDataExecucao] = useState<string>('');
-  const [observacoesFinalizacao, setObservacoesFinalizacao] = useState<string>('');
-  const [pecasUtilizadas, setPecasUtilizadas] = useState<Array<{ nome: string; quantidade: number }>>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { allSetores } = useSetores();
+  const { allUsers } = useUsers();
+  const { error: showError } = useToast();
 
-  // Estados para o formulário de peças utilizadas
-  const [nomePeca, setNomePeca] = useState<string>('');
-  const [quantidadePeca, setQuantidadePeca] = useState<string>('');
-  const [editingPecaIndex, setEditingPecaIndex] = useState<number | null>(null);
+  const [currentMode, setCurrentMode] = useState<'view' | 'edit' | 'create'>(mode);
+  const [formData, setFormData] = useState({
+    titulo: '',
+    descricao: '',
+    tipo: TipoManutencao.PREVENTIVA,
+    prioridade: Prioridade.MEDIA,
+    status: ChamadoStatus.ABERTO,
+    setorId: '',
+    equipamentoId: '',
+    agenteId: '',
+    observacoes: '',
+    dataExecucao: '',
+    pecasUtilizadas: [] as { nome: string; quantidade: number }[]
+  });
 
-  const isEditing = Boolean(chamado);
-  const isViewing = mode === 'view';
+  const isEditing = currentMode === 'edit';
+  const isViewing = currentMode === 'view';
+  const isCreating = currentMode === 'create';
+  const isManager = currentUser?.perfil === PerfilUsuario.GESTAO;
+  const isAssignedAgent = chamado?.agenteId === currentUser?.id;
 
-  // Verificar se pode alterar status
-  const canEditStatus = useMemo(() => {
-    if (!currentUser || !chamado) return false;
-    
-    // Chamados finalizados não podem ter status alterado
-    if (chamado.status === ChamadoStatus.CONCLUIDO) return false;
-    
-    // GESTÃO: pode alterar status de qualquer chamado
-    if (isGestor(currentUser)) return true;
-    
-    // AGENTE: pode alterar status apenas dos seus chamados atribuídos
-    if (isAgente(currentUser)) {
-      return chamado.agenteId === currentUser.id;
-    }
-    
-    return false;
-  }, [currentUser, chamado]);
+  // Permissões
+  const canChangeStatus = isManager || isAssignedAgent;
+  const canAssignAgent = isManager;
 
-  // Filtrar agentes e equipamentos com verificação de segurança
-  const usuariosArray = useMemo(() => {
-    if (Array.isArray(usuarios)) {
-      return usuarios;
-    }
-    const usuariosData = (usuarios as Record<string, unknown>)?.data;
-    return Array.isArray(usuariosData) ? usuariosData : [];
-  }, [usuarios]);
-
-  const agentes = useMemo(() => {
-    return usuariosArray.filter((u: User) => u.perfil === 'agente');
-  }, [usuariosArray]);
-
-  const equipamentosDoSetor = useMemo(() => {
-    if (!selectedSetor || !Array.isArray(equipamentos)) {
-      return Array.isArray(equipamentos) ? [] : [];
-    }
-    return equipamentos.filter(eq => eq.setorId === selectedSetor);
-  }, [selectedSetor, equipamentos]);
-
-  // Opções de status baseadas no workflow
-  const statusOptions = useMemo(() => {
-    if (!chamado || !canEditStatus) {
-      return [];
-    }
-
-    const currentStatus = chamado.status as ChamadoStatus;
-    const availableTransitions = getAvailableStatusTransitions(currentStatus);
-    
-    // Incluir o status atual + transições possíveis
-    const allAvailableStatus = [currentStatus, ...availableTransitions];
-    
-    return allAvailableStatus.map(status => ({
-      value: status,
-      label: STATUS_LABELS[status]
-    }));
-  }, [chamado, canEditStatus]);
-
-  // Verificar se status atual requer campos de finalização
-  const requiresFinalizationFields = useMemo(() => {
-    return statusRequiresFinalizationFields(selectedStatus as ChamadoStatus);
-  }, [selectedStatus]);
-
-  // Verificar se deve mostrar campo de data de execução
-  const shouldShowDataExecucao = useMemo(() => {
-    return requiresFinalizationFields || (isEditing && chamado?.dataExecucao);
-  }, [requiresFinalizationFields, isEditing, chamado?.dataExecucao]);
-
-  const modalTitle = isViewing ? 'Detalhes do Chamado' : 
-                    isEditing ? 'Editar Chamado' : 'Novo Chamado';
-
-  /**
-   * Manipula fechamento da modal com limpeza de cache
-   */
-  const handleClose = useCallback(() => {
-    // Limpar cache relacionado a chamados para garantir dados atualizados
-    cache.invalidateByTag('chamados');
-    onClose();
-  }, [cache, onClose]);
-
-  // Reset form quando modal abrir/fechar ou chamado mudar
+  // Carrega dados do chamado para edição/visualização
   useEffect(() => {
-    if (isOpen) {
-      if (chamado && (mode === 'edit' || mode === 'view')) {
-        setSelectedTipo(chamado.tipo || '');
-        setSelectedPrioridade(chamado.prioridade || '');
-        setSelectedStatus(chamado.status || 'aberto');
-        setSelectedSetor(chamado.setorId || '');
-        setSelectedEquipamento(chamado.equipamentoId || '');
-        setSelectedAgente(chamado.agenteId || '');
-        
-        // Lógica corrigida para título e descrição
-        if (chamado.titulo && chamado.titulo.trim()) {
-          // Se tem título separado, usar título e descrição separados
-          setTitulo(chamado.titulo.trim());
-          setDescricao(chamado.descricao?.trim() || '');
-        } else {
-          // Caso antigo: usar descrição como título e deixar descrição vazia
-          setTitulo(chamado.descricao?.trim() || '');
-          setDescricao('');
-        }
-        
-        // Converter dataExecucao do formato ISO para YYYY-MM-DD (formato do input date)
-        const dataExec = chamado.dataExecucao ? 
-          new Date(chamado.dataExecucao).toISOString().split('T')[0] : '';
-        setDataExecucao(dataExec);
-        setObservacoesFinalizacao(chamado.observacoesFinalizacao || '');
-        setPecasUtilizadas(chamado.pecasUtilizadas || []);
-      } else {
-        // Reset para criar novo
-        setSelectedTipo('');
-        setSelectedPrioridade('');
-        setSelectedStatus('aberto');
-        setSelectedSetor('');
-        setSelectedEquipamento('');
-        setSelectedAgente('');
-        setTitulo('');
-        setDescricao('');
-        setDataExecucao('');
-        setObservacoesFinalizacao('');
-        setPecasUtilizadas([]);
-        // Limpar formulário de peças
-        setNomePeca('');
-        setQuantidadePeca('');
-        setEditingPecaIndex(null);
-      }
-    }
-  }, [isOpen, chamado, mode]);
-
-  // Key única para forçar re-render do FormContainer quando dados importantes mudam
-  const formKey = useMemo(() => {
-    // Usar dados estáveis para a key, evitando re-renders desnecessários
-    const baseKey = `chamado-form-${chamado?.id || 'new'}`;
-    const dataHash = `${titulo.substring(0,10)}-${descricao.substring(0,10)}-${mode}`;
-    return `${baseKey}-${dataHash}`;
-  }, [chamado?.id, titulo, descricao, mode]);
-
-  /**
-   * Funções para gerenciar peças utilizadas
-   */
-  const canEditPecas = useMemo(() => {
-    if (!currentUser) return false;
-    
-    // Se for gestor, pode sempre editar
-    if (isGestor(currentUser)) return true;
-    
-    // Se o chamado estiver concluído, só gestor pode editar
-    if (chamado?.status === ChamadoStatus.CONCLUIDO) return false;
-    
-    // Caso contrário, pode editar se estiver nos campos de finalização
-    return requiresFinalizationFields;
-  }, [currentUser, chamado?.status, requiresFinalizationFields]);
-
-  const handleAddPeca = useCallback(() => {
-    if (!nomePeca.trim() || !quantidadePeca.trim()) {
-      toast.error('Campos obrigatórios', 'Preencha o nome da peça e a quantidade');
-      return;
-    }
-
-    const quantidade = parseInt(quantidadePeca);
-    if (isNaN(quantidade) || quantidade <= 0) {
-      toast.error('Quantidade inválida', 'A quantidade deve ser um número maior que zero');
-      return;
-    }
-
-    const novaPeca = {
-      nome: nomePeca.trim(),
-      quantidade
-    };
-
-    if (editingPecaIndex !== null) {
-      // Editando peça existente
-      const pecasAtualizadas = [...pecasUtilizadas];
-      pecasAtualizadas[editingPecaIndex] = novaPeca;
-      setPecasUtilizadas(pecasAtualizadas);
-      setEditingPecaIndex(null);
-    } else {
-      // Adicionando nova peça
-      setPecasUtilizadas([...pecasUtilizadas, novaPeca]);
-    }
-
-    // Limpar formulário
-    setNomePeca('');
-    setQuantidadePeca('');
-  }, [nomePeca, quantidadePeca, editingPecaIndex, pecasUtilizadas, toast]);
-
-  const handleEditPeca = useCallback((index: number) => {
-    const peca = pecasUtilizadas[index];
-    setNomePeca(peca.nome);
-    setQuantidadePeca(peca.quantidade.toString());
-    setEditingPecaIndex(index);
-  }, [pecasUtilizadas]);
-
-  const handleRemovePeca = useCallback((index: number) => {
-    const pecasAtualizadas = pecasUtilizadas.filter((_, i) => i !== index);
-    setPecasUtilizadas(pecasAtualizadas);
-    
-    // Se estava editando esta peça, cancelar edição
-    if (editingPecaIndex === index) {
-      setEditingPecaIndex(null);
-      setNomePeca('');
-      setQuantidadePeca('');
-    }
-  }, [pecasUtilizadas, editingPecaIndex]);
-
-  const handleCancelEditPeca = useCallback(() => {
-    setEditingPecaIndex(null);
-    setNomePeca('');
-    setQuantidadePeca('');
-  }, []);
-
-  /**
-   * Configuração dos campos do formulário
-   * @decorator @config - Configuração dinâmica baseada no contexto
-   */
-  const getFormFields = useCallback((): FormFieldConfig[] => {
-    const baseFields: FormFieldConfig[] = [
-      {
-        id: 'titulo',
-        label: 'Título do Chamado',
-        type: 'text',
-        placeholder: 'Ex: Problema na impressora do laboratório',
-        required: true,
-        defaultValue: titulo,
-        validation: {
-          minLength: 5,
-          maxLength: 100
-        }
-      },
-      {
-        id: 'descricao',
-        label: 'Descrição Detalhada',
-        type: 'text',
-        placeholder: 'Descreva detalhadamente o problema ou manutenção necessária...',
-        required: true,
-        defaultValue: descricao,
-        validation: {
-          minLength: 10,
-          maxLength: 500
-        }
-      }
-    ];
-
-    if (!isViewing) {
-      baseFields.push({
-        id: 'observacoes',
-        label: 'Observações Adicionais',
-        type: 'text',
-        placeholder: 'Informações adicionais (opcional)',
-        defaultValue: (chamado as Record<string, unknown>)?.observacoes as string || '',
-        validation: {
-          maxLength: 1000
-        }
+    if (chamado && isOpen) {
+      setFormData({
+        titulo: chamado.titulo || '',
+        descricao: chamado.descricao || '',
+        tipo: chamado.tipo || TipoManutencao.PREVENTIVA,
+        prioridade: chamado.prioridade || Prioridade.MEDIA,
+        status: chamado.status || ChamadoStatus.ABERTO,
+        setorId: chamado.setorId || '',
+        equipamentoId: chamado.equipamentoId || '',
+        agenteId: chamado.agenteId || '',
+        observacoes: typeof chamado.observacoes === 'string' ? chamado.observacoes : '',
+        dataExecucao: chamado.dataExecucao || '',
+        pecasUtilizadas: chamado.pecasUtilizadas || []
+      });
+    } else if (!chamado && isOpen) {
+      // Reset para criação
+      setFormData({
+        titulo: '',
+        descricao: '',
+        tipo: TipoManutencao.PREVENTIVA,
+        prioridade: Prioridade.MEDIA,
+        status: ChamadoStatus.ABERTO,
+        setorId: '',
+        equipamentoId: '',
+        agenteId: '',
+        observacoes: '',
+        dataExecucao: '',
+        pecasUtilizadas: []
       });
     }
 
-    return baseFields;
-  }, [chamado, isViewing, titulo, descricao]);
+    setCurrentMode(mode);
+  }, [chamado, isOpen, mode]);
 
-  /**
-   * Opções de setor para dropdown
-   * @decorator @safe - Lista protegida contra dados undefined
-   * @decorator @memo - Memoizado para performance
-   */
-  const setorOptions = useMemo(() => {
-    return Array.isArray(setores) ? setores.map(setor => ({
-      value: setor.id,
-      label: setor.nome
-    })) : [];
-  }, [setores]);
-
-  /**
-   * Opções de equipamento para dropdown  
-   * @decorator @safe - Lista protegida contra dados undefined
-   */
-  // const equipamentoOptions = Array.isArray(equipamentos) ? equipamentos.map(equipamento => ({
-  //   value: equipamento.id,
-  //   label: equipamento.nome
-  // })) : [];
-
-  /**
-   * Manipula submissão do formulário
-   * @decorator @async - Operação assíncrona com loading
-   */
-  const handleSubmit = useCallback(async (formData: Record<string, string>) => {
-    try {
-      setIsSubmitting(true);
-      
-      // Verificar se é um chamado concluído sendo editado (apenas agentes são bloqueados)
-      if (isEditing && chamado?.status === ChamadoStatus.CONCLUIDO && !isGestor(currentUser)) {
-        toast.warning(
-          'Chamado Finalizado',
-          'Este chamado já foi concluído e não pode mais ser alterado. Para fazer ajustes, entre em contato com a gestão.'
-        );
-        return;
-      }
-      
-      // Validações básicas
-      if (!selectedTipo) {
-        toast.error('Erro de Validação', 'Selecione o tipo de manutenção');
-        return;
-      }
-      
-      if (!selectedPrioridade) {
-        toast.error('Erro de Validação', 'Selecione a prioridade do chamado');
-        return;
-      }
-      
-      if (!selectedSetor) {
-        toast.error('Erro de Validação', 'Selecione o setor responsável');
-        return;
-      }
-      
-      // Validação específica para status "concluído"
-      if (requiresFinalizationFields) {
-        if (!observacoesFinalizacao || observacoesFinalizacao.trim().length < 10) {
-          const errorMessage = 'Observações de finalização são obrigatórias e devem ter pelo menos 10 caracteres';
-          toast.error('Erro de Validação', errorMessage);
-          return;
-        }
-        
-        if (!dataExecucao || dataExecucao.trim() === '') {
-          toast.error('Erro de Validação', 'Data de execução é obrigatória ao finalizar um chamado');
-          return;
-        }
-        
-        // Validar se a data de execução não é futura
-        const hoje = new Date();
-        const dataExec = new Date(dataExecucao);
-        if (dataExec > hoje) {
-          toast.error('Erro de Validação', 'A data de execução não pode ser no futuro');
-          return;
-        }
-        
-        // Validar se a data de execução não é anterior à data de abertura
-        if (chamado?.dataAbertura) {
-          const dataAbertura = new Date(chamado.dataAbertura);
-          if (dataExec < dataAbertura) {
-            toast.error('Erro de Validação', 'A data de execução não pode ser anterior à data de abertura do chamado');
-            return;
-          }
-        }
-      }
-      
-      const chamadoData: ChamadoFormData = {
-        tipo: selectedTipo,
-        prioridade: selectedPrioridade,
-        titulo: formData.titulo, // Usar dados do formulário, não estado local
-        descricao: formData.descricao, // Usar dados do formulário, não estado local
-        setorId: selectedSetor,
-        equipamentoId: selectedEquipamento || undefined,
-        agenteId: selectedAgente || undefined,
-        observacoes: formData.observacoes || undefined,
-        // Incluir dataExecucao sempre que tiver valor (seja criando ou editando)
-        dataExecucao: dataExecucao ? new Date(dataExecucao).toISOString() : undefined,
-        observacoesFinalizacao: requiresFinalizationFields ? observacoesFinalizacao : undefined,
-        pecasUtilizadas: requiresFinalizationFields ? pecasUtilizadas : undefined,
-        solicitanteId: currentUser?.id
-      };
-
-      // Se for edição e agente pode editar status
-      if (isEditing && canEditStatus) {
-        chamadoData.status = selectedStatus;
-      }
-
-      await onSubmit(chamadoData, chamado?.id);
-      
-      // Limpar cache após submissão bem-sucedida
-      cache.invalidateByTag('chamados');
-      
-      // Mostrar toast de sucesso
-      toast.success(
-        isEditing ? 'Chamado atualizado!' : 'Chamado criado!',
-        isEditing ? 'As alterações foram salvas com sucesso' : 'O novo chamado foi registrado no sistema'
-      );
-      
-      handleClose();
-    } catch (error) {
-      console.error('❌ Erro no handleSubmit:', error);
-      
-      // Mostrar toast de erro para problemas de API
-      const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro inesperado';
-      toast.error(
-        'Erro ao salvar chamado',
-        errorMessage
-      );
-      
-      // Não fechar a modal em caso de erro para permitir correção
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [
-    selectedTipo, selectedPrioridade, selectedStatus, selectedSetor, 
-    selectedEquipamento, selectedAgente, dataExecucao, observacoesFinalizacao, 
-    pecasUtilizadas, currentUser, onSubmit, handleClose, isEditing, canEditStatus,
-    requiresFinalizationFields, chamado, cache, toast
-  ]);
-
-  /**
-   * Renderiza informações do chamado (modo visualização)
-   * @decorator @readonly - Componente apenas para leitura
-   * @decorator @memo - Memoizado para performance
-   */
-  const renderChamadoInfo = useMemo(() => {
-    if (!chamado || !isViewing) return null;
-
-    const solicitante = usuariosArray.find((u: User) => u.id === chamado.solicitanteId)?.nome || 'N/A';
-    const agente = chamado.agenteId ? usuariosArray.find((u: User) => u.id === chamado.agenteId)?.nome || 'Não atribuído' : 'Não atribuído';
-    const setor = Array.isArray(setores) ? 
-      setores.find(s => s.id === chamado.setorId)?.nome : 'N/A';
-    const equipamento = chamado.equipamentoId && Array.isArray(equipamentos) ? 
-      equipamentos.find(e => e.id === chamado.equipamentoId)?.nome : 'Manutenção Local';
-
-    return (
-      <StatusSection>
-        <StatusTitle>Informações do Chamado</StatusTitle>
-        <StatusGrid>
-          <StatusCard $status={chamado.status}>
-            <StatusLabel>Status</StatusLabel>
-            <StatusValue>{STATUS_LABELS[chamado.status as ChamadoStatus] || chamado.status}</StatusValue>
-          </StatusCard>
-          <StatusCard $status="info">
-            <StatusLabel>Solicitante</StatusLabel>
-            <StatusValue>{solicitante}</StatusValue>
-          </StatusCard>
-          <StatusCard $status="info">
-            <StatusLabel>Agente</StatusLabel>
-            <StatusValue>{agente}</StatusValue>
-          </StatusCard>
-          <StatusCard $status="info">
-            <StatusLabel>Setor</StatusLabel>
-            <StatusValue>{setor}</StatusValue>
-          </StatusCard>
-          <StatusCard $status="info">
-            <StatusLabel>Equipamento</StatusLabel>
-            <StatusValue>{equipamento}</StatusValue>
-          </StatusCard>
-          <StatusCard $status="info">
-            <StatusLabel>Data Abertura</StatusLabel>
-            <StatusValue>{chamado.dataAbertura ? new Date(chamado.dataAbertura).toLocaleDateString('pt-BR') : 'N/A'}</StatusValue>
-          </StatusCard>
-          {chamado.dataExecucao && (
-            <StatusCard $status="info">
-              <StatusLabel>Data Execução</StatusLabel>
-              <StatusValue>{new Date(chamado.dataExecucao).toLocaleDateString('pt-BR')}</StatusValue>
-            </StatusCard>
-          )}
-        </StatusGrid>
-      </StatusSection>
-    );
-  }, [chamado, isViewing, usuariosArray, setores, equipamentos]);
-
-  /**
-   * Footer customizado com ações baseadas no modo
-   * @decorator @conditional - Ações condicionais baseadas em permissões
-   */
-  const renderFooter = () => {
-    if (isViewing) {
-      return (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-          <Button
-            variant="secondary"
-            onClick={handleClose}
-            disabled={isSubmitting}
-          >
-            Fechar
-          </Button>
-        </div>
-      );
+  const validateForm = (): boolean => {
+    if (!formData.titulo.trim()) {
+      showError('Título é obrigatório');
+      return false;
+    } else if (formData.titulo.trim().length < 5) {
+      showError('Título deve ter pelo menos 5 caracteres');
+      return false;
     }
 
-    return (
-      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-        <Button 
-          variant="secondary" 
-          onClick={handleClose}
-          disabled={isSubmitting}
-        >
-          Cancelar
-        </Button>
-        <Button 
-          variant="primary" 
-          form="chamado-form"
-          type="submit"
-          loading={isSubmitting}
-        >
-          {isEditing ? 'Atualizar' : 'Criar Chamado'}
-        </Button>
-      </div>
-    );
+    if (!formData.descricao.trim()) {
+      showError('Descrição é obrigatória');
+      return false;
+    } else if (formData.descricao.trim().length < 10) {
+      showError('Descrição deve ter pelo menos 10 caracteres');
+      return false;
+    }
+
+    if (!formData.setorId) {
+      showError('Setor é obrigatório');
+      return false;
+    }
+
+    if (!formData.equipamentoId) {
+      showError('Equipamento ou local é obrigatório');
+      return false;
+    }
+
+    // Validações específicas para finalização
+    if (formData.status === ChamadoStatus.CONCLUIDO) {
+      if (!formData.observacoes.trim()) {
+        showError('Observações são obrigatórias para finalizar o chamado');
+        return false;
+      } else if (formData.observacoes.trim().length < 10) {
+        showError('Observações devem ter pelo menos 10 caracteres');
+        return false;
+      }
+
+      if (!formData.dataExecucao) {
+        showError('Data de execução é obrigatória para finalizar o chamado');
+        return false;
+      } else {
+        const execDate = new Date(formData.dataExecucao);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // Permite até o final do dia atual
+        
+        const chamadoDate = chamado?.dataAbertura ? new Date(chamado.dataAbertura) : null;
+        
+        // Permite data até o final do dia atual
+        if (execDate > today) {
+          showError('Data de execução não pode ser no futuro');
+          return false;
+        }
+        
+        // Só valida data de abertura se existir e se não for edição
+        if (chamadoDate && execDate < chamadoDate && isCreating) {
+          showError('Data de execução não pode ser anterior à data de abertura');
+          return false;
+        }
+      }
+
+      if (!formData.pecasUtilizadas || formData.pecasUtilizadas.length === 0) {
+        showError('É obrigatório registrar pelo menos uma peça utilizada para finalizar o chamado');
+        return false;
+      }
+    }
+
+    return true;
   };
 
+  const handleSave = async () => {
+    // Verificar se agente está tentando editar chamado concluído
+    if (!canSaveChanges) {
+      showError('Chamados concluídos não podem ser editados por agentes. Entre em contato com a gestão.');
+      return;
+    }
+
+    if (!validateForm()) return;
+
+    try {
+      await onSave(formData);
+      // Sempre fechar a modal após salvar (criação ou edição)
+      onClose();
+    } catch (error) {
+      console.error('Erro ao salvar chamado:', error);
+    }
+  };
+
+
+
+  const handleFieldChange = (field: string, value: string | string[]) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePecasChange = (pecas: { nome: string; quantidade: number }[]) => {
+    setFormData(prev => ({ ...prev, pecasUtilizadas: pecas }));
+  };
+
+  // Opções para seleções
+  const tipoOptions = [
+    {
+      id: TipoManutencao.PREVENTIVA,
+      label: 'Manutenção Preventiva',
+      description: 'Manutenção planejada para prevenir problemas',
+      color: '#10b981',
+      icon: '🔧'
+    },
+    {
+      id: TipoManutencao.CORRETIVA,
+      label: 'Manutenção Corretiva',
+      description: 'Correção de problemas identificados',
+      color: '#f59e0b',
+      icon: '⚠️'
+    }
+  ];
+
+  const prioridadeOptions = [
+    {
+      id: Prioridade.BAIXA,
+      label: 'Baixa',
+      description: 'Pode aguardar programação',
+      color: '#10b981',
+      icon: '🟢'
+    },
+    {
+      id: Prioridade.MEDIA,
+      label: 'Média',
+      description: 'Programar com antecedência',
+      color: '#f59e0b',
+      icon: '🟡'
+    },
+    {
+      id: Prioridade.ALTA,
+      label: 'Alta',
+      description: 'Necessita atenção prioritária',
+      color: '#ef4444',
+      icon: '🔴'
+    }
+  ];
+
+  const statusOptions = [
+    {
+      id: ChamadoStatus.ABERTO,
+      label: 'Aberto',
+      description: 'Aguardando atribuição de agente',
+      color: '#6b7280',
+      icon: '📋'
+    },
+    {
+      id: ChamadoStatus.EM_PROGRESSO,
+      label: 'Em Progresso',
+      description: 'Sendo executado pelo agente',
+      color: '#3b82f6',
+      icon: '⚙️'
+    },
+    {
+      id: ChamadoStatus.CONCLUIDO,
+      label: 'Concluído',
+      description: 'Manutenção finalizada',
+      color: '#10b981',
+      icon: '✅'
+    }
+  ];
+
+  // Filtrar opções de status baseado no workflow
+  const getAvailableStatusOptions = () => {
+    if (!canChangeStatus) {
+      return statusOptions.filter(opt => opt.id === formData.status);
+    }
+
+    const currentStatus = formData.status;
+
+    switch (currentStatus) {
+      case ChamadoStatus.ABERTO:
+        return statusOptions.filter(opt =>
+          opt.id === ChamadoStatus.ABERTO ||
+          opt.id === ChamadoStatus.EM_PROGRESSO
+        );
+      case ChamadoStatus.EM_PROGRESSO:
+        return statusOptions.filter(opt =>
+          opt.id === ChamadoStatus.EM_PROGRESSO ||
+          opt.id === ChamadoStatus.CONCLUIDO
+        );
+      case ChamadoStatus.CONCLUIDO:
+        // Gestores podem alterar chamados finalizados
+        return isManager ? statusOptions : statusOptions.filter(opt => opt.id === ChamadoStatus.CONCLUIDO);
+      default:
+        return statusOptions;
+    }
+  };
+
+  const isFormValid = formData.titulo.trim() &&
+    formData.descricao.trim() &&
+    formData.setorId &&
+    formData.equipamentoId;
+
+  // Agentes não podem editar chamados concluídos, mas gestores podem
+  const canSaveChanges = isCreating || isManager || (chamado?.status !== ChamadoStatus.CONCLUIDO);
+
+  const modalTitle = isCreating ? 'Novo Chamado' :
+    isEditing ? 'Editar Chamado' :
+      'Detalhes do Chamado';
+
+  const modalSubtitle = isCreating ? 'Preencha os dados do chamado de manutenção' :
+    isEditing ? 'Atualize as informações do chamado' :
+      'Visualize os detalhes do chamado';
+
   return (
-    <Modal
+    <FormModal
       isOpen={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       title={modalTitle}
+      subtitle={modalSubtitle}
+      confirmText={isCreating ? 'Criar Chamado' : isEditing ? 'Salvar Alterações' : undefined}
+      onConfirm={isViewing ? undefined : handleSave}
+      isLoading={isSaving}
+      isConfirmDisabled={!isFormValid || !canSaveChanges}
       size="large"
-      footer={renderFooter()}
-      closeOnOverlayClick={!isSubmitting}
-      closeOnEsc={!isSubmitting}
     >
-      {renderChamadoInfo}
-      
+      {/* Campos básicos */}
+      <FieldGroup>
+        <div>
+          <Input
+            placeholder="Título do chamado"
+            value={formData.titulo}
+            onChange={(e) => handleFieldChange('titulo', e.target.value)}
+            disabled={isViewing}
+          />
+        </div>
+
+        <div>
+          <Textarea
+            placeholder="Descrição detalhada do problema ou serviço necessário..."
+            value={formData.descricao}
+            onChange={(value) => handleFieldChange('descricao', value)}
+            disabled={isViewing}
+            rows={3}
+          />
+        </div>
+      </FieldGroup>
+
+      {/* Tipo do Chamado */}
       {!isViewing && (
-        <FormContainer
-          key={formKey} // Key única para forçar re-render
-          fields={getFormFields()}
-          onSubmit={handleSubmit}
-          submitDisabled={isSubmitting}
-          showReset={false}
-          showSubmit={false}
-          formId="chamado-form"
-        >
-          <FormSection>
-            {/* Seleção de Tipo */}
-            <div style={{ marginBottom: '16px' }}>
-              <FieldLabel>Tipo de Manutenção *</FieldLabel>
-              <Select
-                options={[
-                  { value: 'corretiva', label: 'Manutenção Corretiva' },
-                  { value: 'preventiva', label: 'Manutenção Preventiva' }
-                ]}
-                value={selectedTipo}
-                onChange={(e) => setSelectedTipo(e.target.value)}
-                placeholder="Selecione o tipo de manutenção"
-                required
-              />
-            </div>
-
-            {/* Seleção de Prioridade */}
-            <div style={{ marginBottom: '16px' }}>
-              <FieldLabel>Prioridade *</FieldLabel>
-              <Select
-                options={[
-                  { value: 'baixa', label: 'Baixa' },
-                  { value: 'media', label: 'Média' },
-                  { value: 'alta', label: 'Alta' }
-                ]}
-                value={selectedPrioridade}
-                onChange={(e) => setSelectedPrioridade(e.target.value)}
-                placeholder="Selecione a prioridade"
-                required
-              />
-            </div>
-
-            {/* Status (para gestores e agentes em edição) */}
-            {isEditing && canEditStatus && (
-              <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Status do Chamado</FieldLabel>
-                <Select
-                  options={statusOptions}
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  placeholder="Selecione o status"
-                />
-                {statusOptions.length === 1 && (
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: '#64748b', 
-                    marginTop: '4px' 
-                  }}>
-                    Status atual. {getAvailableStatusTransitions(selectedStatus as ChamadoStatus).length === 0 
-                      ? 'Chamado finalizado.' 
-                      : `Selecione uma nova etapa para continuar. ${isGestor(currentUser) ? '(Gestão)' : '(Agente responsável)'}`
-                    }
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Seleção de Setor e Equipamento */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-              <div>
-                <FieldLabel>Setor *</FieldLabel>
-                <Select
-                  options={setorOptions}
-                  value={selectedSetor}
-                  onChange={(e) => setSelectedSetor(e.target.value)}
-                  placeholder="Selecione um setor"
-                  required
-                />
-              </div>
-
-              <div>
-                <FieldLabel>Equipamento (Opcional)</FieldLabel>
-                <Select
-                  options={[
-                    { value: '', label: 'Manutenção Local' },
-                    ...equipamentosDoSetor.map(eq => ({
-                      value: eq.id,
-                      label: `${eq.nome} (${eq.codigo})`
-                    }))
-                  ]}
-                  value={selectedEquipamento}
-                  onChange={(e) => setSelectedEquipamento(e.target.value)}
-                  placeholder="Equipamento específico (opcional)"
-                  disabled={!selectedSetor}
-                />
-              </div>
-            </div>
-
-            {/* Atribuir Agente (apenas para GESTÃO) */}
-            {isGestor(currentUser) && (
-              <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Agente Responsável</FieldLabel>
-                <Select
-                  options={[
-                    { value: '', label: 'Sem agente atribuído' },
-                    ...agentes.map((agente: User) => ({
-                      value: agente.id,
-                      label: agente.nome
-                    }))
-                  ]}
-                  value={selectedAgente}
-                  onChange={(e) => setSelectedAgente(e.target.value)}
-                  placeholder="Atribuir a um agente (opcional)"
-                />
-              </div>
-            )}
-
-            {/* Data de Execução (obrigatória ao finalizar ou editável se já existe) */}
-            {shouldShowDataExecucao && (
-              <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Data de Execução {requiresFinalizationFields ? '*' : ''}</FieldLabel>
-                <input
-                  type="date"
-                  value={dataExecucao}
-                  onChange={(e) => setDataExecucao(e.target.value)}
-                  max={new Date().toISOString().split('T')[0]} // Não permite datas futuras
-                  required={requiresFinalizationFields}
-                  style={{ 
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontFamily: 'inherit'
-                  }}
-                />
-                <div style={{ 
-                  fontSize: '12px', 
-                  color: '#64748b', 
-                  marginTop: '4px' 
-                }}>
-                  {requiresFinalizationFields 
-                    ? 'Campo obrigatório. Informe a data em que o serviço foi executado.'
-                    : 'Data em que o serviço foi executado (opcional).'
-                  }
-                </div>
-              </div>
-            )}
-
-            {/* Observações de Finalização (apenas se status = concluído) */}
-            {requiresFinalizationFields && (
-              <>
-                <div style={{ marginBottom: '16px' }}>
-                  <FieldLabel>Observações da Finalização *</FieldLabel>
-                  <Textarea
-                    value={observacoesFinalizacao}
-                    onChange={setObservacoesFinalizacao}
-                    placeholder="Descreva detalhadamente o que foi feito na manutenção"
-                    rows={4}
-                    maxLength={1000}
-                    required
-                    helperText="Campo obrigatório. Detalhe as ações realizadas durante a manutenção."
-                  />
-                </div>
-              </>
-            )}
-
-            {/* Peças Utilizadas (apenas se status = concluído) */}
-            {requiresFinalizationFields && (
-              <div style={{ marginBottom: '16px' }}>
-                <FieldLabel>Peças Utilizadas</FieldLabel>
-                <div style={{ 
-                  border: '1px solid #e2e8f0', 
-                  borderRadius: '8px', 
-                  padding: '12px',
-                  backgroundColor: '#f8fafc'
-                }}>
-                  
-                  {/* Formulário para adicionar/editar peças */}
-                  {canEditPecas && (
-                    <div style={{ 
-                      marginBottom: '16px',
-                      padding: '12px',
-                      backgroundColor: 'white',
-                      borderRadius: '6px',
-                      border: '1px solid #e2e8f0'
-                    }}>
-                      <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: '2fr 1fr auto', 
-                        gap: '8px',
-                        alignItems: 'end'
-                      }}>
-                        <div>
-                          <FieldLabel style={{ fontSize: '12px', marginBottom: '4px' }}>
-                            Nome da Peça
-                          </FieldLabel>
-                          <Input
-                            value={nomePeca}
-                            onChange={(e) => setNomePeca(e.target.value)}
-                            placeholder="Ex: Cabo coaxial RG-213"
-                          />
-                        </div>
-                        <div>
-                          <FieldLabel style={{ fontSize: '12px', marginBottom: '4px' }}>
-                            Quantidade
-                          </FieldLabel>
-                          <Input
-                            type="number"
-                            value={quantidadePeca}
-                            onChange={(e) => setQuantidadePeca(e.target.value)}
-                            placeholder="Ex: 2"
-                          />
-                        </div>
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                          <Button
-                            variant="primary"
-                            size="small"
-                            onClick={handleAddPeca}
-                            disabled={!nomePeca.trim() || !quantidadePeca.trim()}
-                          >
-                            {editingPecaIndex !== null ? 'Salvar' : 'Adicionar'}
-                          </Button>
-                          {editingPecaIndex !== null && (
-                            <Button
-                              variant="secondary"
-                              size="small"
-                              onClick={handleCancelEditPeca}
-                            >
-                              Cancelar
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Lista de peças utilizadas */}
-                  {pecasUtilizadas.length === 0 ? (
-                    <p style={{ color: '#64748b', margin: 0, textAlign: 'center', padding: '16px' }}>
-                      Nenhuma peça foi utilizada nesta manutenção
-                    </p>
-                  ) : (
-                    <div>
-                      {pecasUtilizadas.map((peca, index) => (
-                        <div key={index} style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: '8px',
-                          padding: '12px',
-                          backgroundColor: 'white',
-                          borderRadius: '6px',
-                          border: '1px solid #e2e8f0'
-                        }}>
-                          <div style={{ flex: 1 }}>
-                            <span style={{ fontWeight: 500 }}>{peca.nome}</span>
-                            <span style={{ 
-                              marginLeft: '12px', 
-                              color: '#64748b',
-                              fontSize: '14px'
-                            }}>
-                              Qtd: {peca.quantidade}
-                            </span>
-                          </div>
-                          
-                          {canEditPecas && (
-                            <div style={{ display: 'flex', gap: '4px' }}>
-                              <Button
-                                variant="outline"
-                                size="small"
-                                onClick={() => handleEditPeca(index)}
-                              >
-                                Editar
-                              </Button>
-                              <Button
-                                variant="danger"
-                                size="small"
-                                onClick={() => handleRemovePeca(index)}
-                              >
-                                Remover
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Informação sobre permissões */}
-                  {!canEditPecas && chamado?.status === ChamadoStatus.CONCLUIDO && !isGestor(currentUser) && (
-                    <div style={{
-                      textAlign: 'center',
-                      color: '#64748b',
-                      fontSize: '12px',
-                      fontStyle: 'italic',
-                      marginTop: '8px'
-                    }}>
-                      Chamado concluído. Apenas gestores podem editar as peças utilizadas.
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </FormSection>
-        </FormContainer>
+        <FieldGroup>
+          <SectionTitle>Tipo do Chamado</SectionTitle>
+          <FormSelection
+            options={tipoOptions}
+            value={formData.tipo}
+            onChange={(value) => handleFieldChange('tipo', value)}
+          />
+        </FieldGroup>
       )}
-    </Modal>
+
+      {/* Prioridade */}
+      {!isViewing && (
+        <FieldGroup>
+          <SectionTitle>Prioridade</SectionTitle>
+          <FormSelection
+            options={prioridadeOptions}
+            value={formData.prioridade}
+            onChange={(value) => handleFieldChange('prioridade', value)}
+          />
+        </FieldGroup>
+      )}
+
+      {/* Status (apenas para edição) */}
+      {!isCreating && !isViewing && canChangeStatus && (
+        <FieldGroup>
+          <SectionTitle>Status do Chamado</SectionTitle>
+          <FormSelection
+            options={getAvailableStatusOptions()}
+            value={formData.status}
+            onChange={(value) => handleFieldChange('status', value)}
+          />
+        </FieldGroup>
+      )}
+
+      {/* Setor e Equipamento */}
+      <FieldGroup>
+        <SectionTitle>Relação</SectionTitle>
+        <div>
+          <Select
+            placeholder="Selecione o setor"
+            value={formData.setorId}
+            onChange={(e) => handleFieldChange('setorId', e.target.value)}
+            disabled={isViewing}
+            options={allSetores
+              .filter(setor => setor.ativo)
+              .map(setor => ({
+                value: setor.id,
+                label: setor.nome
+              }))
+            }
+          />
+        </div>
+
+        <div>
+          <Select
+            placeholder="Selecione o equipamento ou local"
+            value={formData.equipamentoId}
+            onChange={(e) => handleFieldChange('equipamentoId', e.target.value)}
+            disabled={isViewing}
+            options={[
+              // Equipamentos
+              { value: 'EQ001', label: 'Microscópio Biológico' },
+              { value: 'EQ002', label: 'Estação Meteorológica' },
+              { value: 'EQ003', label: 'Espectrômetro' },
+              { value: 'EQ004', label: 'Gerador de Energia' },
+              { value: 'EQ005', label: 'Sistema de Aquecimento' },
+              // Locais/Instalações
+              { value: 'LOC001', label: 'Laboratório Principal' },
+              { value: 'LOC002', label: 'Alojamentos' },
+              { value: 'LOC003', label: 'Área de Comunicações' },
+              { value: 'LOC004', label: 'Depósito de Suprimentos' },
+              { value: 'LOC005', label: 'Área Externa - Antenas' }
+            ]}
+          />
+        </div>
+      </FieldGroup>
+
+      {/* Agente responsável (apenas para gestores) */}
+      {canAssignAgent && (
+        <FieldGroup>
+          <SectionTitle>Agente Responsável</SectionTitle>
+          <div>
+            <Select
+              placeholder="Selecione o agente (opcional)"
+              value={formData.agenteId}
+              onChange={(e) => handleFieldChange('agenteId', e.target.value)}
+              disabled={isViewing}
+              options={allUsers
+                .filter(user => user.perfil === PerfilUsuario.AGENTE && user.ativo)
+                .map(user => ({
+                  value: user.id,
+                  label: user.nome
+                }))
+              }
+            />
+          </div>
+        </FieldGroup>
+      )}
+
+      {/* Data de Execução (apenas se concluído) */}
+      {formData.status === ChamadoStatus.CONCLUIDO && (
+        <FieldGroup>
+          <SectionTitle>Data de Execução *</SectionTitle>
+          <div>
+            <Input
+              type="date"
+              value={formData.dataExecucao}
+              onChange={(e) => handleFieldChange('dataExecucao', e.target.value)}
+              disabled={isViewing}
+            />
+          </div>
+        </FieldGroup>
+      )}
+
+      {/* Observações (apenas se concluído) */}
+      {formData.status === ChamadoStatus.CONCLUIDO && (
+        <FieldGroup>
+          <SectionTitle>Observações do Atendimento *</SectionTitle>
+          <div>
+            <Textarea
+              placeholder="Descreva detalhadamente o que foi realizado na manutenção..."
+              value={formData.observacoes}
+              onChange={(value) => handleFieldChange('observacoes', value)}
+              disabled={isViewing}
+              rows={4}
+            />
+          </div>
+        </FieldGroup>
+      )}
+
+      {/* Peças Utilizadas (apenas se concluído) */}
+      {formData.status === ChamadoStatus.CONCLUIDO && (
+        <FieldGroup>
+          <FormList
+            title="Peças Utilizadas *"
+            items={formData.pecasUtilizadas.map((peca, index) => ({
+              id: `peca-${index}`,
+              title: peca.nome,
+              subtitle: `Quantidade: ${peca.quantidade}`,
+              data: peca
+            }))}
+            onChange={(items) => {
+              const pecas = items.map(item => {
+                const pecaData = item.data as { nome: string; quantidade: string };
+                return {
+                  nome: pecaData.nome,
+                  quantidade: parseInt(pecaData.quantidade) || 1
+                };
+              });
+              handlePecasChange(pecas);
+            }}
+            newItemFields={[
+              {
+                key: 'nome',
+                label: 'Nome da Peça',
+                placeholder: 'Ex: Resistor 10kΩ, Fusível 20A',
+                required: true,
+                validate: (value) => {
+                  if (value.length < 2) return 'Nome deve ter pelo menos 2 caracteres';
+                  return null;
+                }
+              },
+              {
+                key: 'quantidade',
+                label: 'Quantidade',
+                placeholder: 'Ex: 2',
+                type: 'number',
+                required: true,
+                validate: (value) => {
+                  const num = parseInt(value);
+                  if (!value.trim() || isNaN(num) || num < 1) return 'Quantidade deve ser um número maior que 0';
+                  return null;
+                }
+              }
+            ]}
+            addButtonText="Adicionar Peça"
+            emptyText="Registre as peças utilizadas na manutenção"
+            emptyIcon="🔧"
+            maxItems={20}
+            allowEdit={!isViewing}
+          />
+        </FieldGroup>
+      )}
+
+      {/* Aviso para chamados finalizados */}
+      {chamado?.status === ChamadoStatus.CONCLUIDO && !isManager && (
+        <div style={{
+          padding: '12px',
+          backgroundColor: '#fef3c7',
+          borderLeft: '4px solid #f59e0b',
+          borderRadius: '4px',
+          fontSize: '14px',
+          color: '#92400e'
+        }}>
+          <strong>Chamado Finalizado:</strong> Este chamado foi concluído e não pode ser editado.
+          Entre em contato com a gestão para ajustes.
+        </div>
+      )}
+    </FormModal>
   );
 }

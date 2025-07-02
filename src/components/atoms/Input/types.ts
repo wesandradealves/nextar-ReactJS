@@ -4,7 +4,7 @@
 
 export interface InputProps {
   /** Tipo do input HTML */
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
   /** Valor do input */
   value?: string;
   /** Valor padrão */

@@ -114,5 +114,27 @@
     "id": "10",
     "dataAbertura": "2025-07-01T01:11:56.652Z",
     "dataAtualizacao": "2025-07-01T04:23:10.735Z"
+  },
+  {
+    "tipo": "preventiva",
+    "prioridade": "baixa",
+    "titulo": "Teste de chamado",
+    "descricao": "Chamado teste",
+    "setorId": "1",
+    "equipamentoId": "LOC001",
+    "agenteId": "4",
+    "observacoes": "testetestetestetestetestetestetestetesteteste",
+    "solicitanteId": "0",
+    "status": "concluido",
+    "id": "11",
+    "dataAbertura": "2025-07-02T06:23:02.310Z",
+    "dataExecucao": "2025-07-03",
+    "pecasUtilizadas": [
+      {
+        "nome": "teste",
+        "quantidade": 3
+      }
+    ],
+    "dataAtualizacao": "2025-07-02T06:45:09.816Z"
   }
 ]
