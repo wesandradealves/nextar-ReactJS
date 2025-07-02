@@ -35,7 +35,7 @@ export const FieldGroup = styled.div`
  * Título de seção dentro do formulário
  */
 export const SectionTitle = styled.h4`
-  margin: 0 0 12px 0;
+//   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
   color: #374151;
@@ -48,7 +48,7 @@ export const SelectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
+//   margin-top: 16px;
 `;
 
 /**

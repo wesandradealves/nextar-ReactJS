@@ -38,14 +38,16 @@ export interface UserModalProps {
 /**
  * Modal para criação e edição de usuários
  * 
- * @version 2.0.1
+ * @version 2.0.3
  * @description
  * Modal padronizado usando os novos componentes:
  * - FormModal para estrutura base
  * - FormSelection para seleção de perfil
+ * - Campo de setor como texto livre (diferente dos setores de chamados)
  * - Validações integradas
  * - Layout responsivo
- * - Alteração de senha para gestores (apenas em edição)
+ * - Campos de senha obrigatórios na criação
+ * - Alteração de senha opcional para gestores (apenas em edição)
  */
 export default function UserModal({
   isOpen,
@@ -60,7 +62,8 @@ export default function UserModal({
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
-    perfil: PerfilUsuario.PESQUISADOR
+    perfil: PerfilUsuario.PESQUISADOR,
+    setor: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -74,6 +77,7 @@ export default function UserModal({
   const isEditing = !!user;
   const isManager = currentUser?.perfil === PerfilUsuario.GESTAO;
   const canChangePassword = isEditing && isManager && onChangePassword;
+  const requirePassword = !isEditing; // Senha obrigatória na criação
 
   // Carrega dados do usuário para edição
   useEffect(() => {
@@ -81,14 +85,16 @@ export default function UserModal({
       setFormData({
         nome: user.nome || '',
         email: user.email || '',
-        perfil: user.perfil || PerfilUsuario.PESQUISADOR
+        perfil: user.perfil || PerfilUsuario.PESQUISADOR,
+        setor: user.setor || ''
       });
     } else if (!user && isOpen) {
       // Reset para criação
       setFormData({
         nome: '',
         email: '',
-        perfil: PerfilUsuario.PESQUISADOR
+        perfil: PerfilUsuario.PESQUISADOR,
+        setor: ''
       });
     }
     
@@ -97,6 +103,9 @@ export default function UserModal({
       newPassword: '',
       confirmPassword: ''
     });
+    
+    // Para criação, não mostrar campos de senha inicialmente
+    // Para edição, manter como estava (false)
     setShowPasswordFields(false);
     setErrors({});
   }, [user, isOpen]);
@@ -119,10 +128,18 @@ export default function UserModal({
       }
     }
 
-    // Validação de senha (apenas se campos estão visíveis)
-    if (showPasswordFields) {
+    if (!formData.setor.trim()) {
+      newErrors.setor = 'Setor é obrigatório';
+    }
+
+    // Validação de senha
+    // Para criação: sempre obrigatória
+    // Para edição: apenas se campos estão visíveis
+    const shouldValidatePassword = requirePassword || showPasswordFields;
+    
+    if (shouldValidatePassword) {
       if (!passwordData.newPassword.trim()) {
-        newErrors.newPassword = 'Nova senha é obrigatória';
+        newErrors.newPassword = 'Senha é obrigatória';
       } else if (passwordData.newPassword.length < 6) {
         newErrors.newPassword = 'Senha deve ter pelo menos 6 caracteres';
       }
@@ -142,12 +159,24 @@ export default function UserModal({
     if (!validateForm()) return;
 
     try {
-      // Salvar dados do usuário
-      await onSave(formData);
-      
-      // Se tem alteração de senha, executar separadamente
-      if (showPasswordFields && passwordData.newPassword && onChangePassword && user) {
-        await onChangePassword(user.id, passwordData.newPassword);
+      if (isEditing) {
+        // Editar usuário existente
+        await onSave(formData);
+        
+        // Se tem alteração de senha, executar separadamente
+        if (showPasswordFields && passwordData.newPassword && onChangePassword && user) {
+          await onChangePassword(user.id, passwordData.newPassword);
+        }
+      } else {
+        // Criar novo usuário - incluir dados de senha
+        const createData = {
+          ...formData,
+          senha: passwordData.newPassword,
+          // Campos obrigatórios para CreateUserData
+          usuario: formData.email, // Usar email como usuário
+          setor: formData.setor // Usar setor selecionado
+        };
+        await onSave(createData);
       }
       
       onClose();
@@ -198,7 +227,12 @@ export default function UserModal({
     }
   ];
 
-  const isFormValid = formData.nome.trim() && formData.email.trim() && !Object.keys(errors).length;
+  const isFormValid = formData.nome.trim() && 
+                     formData.email.trim() && 
+                     formData.setor.trim() &&
+                     !Object.keys(errors).length &&
+                     // Para criação, validar se senha está preenchida
+                     (isEditing || passwordData.newPassword.trim());
 
   return (
     <FormModal
@@ -258,31 +292,37 @@ export default function UserModal({
         />
       </FieldGroup>
 
-      {canChangePassword && (
-        <FieldGroup>
-          <ToggleContainer style={{ width: '100%' }}>
-            <ToggleSwitch>
-              <ToggleInput
-                type="checkbox"
-                checked={showPasswordFields}
-                onChange={(e) => setShowPasswordFields(e.target.checked)}
-              />
-              <ToggleSlider $checked={showPasswordFields} />
-            </ToggleSwitch>
-            <ToggleInfo>
-              <ToggleTitle>Redefinir senha</ToggleTitle>
-              <ToggleText>
-                {showPasswordFields ? 'Campos habilitados' : 'Clique para habilitar'}
-              </ToggleText>
-            </ToggleInfo>
-          </ToggleContainer>
+      <FieldGroup>
+        <SectionTitle>Setor do Usuário</SectionTitle>
+        <div>
+          <Input
+            placeholder="Digite o setor do usuário (ex: TI, Administração, etc.)"
+            value={formData.setor}
+            onChange={(e) => handleFieldChange('setor', e.target.value)}
+          />
+          {errors.setor && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#ef4444', 
+              marginTop: '4px' 
+            }}>
+              {errors.setor}
+            </div>
+          )}
+        </div>
+      </FieldGroup>
 
-          {showPasswordFields && (
+      {/* Seção de Senha */}
+      {(requirePassword || canChangePassword) && (
+        <FieldGroup>
+          {requirePassword ? (
             <>
+              {/* Campos obrigatórios para criação */}
+              <SectionTitle>Definir Senha</SectionTitle>
               <div>
                 <Input
                   type="password"
-                  placeholder="Nova senha (mínimo 6 caracteres)"
+                  placeholder="Senha (mínimo 6 caracteres)"
                   value={passwordData.newPassword}
                   onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                 />
@@ -300,7 +340,7 @@ export default function UserModal({
               <div>
                 <Input
                   type="password"
-                  placeholder="Confirme a nova senha"
+                  placeholder="Confirme a senha"
                   value={passwordData.confirmPassword}
                   onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
                 />
@@ -314,6 +354,66 @@ export default function UserModal({
                   </div>
                 )}
               </div>
+            </>
+          ) : (
+            <>
+              {/* Toggle para edição de senha (apenas para gestores) */}
+              <ToggleContainer style={{ width: '100%' }}>
+                <ToggleSwitch>
+                  <ToggleInput
+                    type="checkbox"
+                    checked={showPasswordFields}
+                    onChange={(e) => setShowPasswordFields(e.target.checked)}
+                  />
+                  <ToggleSlider $checked={showPasswordFields} />
+                </ToggleSwitch>
+                <ToggleInfo>
+                  <ToggleTitle>Redefinir senha</ToggleTitle>
+                  <ToggleText>
+                    {showPasswordFields ? 'Campos habilitados' : 'Clique para habilitar'}
+                  </ToggleText>
+                </ToggleInfo>
+              </ToggleContainer>
+
+              {showPasswordFields && (
+                <>
+                  <div>
+                    <Input
+                      type="password"
+                      placeholder="Nova senha (mínimo 6 caracteres)"
+                      value={passwordData.newPassword}
+                      onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                    />
+                    {errors.newPassword && (
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#ef4444', 
+                        marginTop: '4px' 
+                      }}>
+                        {errors.newPassword}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <Input
+                      type="password"
+                      placeholder="Confirme a nova senha"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                    />
+                    {errors.confirmPassword && (
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#ef4444', 
+                        marginTop: '4px' 
+                      }}>
+                        {errors.confirmPassword}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </FieldGroup>

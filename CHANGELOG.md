@@ -5,6 +5,38 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.2] - 2025-07-02
+
+### Corrigido
+- **UserModal - Criação de Senha Implementada**
+  - Campo de senha agora é obrigatório durante criação de usuários
+  - Interface padronizada seguindo o mesmo padrão da edição
+  - Validação robusta com confirmação de senha
+  - Distinção clara entre criação (campos obrigatórios) e edição (toggle opcional)
+  - Funcionalidade de alteração de senha mantida para gestores na edição
+
+- **UserModal - Setor como Campo Livre**
+  - Correção: setor de usuário agora é campo de texto livre
+  - Remoção da dependência incorreta do `useSetores` (setores de chamados)
+  - Campo "Setor do Usuário" permite entrada livre de texto
+  - Validação obrigatória do campo setor
+  - Diferenciação correta entre setores de usuários vs setores científicos
+
+### Melhorado
+- **Experiência do Usuário na Criação**
+  - Modal de criação agora exige senha obrigatória
+  - Todos os campos necessários (nome, email, perfil, setor, senha) são obrigatórios
+  - Interface mais intuitiva com placeholders explicativos
+  - Validação em tempo real com feedback visual
+  - Integração perfeita com API de criação (`CreateUserData`)
+
+### Técnico
+- **Validação de Formulário Aprimorada**
+  - Lógica condicional para validação de senha (criação vs edição)
+  - Campo `setor` adicionado às validações obrigatórias
+  - Estado de formulário válido considera todos os campos necessários
+  - Correção da tipagem TypeScript para o estado do formulário
+
 ## [2.0.1] - 2025-07-02
 
 ### Adicionado
