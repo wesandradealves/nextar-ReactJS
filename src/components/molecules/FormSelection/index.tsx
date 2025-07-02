@@ -6,51 +6,8 @@ import {
   CustomRadio,
   OptionLabel,
   OptionDescription
-} from '../Modal/formStyles';
-
-/**
- * Opção de seleção
- */
-export interface SelectionItem {
-  /** ID único da opção */
-  id: string;
-  /** Label principal */
-  label: string;
-  /** Descrição opcional */
-  description?: string;
-  /** Cor da opção */
-  color?: string;
-  /** Se a opção está desabilitada */
-  disabled?: boolean;
-  /** Ícone ou emoji da opção */
-  icon?: string;
-}
-
-/**
- * Props do FormSelection
- */
-export interface FormSelectionProps {
-  /** Lista de opções */
-  options: SelectionItem[];
-  /** Valor selecionado atual */
-  value: string;
-  /** Callback quando uma opção é selecionada */
-  onChange: (value: string) => void;
-  /** Tamanho das opções */
-  size?: 'small' | 'medium' | 'large';
-  /** Se permite múltipla seleção */
-  multiple?: boolean;
-  /** Valores selecionados (para múltipla seleção) */
-  values?: string[];
-  /** Callback para múltipla seleção */
-  onMultipleChange?: (values: string[]) => void;
-  /** Classes CSS adicionais */
-  className?: string;
-  /** Se deve mostrar radio/checkbox visual */
-  showIndicator?: boolean;
-  /** Se o componente inteiro está desabilitado */
-  disabled?: boolean;
-}
+} from './styles';
+import { FormSelectionProps } from './types';
 
 /**
  * Componente de seleção padronizado para formulários
@@ -76,7 +33,7 @@ export interface FormSelectionProps {
  * />
  * ```
  */
-export const FormSelection: React.FC<FormSelectionProps> = ({
+export const FormSelection = ({
   options,
   value,
   onChange,
@@ -87,7 +44,7 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
   className,
   showIndicator = true,
   disabled = false
-}) => {
+}: FormSelectionProps) => {
   const handleOptionClick = (optionId: string, itemDisabled?: boolean) => {
     if (disabled || itemDisabled) return;
 
@@ -114,54 +71,81 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
     return multiple ? values.includes(optionId) : value === optionId;
   };
 
+  // Helper para determinar padding com base no tamanho
+  const getPadding = (optionSize: 'small' | 'medium' | 'large') => {
+    switch (optionSize) {
+      case 'small': return 'py-3 px-4';
+      case 'large': return 'py-5 px-6';
+      default: return 'p-4'; // medium
+    }
+  };
+
   return (
     <SelectionContainer 
-      className={className}
+      className={`flex flex-col gap-2 ${className || ''}`}
       style={{ opacity: disabled ? 0.7 : 1 }}
     >
-      {options.map((option) => (
-        <SelectionOption
-          key={option.id}
-          $selected={isSelected(option.id)}
-          $color={option.color}
-          $size={size}
-          onClick={() => handleOptionClick(option.id, option.disabled)}
-          onKeyDown={(e) => handleKeyDown(e, option.id, option.disabled)}
-          tabIndex={(disabled || option.disabled) ? -1 : 0}
-          role={multiple ? 'checkbox' : 'radio'}
-          aria-checked={isSelected(option.id)}
-          aria-disabled={disabled || option.disabled}
-          style={{
-            opacity: (disabled || option.disabled) ? 0.5 : 1,
-            cursor: (disabled || option.disabled) ? 'not-allowed' : 'pointer'
-          }}
-        >
-          <RadioContainer>
-            {showIndicator && (
-              <CustomRadio
-                $selected={isSelected(option.id)}
-                $color={option.color}
-                style={{
-                  borderRadius: multiple ? '4px' : '50%'
-                }}
-              />
-            )}
-            
-            <div style={{ flex: 1 }}>
-              <OptionLabel>
-                {option.icon && (
-                  <span style={{ marginRight: '8px' }}>{option.icon}</span>
-                )}
-                {option.label}
-              </OptionLabel>
-              
-              {option.description && (
-                <OptionDescription>{option.description}</OptionDescription>
+      {options.map((option) => {
+        const selected = isSelected(option.id);
+        const optionColor = option.color || '#3b82f6';
+        const isDisabled = disabled || option.disabled;
+        
+        return (
+          <SelectionOption
+            key={option.id}
+            $selected={selected}
+            $color={optionColor}
+            $size={size}
+            onClick={() => handleOptionClick(option.id, option.disabled)}
+            onKeyDown={(e) => handleKeyDown(e, option.id, option.disabled)}
+            tabIndex={isDisabled ? -1 : 0}
+            role={multiple ? 'checkbox' : 'radio'}
+            aria-checked={selected}
+            aria-disabled={isDisabled}
+            className={`
+              ${getPadding(size)}
+              transition-all duration-200 
+              rounded-lg border-2
+              ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-opacity-[0.08]'}
+              focus:outline-none focus:ring-2 focus:ring-offset-2
+            `}
+            style={{
+              borderColor: selected ? optionColor : '#e5e7eb',
+              backgroundColor: selected ? `${optionColor}08` : 'white',
+              ...(selected && { boxShadow: `0 0 0 1px ${optionColor}10` }),
+              ...(isDisabled && { opacity: 0.5, cursor: 'not-allowed' })
+            }}
+          >
+            <RadioContainer className="flex items-center gap-3">
+              {showIndicator && (
+                <CustomRadio
+                  $selected={selected}
+                  $color={optionColor}
+                  className="w-4 h-4 flex-shrink-0 flex items-center justify-center transition-all"
+                  style={{
+                    borderRadius: multiple ? '4px' : '50%'
+                  }}
+                />
               )}
-            </div>
-          </RadioContainer>
-        </SelectionOption>
-      ))}
+              
+              <div className="flex-1">
+                <OptionLabel className="font-semibold text-sm text-gray-900 mb-1">
+                  {option.icon && (
+                    <span className="mr-2">{option.icon}</span>
+                  )}
+                  {option.label}
+                </OptionLabel>
+                
+                {option.description && (
+                  <OptionDescription className="text-xs text-gray-500 leading-relaxed">
+                    {option.description}
+                  </OptionDescription>
+                )}
+              </div>
+            </RadioContainer>
+          </SelectionOption>
+        );
+      })}
     </SelectionContainer>
   );
 };

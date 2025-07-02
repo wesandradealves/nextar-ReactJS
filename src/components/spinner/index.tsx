@@ -1,12 +1,12 @@
 "use client";
 
-import { SpinnerContainer, SpinnerWheel } from './styles';
+import { SpinnerContainer, SpinnerElement } from './styles';
 import type { SpinnerProps } from './types';
 
 /**
  * Componente atômico Spinner
  * Exibe um indicador de carregamento animado
- * Segue padrão Atomic Design
+ * Segue padrão Atomic Design e híbrido Tailwind + styled-components
  * 
  * @example
  * ```tsx
@@ -20,24 +20,28 @@ import type { SpinnerProps } from './types';
  * <Spinner size="large" color="#ff0000" />
  * ```
  */
-export default function Spinner({
+export const Spinner = ({
   size = 'medium',
   color = '#667eea',
   overlay = false,
   className,
   visible = true
-}: SpinnerProps) {
+}: SpinnerProps) => {
   if (!visible) return null;
 
   return (
     <SpinnerContainer 
-      className={className}
       $overlay={overlay}
+      className={className}
     >
-      <SpinnerWheel 
+      <SpinnerElement
         $size={size}
         $color={color}
+        className="animate-spin"
       />
     </SpinnerContainer>
   );
 }
+
+// Exportação padrão para compatibilidade com código existente
+export default Spinner;

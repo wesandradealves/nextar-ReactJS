@@ -14,73 +14,8 @@ import {
   EmptyTitle,
   EmptyText,
   SectionTitle
-} from '../Modal/formStyles';
-
-/**
- * Item da lista
- */
-export interface ListFormItem {
-  /** ID único do item */
-  id: string;
-  /** Título/nome principal */
-  title: string;
-  /** Subtítulo/descrição */
-  subtitle?: string;
-  /** Dados adicionais */
-  data?: Record<string, unknown>;
-}
-
-/**
- * Campo para adicionar novo item
- */
-export interface NewItemField {
-  /** Chave do campo */
-  key: string;
-  /** Label do campo */
-  label: string;
-  /** Placeholder */
-  placeholder: string;
-  /** Tipo do campo */
-  type?: 'text' | 'number' | 'email';
-  /** Se é obrigatório */
-  required?: boolean;
-  /** Validação customizada */
-  validate?: (value: string) => string | null;
-}
-
-/**
- * Props do FormList
- */
-export interface FormListProps {
-  /** Título da lista */
-  title?: string;
-  /** Lista de itens */
-  items: ListFormItem[];
-  /** Callback para atualizar items */
-  onChange: (items: ListFormItem[]) => void;
-  /** Campos para adicionar novo item */
-  newItemFields: NewItemField[];
-  /** Texto do botão de adicionar */
-  addButtonText?: string;
-  /** Texto quando a lista está vazia */
-  emptyText?: string;
-  /** Ícone quando a lista está vazia */
-  emptyIcon?: string;
-  /** Se deve mostrar números dos itens */
-  showNumbers?: boolean;
-  /** Se permite reordenar itens */
-  allowReorder?: boolean;
-  /** Se permite editar itens inline */
-  allowEdit?: boolean;
-  /** Máximo de itens permitidos */
-  maxItems?: number;
-  /** Classes CSS adicionais */
-  className?: string;
-  /** Função para renderizar ações customizadas */
-  renderActions?: (item: ListFormItem, index: number) => React.ReactNode;
-  /** Função para renderizar conteúdo customizado */
-  renderContent?: (item: ListFormItem, index: number) => React.ReactNode;
-}
+} from './styles';
+import { FormListProps, ListFormItem } from './types';
 
 /**
  * Componente de lista para formulários
@@ -107,7 +42,7 @@ export interface FormListProps {
  * />
  * ```
  */
-export const FormList: React.FC<FormListProps> = ({
+export const FormList = ({
   title,
   items,
   onChange,
@@ -117,11 +52,12 @@ export const FormList: React.FC<FormListProps> = ({
   emptyIcon = '📝',
   showNumbers = false,
   allowReorder = false,
+  allowEdit = false,
   maxItems,
   className,
   renderActions,
   renderContent
-}) => {
+}: FormListProps) => {
   const [newItemData, setNewItemData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -134,195 +70,230 @@ export const FormList: React.FC<FormListProps> = ({
     setNewItemData(initialData);
   }, [newItemFields]);
 
-  const validateField = (field: NewItemField, value: string): string | null => {
-    if (field.required && !value.trim()) {
-      return `${field.label} é obrigatório`;
-    }
-    
-    if (field.validate) {
-      return field.validate(value);
-    }
-    
-    return null;
-  };
-
-  const validateAllFields = (): boolean => {
+  // Validação de campos
+  const validateFields = (): boolean => {
     const newErrors: Record<string, string> = {};
-    let isValid = true;
+    let hasErrors = false;
 
     newItemFields.forEach(field => {
-      const error = validateField(field, newItemData[field.key]);
-      if (error) {
-        newErrors[field.key] = error;
-        isValid = false;
+      const value = newItemData[field.key] || '';
+      
+      // Validação de campo obrigatório
+      if (field.required && !value.trim()) {
+        newErrors[field.key] = `${field.label} é obrigatório`;
+        hasErrors = true;
+      } 
+      // Validação customizada
+      else if (field.validate && value.trim()) {
+        const error = field.validate(value);
+        if (error) {
+          newErrors[field.key] = error;
+          hasErrors = true;
+        }
       }
     });
 
     setErrors(newErrors);
-    return isValid;
+    return !hasErrors;
   };
 
-  const handleFieldChange = (key: string, value: string) => {
-    setNewItemData(prev => ({ ...prev, [key]: value }));
+  // Handler para campos de texto
+  const handleInputChange = (key: string, value: string) => {
+    setNewItemData(prev => ({
+      ...prev,
+      [key]: value
+    }));
     
-    // Remove erro quando usuário começa a digitar
+    // Limpar erro quando usuário começa a digitar
     if (errors[key]) {
-      setErrors(prev => ({ ...prev, [key]: '' }));
+      setErrors(prev => ({
+        ...prev,
+        [key]: ''
+      }));
     }
   };
 
-  const addItem = () => {
-    if (!validateAllFields()) return;
+  // Adicionar novo item
+  const handleAddItem = () => {
+    if (!validateFields()) return;
     
+    // Verificar limite máximo
     if (maxItems && items.length >= maxItems) {
-      alert(`Máximo de ${maxItems} itens permitidos`);
       return;
     }
-
+    
+    // Construir título e subtítulo do item
+    const mainField = newItemFields[0];
+    const secondaryField = newItemFields[1];
+    
     const newItem: ListFormItem = {
-      id: Date.now().toString(),
-      title: newItemData[newItemFields[0]?.key] || 'Novo Item',
-      subtitle: newItemFields[1] ? newItemData[newItemFields[1].key] : undefined,
+      id: `item-${Date.now()}`,
+      title: newItemData[mainField.key],
+      subtitle: secondaryField ? newItemData[secondaryField.key] : undefined,
       data: { ...newItemData }
     };
-
+    
     onChange([...items, newItem]);
     
-    // Reset form
-    const resetData: Record<string, string> = {};
+    // Resetar formulário
+    const initialData: Record<string, string> = {};
     newItemFields.forEach(field => {
-      resetData[field.key] = '';
+      initialData[field.key] = '';
     });
-    setNewItemData(resetData);
+    setNewItemData(initialData);
     setErrors({});
   };
 
-  const removeItem = (id: string) => {
+  // Remover item
+  const handleRemoveItem = (id: string) => {
     onChange(items.filter(item => item.id !== id));
   };
 
-  const moveItem = (fromIndex: number, toIndex: number) => {
-    if (!allowReorder) return;
-    
+  // Reordenar item para cima
+  const handleMoveUp = (index: number) => {
+    if (index <= 0) return;
     const newItems = [...items];
-    const [movedItem] = newItems.splice(fromIndex, 1);
-    newItems.splice(toIndex, 0, movedItem);
+    const temp = newItems[index];
+    newItems[index] = newItems[index - 1];
+    newItems[index - 1] = temp;
     onChange(newItems);
   };
 
-  const canAddItems = !maxItems || items.length < maxItems;
+  // Reordenar item para baixo
+  const handleMoveDown = (index: number) => {
+    if (index >= items.length - 1) return;
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index + 1];
+    newItems[index + 1] = temp;
+    onChange(newItems);
+  };
 
   return (
-    <div className={className}>
-      {title && <SectionTitle>{title}</SectionTitle>}
+    <div className={`flex flex-col gap-4 ${className || ''}`}>
+      {title && (
+        <SectionTitle className="text-lg font-semibold text-gray-800 mb-2">
+          {title}
+        </SectionTitle>
+      )}
       
-      <ItemListContainer>
+      <ItemListContainer className="flex flex-col gap-2">
         {items.length === 0 ? (
-          <EmptyContainer>
-            <div style={{ fontSize: '32px' }}>{emptyIcon}</div>
-            <EmptyTitle>Lista Vazia</EmptyTitle>
-            <EmptyText>{emptyText}</EmptyText>
+          <EmptyContainer className="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-gray-300 rounded-lg bg-gray-50">
+            <div className="text-4xl mb-3">{emptyIcon}</div>
+            <EmptyTitle className="text-lg font-medium text-gray-700">
+              Nenhum Item
+            </EmptyTitle>
+            <EmptyText className="text-sm text-gray-500 text-center">
+              {emptyText}
+            </EmptyText>
           </EmptyContainer>
         ) : (
-          items.map((item, index) => (
-            <ListItem key={item.id}>
-              {renderContent ? renderContent(item, index) : (
-                <ListItemContent>
-                  <ListItemTitle>
-                    {showNumbers && `${index + 1}. `}
-                    {item.title}
-                  </ListItemTitle>
-                  {item.subtitle && (
-                    <ListItemSubtitle>{item.subtitle}</ListItemSubtitle>
-                  )}
-                </ListItemContent>
-              )}
-              
-              <ListItemActions>
-                {renderActions ? renderActions(item, index) : (
-                  <>
-                    {allowReorder && index > 0 && (
-                      <Button
-                        variant="outline"
-                        size="small"
-                        onClick={() => moveItem(index, index - 1)}
-                      >
-                        ↑
-                      </Button>
+          <div className="flex flex-col gap-2">
+            {items.map((item, index) => (
+              <ListItem 
+                key={item.id}
+                className="flex justify-between items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                {renderContent ? (
+                  renderContent(item, index)
+                ) : (
+                  <ListItemContent className="flex flex-col">
+                    <ListItemTitle className="font-medium">
+                      {showNumbers && <span className="mr-1 opacity-70">{index + 1}.</span>}
+                      {item.title}
+                    </ListItemTitle>
+                    {item.subtitle && (
+                      <ListItemSubtitle className="text-sm text-gray-500">
+                        {item.subtitle}
+                      </ListItemSubtitle>
                     )}
-                    
-                    {allowReorder && index < items.length - 1 && (
-                      <Button
-                        variant="outline"
-                        size="small"
-                        onClick={() => moveItem(index, index + 1)}
-                      >
-                        ↓
-                      </Button>
-                    )}
-                    
-                    <Button
-                      variant="secondary"
-                      size="small"
-                      onClick={() => removeItem(item.id)}
-                    >
-                      Remover
-                    </Button>
-                  </>
+                  </ListItemContent>
                 )}
-              </ListItemActions>
-            </ListItem>
-          ))
+                
+                <ListItemActions className="flex items-center gap-2">
+                  {renderActions ? (
+                    renderActions(item, index)
+                  ) : (
+                    <>
+                      {allowReorder && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="small"
+                            onClick={() => handleMoveUp(index)}
+                            disabled={index === 0}
+                            className="p-1 min-w-[28px]"
+                          >
+                            ↑
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="small"
+                            onClick={() => handleMoveDown(index)}
+                            disabled={index === items.length - 1}
+                            className="p-1 min-w-[28px]"
+                          >
+                            ↓
+                          </Button>
+                        </>
+                      )}
+                      {allowEdit && (
+                        <Button
+                          variant="outline"
+                          size="small"
+                          className="p-1 min-w-[28px]"
+                        >
+                          ✏️
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="small"
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="p-1 min-w-[28px] text-red-600 hover:bg-red-50"
+                      >
+                        ✕
+                      </Button>
+                    </>
+                  )}
+                </ListItemActions>
+              </ListItem>
+            ))}
+          </div>
         )}
-
-        {canAddItems && (
-          <InlineFormContainer>
-            <InlineFieldGrid>
-              {newItemFields.map((field) => (
-                <div key={field.key}>
+        
+        {(!maxItems || items.length < maxItems) && (
+          <InlineFormContainer className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+            <InlineFieldGrid className="grid gap-3 mb-3 sm:grid-cols-2 xs:grid-cols-1">
+              {newItemFields.map(field => (
+                <div key={field.key} className="flex flex-col">
+                  <div className="text-sm font-medium text-gray-700 mb-1">{field.label}</div>
                   <Input
-                    type={field.type || 'text'}
                     placeholder={field.placeholder}
                     value={newItemData[field.key] || ''}
-                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    onChange={(e) => handleInputChange(field.key, e.target.value)}
+                    type={field.type || 'text'}
+                    hasError={!!errors[field.key]}
+                    className={errors[field.key] ? 'border-red-500' : ''}
                   />
                   {errors[field.key] && (
-                    <div style={{ 
-                      fontSize: '12px', 
-                      color: '#ef4444', 
-                      marginTop: '4px' 
-                    }}>
-                      {errors[field.key]}
-                    </div>
+                    <div className="text-xs text-red-500 mt-1">{errors[field.key]}</div>
                   )}
                 </div>
               ))}
             </InlineFieldGrid>
             
-            <div style={{ height: '100%', display: 'flex', alignItems: 'stretch' }}>
+            <div className="flex justify-end">
               <Button
-                variant="outline"
+                variant="primary"
                 size="small"
-                onClick={addItem}
-                disabled={!newItemFields.every(field => 
-                  field.required ? newItemData[field.key]?.trim() : true
-                )}
+                onClick={handleAddItem}
               >
                 {addButtonText}
               </Button>
             </div>
           </InlineFormContainer>
-        )}
-        
-        {maxItems && (
-          <div style={{ 
-            fontSize: '12px', 
-            color: '#6b7280', 
-            textAlign: 'center',
-            marginTop: '8px'
-          }}>
-            {items.length}/{maxItems} itens
-          </div>
         )}
       </ItemListContainer>
     </div>

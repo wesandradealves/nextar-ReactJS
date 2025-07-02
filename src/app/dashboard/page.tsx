@@ -10,20 +10,10 @@ import CountUp from 'react-countup';
 import {
   DashboardContainer,
   Content,
-  WelcomeSection,
-  WelcomeTitle,
-  WelcomeText,
   StatCard,
   StatTitle,
   StatValue,
   StatLabel,
-  // QuickActions,
-  // ActionTitle,
-  // ActionGrid,
-  // ActionButton,
-  // ActionNote
-  
-  // Novos componentes styled
   PageTitle,
   PageDescription,
   SectionContainer,
@@ -78,9 +68,9 @@ export default function Dashboard() {
         </SectionContainer>
 
         <GridContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
-            <StatTitle className="text-blue-700 dark:text-blue-300">🔧 Chamados</StatTitle>
-            <StatValue className="text-gray-800 dark:text-white">
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden p-6 text-center">
+            <StatTitle className="text-blue-700 dark:text-blue-300 font-medium text-sm mb-2">🔧 Chamados</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white text-3xl font-bold mb-1">
               <CountUp
                 end={stats.chamadosAbertos}
                 duration={1.2}
@@ -92,9 +82,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
-            <StatTitle className="text-green-700 dark:text-green-300">⚙️ Equipamentos</StatTitle>
-            <StatValue className="text-gray-800 dark:text-white">
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden p-6 text-center">
+            <StatTitle className="text-green-700 dark:text-green-300 font-medium text-sm mb-2">⚙️ Equipamentos</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white text-3xl font-bold mb-1">
               <CountUp
                 end={stats.totalEquipamentos}
                 duration={1.5}
@@ -106,9 +96,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
-            <StatTitle className="text-purple-700 dark:text-purple-300">👥 Usuários</StatTitle>
-            <StatValue className="text-gray-800 dark:text-white">
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden p-6 text-center">
+            <StatTitle className="text-purple-700 dark:text-purple-300 font-medium text-sm mb-2">👥 Usuários</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white text-3xl font-bold mb-1">
               <CountUp
                 end={stats.usuariosAtivos}
                 duration={1.0}
@@ -120,9 +110,9 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
 
-          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
-            <StatTitle className="text-indigo-700 dark:text-indigo-300">✅ Resolvidos</StatTitle>
-            <StatValue className="text-gray-800 dark:text-white">
+          <StatCard className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden p-6 text-center">
+            <StatTitle className="text-indigo-700 dark:text-indigo-300 font-medium text-sm mb-2">✅ Resolvidos</StatTitle>
+            <StatValue className="text-gray-800 dark:text-white text-3xl font-bold mb-1">
               <CountUp
                 end={stats.chamadosResolvidos}
                 duration={1.8}
@@ -145,32 +135,6 @@ export default function Dashboard() {
             />
           </ChartContainer>
         )}
-
-        {/* <QuickActions>
-          <ActionTitle>🚀 Ações Rápidas</ActionTitle>
-          <ActionGrid>
-            <ActionButton onClick={() => handleNavigate('/dashboard/chamados')}>
-              📋 Ver Chamados
-            </ActionButton>
-            
-            {canCreateChamados && (
-              <></>
-            )}
-            
-            {isGestao && (
-              <ActionButton onClick={() => handleNavigate('/dashboard/usuarios')}>
-                👥 Gerenciar Usuários
-              </ActionButton>
-            )}
-            
-            <ActionButton onClick={() => handleNavigate('/dashboard/profile')}>
-              👤 Meu Perfil
-            </ActionButton>
-          </ActionGrid>
-          <ActionNote>
-            * Algumas funcionalidades ainda em desenvolvimento
-          </ActionNote>
-        </QuickActions> */}
       </Content>
     </DashboardContainer>
   );

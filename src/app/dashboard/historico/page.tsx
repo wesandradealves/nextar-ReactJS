@@ -11,9 +11,9 @@ import { DataTable } from '@/components/molecules/DataTable';
 import { Badge } from '@/components/atoms/Badge';
 import { ChamadoEnriquecido } from '@/hooks/useHistorico';
 import { TipoManutencao, ChamadoStatus, PerfilUsuario } from '@/utils/enums';
-import { Container, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer } from './styles';
+import { Container, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer, StatValue, StatLabel, ExportInfo, PaginationContainer, PageInfo, ErrorMessage } from './styles';
 
-const HistoricoPage: React.FC = () => {
+const HistoricoPage = () => {
   const { user } = useAuth();
   const { 
     chamados, 
@@ -121,8 +121,7 @@ const HistoricoPage: React.FC = () => {
   // Verifica se o usuário atual pode exportar o histórico (apenas GESTAO)
   const canExportHistorico = user?.perfil === PerfilUsuario.GESTAO;
 
-  return (
-    <Container>
+  return (      <Container className="flex flex-col gap-6 px-6 min-h-screen pb-8">
       <PageHeader
         title="Histórico de Manutenções"
         subtitle="Acompanhamento completo de todas as manutenções realizadas"
@@ -134,41 +133,41 @@ const HistoricoPage: React.FC = () => {
 
       {/* Stats */}
       {stats && (
-        <StatsContainer>
-          <StatCard>
-            <div className="stat-value">{stats.total}</div>
-            <div className="stat-label">Total de Manutenções</div>
+        <StatsContainer className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.total}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Total de Manutenções</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.CONCLUIDO]}</div>
-            <div className="stat-label">Concluídas</div>
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.porStatus[ChamadoStatus.CONCLUIDO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Concluídas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.EM_PROGRESSO]}</div>
-            <div className="stat-label">Em Andamento</div>
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.porStatus[ChamadoStatus.EM_PROGRESSO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Em Andamento</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.ABERTO]}</div>
-            <div className="stat-label">Abertas</div>
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.porStatus[ChamadoStatus.ABERTO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Abertas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porTipo[TipoManutencao.PREVENTIVA]}</div>
-            <div className="stat-label">Preventivas</div>
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.porTipo[TipoManutencao.PREVENTIVA]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Preventivas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porTipo[TipoManutencao.CORRETIVA]}</div>
-            <div className="stat-label">Corretivas</div>
+          <StatCard className="bg-white border border-gray-200 rounded-lg p-5 text-center hover:shadow-md transition-shadow">
+            <StatValue className="text-2xl font-bold text-gray-800 mb-2">{stats.porTipo[TipoManutencao.CORRETIVA]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 font-medium">Corretivas</StatLabel>
           </StatCard>
         </StatsContainer>
       )}
 
       {/* Filtros */}
-      <FiltersContainer>
-        <h3>Filtros de Pesquisa</h3>
+      <FiltersContainer className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-5">Filtros de Pesquisa</h3>
         
-        <FiltersRow>
-          <FilterGroup>
-            <label>Tipo de Manutenção</label>
+        <FiltersRow className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <FilterGroup className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">Tipo de Manutenção</label>
             <Select
               value={filters.tipo || ''}
               onChange={(e) => handleFilterChange('tipo', e.target.value)}
@@ -180,8 +179,8 @@ const HistoricoPage: React.FC = () => {
             />
           </FilterGroup>
 
-          <FilterGroup>
-            <label>Status</label>
+          <FilterGroup className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">Status</label>
             <Select
               value={filters.status || ''}
               onChange={(e) => handleFilterChange('status', e.target.value)}
@@ -241,7 +240,7 @@ const HistoricoPage: React.FC = () => {
             />
           </FilterGroup>
 
-          <FilterGroup className="actions">
+          <FilterGroup className="flex flex-row items-end gap-3">
             <Button variant="secondary" onClick={clearFilters}>
               Limpar Filtros
             </Button>
@@ -251,9 +250,9 @@ const HistoricoPage: React.FC = () => {
           </FilterGroup>
         </FiltersRow>
 
-        <FiltersRow>
-          <FilterGroup>
-            <label>Data Início</label>
+        <FiltersRow className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <FilterGroup className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">Data Início</label>
             <DateInput
               value={filters.dataInicio || ''}
               onChange={(value) => handleFilterChange('dataInicio', value)}
@@ -273,10 +272,10 @@ const HistoricoPage: React.FC = () => {
       </FiltersContainer>
 
       {/* Exportação */}
-      <ExportContainer>
-        <span className="export-info">
+      <ExportContainer className="flex items-center justify-between mb-4 py-4">
+        <ExportInfo className="text-sm text-gray-500">
           {chamados.length} registros encontrados
-        </span>
+        </ExportInfo>
       </ExportContainer>
 
       {/* Tabela de dados */}
@@ -289,7 +288,7 @@ const HistoricoPage: React.FC = () => {
 
       {/* Paginação */}
       {pagination.totalPages > 1 && (
-        <div className="pagination">
+        <PaginationContainer className="flex items-center justify-center gap-4 mt-6 py-5">
           <Button
             variant="outline"
             disabled={pagination.page === 1}
@@ -298,9 +297,9 @@ const HistoricoPage: React.FC = () => {
             Anterior
           </Button>
           
-          <span className="page-info">
+          <PageInfo className="text-sm text-gray-600 min-w-[120px] text-center">
             Página {pagination.page} de {pagination.totalPages}
-          </span>
+          </PageInfo>
           
           <Button
             variant="outline"
@@ -309,13 +308,13 @@ const HistoricoPage: React.FC = () => {
           >
             Próxima
           </Button>
-        </div>
+        </PaginationContainer>
       )}
 
       {error && (
-        <div className="error-message">
+        <ErrorMessage className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 mt-4">
           Erro ao carregar histórico: {error}
-        </div>
+        </ErrorMessage>
       )}
     </Container>
   );

@@ -22,6 +22,11 @@ import {
   LegendColor,
   LegendText
 } from './styles';
+import {
+  DistribuicaoTipo,
+  AgenteDistribuicao,
+  ChartProps
+} from './types';
 
 // Registramos os componentes necessários do Chart.js
 ChartJS.register(
@@ -35,40 +40,24 @@ ChartJS.register(
 );
 
 /**
- * Interfaces para os componentes de gráficos
- */
-interface DistribuicaoTipo {
-  [TipoManutencao.CORRETIVA]: number;
-  [TipoManutencao.PREVENTIVA]: number;
-}
-
-interface AgenteDistribuicao {
-  agenteId: string;
-  nomeAgente: string;
-  quantidade: number;
-  quantidadeConcluidos: number;
-}
-
-export interface ChartProps {
-  distribucaoTipo: DistribuicaoTipo;
-  distribucaoAgente: AgenteDistribuicao[];
-}
-
-/**
  * Gráfico de distribuição por tipo de manutenção (corretiva/preventiva)
  * 
  * @param distribucaoTipo - Objeto com a contagem de manutenções por tipo
  * @returns Componente de gráfico de pizza
  */
-export const MaintenanceTypeChart: React.FC<{ distribucaoTipo: DistribuicaoTipo }> = ({ distribucaoTipo }) => {
+export const MaintenanceTypeChart = ({ 
+  distribucaoTipo 
+}: { 
+  distribucaoTipo: DistribuicaoTipo 
+}) => {
   const hasData = distribucaoTipo && 
     (distribucaoTipo[TipoManutencao.CORRETIVA] > 0 || distribucaoTipo[TipoManutencao.PREVENTIVA] > 0);
 
   if (!hasData) {
     return (
-      <ChartCard>
-        <ChartTitle>Distribuição por Tipo de Manutenção</ChartTitle>
-        <NoDataMessage>Nenhum dado disponível</NoDataMessage>
+      <ChartCard className="bg-white p-6 md:p-4 rounded-xl shadow-sm flex flex-col">
+        <ChartTitle className="text-base font-semibold text-slate-800 mb-4 text-center">Distribuição por Tipo de Manutenção</ChartTitle>
+        <NoDataMessage className="flex items-center justify-center h-60 text-slate-400 italic">Nenhum dado disponível</NoDataMessage>
       </ChartCard>
     );
   }
@@ -123,19 +112,19 @@ export const MaintenanceTypeChart: React.FC<{ distribucaoTipo: DistribuicaoTipo 
   };
 
   return (
-    <ChartCard>
-      <ChartTitle>Distribuição por Tipo de Manutenção</ChartTitle>
-      <ChartContent>
+    <ChartCard className="bg-white p-6 md:p-4 rounded-xl shadow-sm flex flex-col">
+      <ChartTitle className="text-base font-semibold text-slate-800 mb-4 text-center">Distribuição por Tipo de Manutenção</ChartTitle>
+      <ChartContent className="h-60 flex items-center justify-center">
         <Pie data={data} options={options} />
       </ChartContent>
-      <ChartLegend>
+      <ChartLegend className="flex flex-wrap justify-center gap-4 mt-4">
         <LegendItem $color="rgba(255, 99, 132, 0.7)">
           <LegendColor $color="rgba(255, 99, 132, 0.7)" />
-          <LegendText>Corretiva: {distribucaoTipo[TipoManutencao.CORRETIVA]}</LegendText>
+          <LegendText className="text-slate-700">Corretiva: {distribucaoTipo[TipoManutencao.CORRETIVA]}</LegendText>
         </LegendItem>
         <LegendItem $color="rgba(54, 162, 235, 0.7)">
           <LegendColor $color="rgba(54, 162, 235, 0.7)" />
-          <LegendText>Preventiva: {distribucaoTipo[TipoManutencao.PREVENTIVA]}</LegendText>
+          <LegendText className="text-slate-700">Preventiva: {distribucaoTipo[TipoManutencao.PREVENTIVA]}</LegendText>
         </LegendItem>
       </ChartLegend>
     </ChartCard>
@@ -148,14 +137,18 @@ export const MaintenanceTypeChart: React.FC<{ distribucaoTipo: DistribuicaoTipo 
  * @param distribucaoAgente - Array com dados de manutenções por agente
  * @returns Componente de gráfico de barras
  */
-export const MaintenanceAgentChart: React.FC<{ distribucaoAgente: AgenteDistribuicao[] }> = ({ distribucaoAgente }) => {
+export const MaintenanceAgentChart = ({ 
+  distribucaoAgente 
+}: { 
+  distribucaoAgente: AgenteDistribuicao[] 
+}) => {
   const hasData = distribucaoAgente && distribucaoAgente.length > 0;
 
   if (!hasData) {
     return (
-      <ChartCard>
-        <ChartTitle>Distribuição por Agente de Manutenção</ChartTitle>
-        <NoDataMessage>Nenhum dado disponível</NoDataMessage>
+      <ChartCard className="bg-white p-6 md:p-4 rounded-xl shadow-sm flex flex-col">
+        <ChartTitle className="text-base font-semibold text-slate-800 mb-4 text-center">Distribuição por Agente de Manutenção</ChartTitle>
+        <NoDataMessage className="flex items-center justify-center h-60 text-slate-400 italic">Nenhum dado disponível</NoDataMessage>
       </ChartCard>
     );
   }
@@ -212,9 +205,9 @@ export const MaintenanceAgentChart: React.FC<{ distribucaoAgente: AgenteDistribu
   };
 
   return (
-    <ChartCard>
-      <ChartTitle>Distribuição por Agente de Manutenção</ChartTitle>
-      <ChartContent>
+    <ChartCard className="bg-white p-6 md:p-4 rounded-xl shadow-sm flex flex-col">
+      <ChartTitle className="text-base font-semibold text-slate-800 mb-4 text-center">Distribuição por Agente de Manutenção</ChartTitle>
+      <ChartContent className="h-60 flex items-center justify-center">
         <Bar data={data} options={options} />
       </ChartContent>
     </ChartCard>
@@ -240,12 +233,15 @@ export const MaintenanceAgentChart: React.FC<{ distribucaoAgente: AgenteDistribu
  * />
  * ```
  */
-export const DashboardCharts: React.FC<ChartProps> = ({ distribucaoTipo, distribucaoAgente }) => {
+export const DashboardCharts = ({ 
+  distribucaoTipo, 
+  distribucaoAgente 
+}: ChartProps) => {
   return (
-    <>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6 w-full">
       <MaintenanceTypeChart distribucaoTipo={distribucaoTipo} />
       <MaintenanceAgentChart distribucaoAgente={distribucaoAgente} />
-    </>
+    </div>
   );
 };
 

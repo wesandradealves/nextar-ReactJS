@@ -6,25 +6,9 @@ import {
   PageSubtitle,
   HeaderActions 
 } from './styles';
+import { PageHeaderProps } from './types';
 
-export interface PageHeaderProps {
-  title: string;
-  subtitle?: string;
-  onExport?: () => void;
-  onAdd?: () => void;
-  addLabel?: string;
-  exportLabel?: string;
-  exportDisabled?: boolean;
-  showExportButton?: boolean;
-  showAddButton?: boolean;
-  children?: React.ReactNode;
-}
-
-/**
- * Componente de cabeçalho padronizado para páginas da aplicação
- * Pode incluir botões de exportação e adição, além de conteúdo personalizado
- */
-export const PageHeader: React.FC<PageHeaderProps> = ({
+export const PageHeader = ({
   title,
   subtitle,
   onExport,
@@ -35,15 +19,21 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   showExportButton = true,
   showAddButton = true,
   children
-}) => {
+}: PageHeaderProps) => {
   return (
-    <PageHeaderContainer>
-      <div>
-        <PageTitle>{title}</PageTitle>
-        {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
+    <PageHeaderContainer className="flex flex-col md:flex-row justify-between items-start gap-5 p-5 md:p-6">
+      <div className="space-y-2">
+        <PageTitle className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 m-0 leading-tight">
+          {title}
+        </PageTitle>
+        {subtitle && (
+          <PageSubtitle className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            {subtitle}
+          </PageSubtitle>
+        )}
       </div>
       
-      <HeaderActions>
+      <HeaderActions className="flex items-center gap-3 mt-4 md:mt-0 w-full md:w-auto justify-end">
         {children}
         
         {showExportButton && onExport && (
@@ -51,6 +41,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             variant="secondary"
             onClick={onExport}
             disabled={exportDisabled}
+            className="text-sm whitespace-nowrap"
           >
             {exportLabel}
           </Button>
@@ -60,6 +51,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           <Button
             variant="primary"
             onClick={onAdd}
+            className="text-sm whitespace-nowrap"
           >
             {addLabel}
           </Button>
