@@ -5,6 +5,30 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.0.1] - 2025-07-02
+
+### Corrigido
+- **Estatísticas do Histórico Independentes dos Filtros**
+  - Corrigido problema onde estatísticas dos cards mudavam quando filtros eram aplicados
+  - API `/api/historico` agora calcula estatísticas globais independentemente dos filtros
+  - Hook `useHistorico` implementa cache separado para estatísticas globais (TTL 10min)
+  - Função `fetchGlobalStats()` carrega estatísticas na inicialização e separadamente dos dados filtrados
+  - Cards de estatísticas sempre mostram dados totais do sistema, não dos registros filtrados
+  - Filtros funcionam apenas para tabela de dados, paginação e exportação
+
+### Melhorado
+- **Performance do Cache**
+  - Cache otimizado com estratégias separadas para dados filtrados (5min) e estatísticas (10min)
+  - Invalidação inteligente por tags específicas (`historico`, `stats`, `chamados`)
+  - Carregamento inicial mais eficiente com chamadas API otimizadas
+
+### Técnico
+- **Arquitetura de Dados Aprimorada**
+  - Separação clara entre dados filtrados e estatísticas globais na API
+  - Hook refatorado para evitar sobrescrita de estatísticas durante filtragem
+  - Dependências do useCallback otimizadas para eliminar warnings do ESLint
+  - Estrutura de cache mais robusta e previsível
+
 ## [3.0.0] - 2025-07-02
 
 ### Adicionado
