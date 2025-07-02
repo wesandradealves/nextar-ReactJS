@@ -366,12 +366,17 @@ export default function EquipamentosPage() {
   }, []);
 
   const handleSubmitEquipamento = useCallback(async (data: CreateEquipamentoData | UpdateEquipamentoData, equipamentoId?: string) => {
-    if (equipamentoId && editingEquipamento) {
-      // Editar equipamento existente
-      await updateEquipamento(equipamentoId, data as UpdateEquipamentoData);
-    } else {
-      // Criar novo equipamento
-      await createEquipamento(data as CreateEquipamentoData);
+    try {
+      if (equipamentoId && editingEquipamento) {
+        // Editar equipamento existente
+        await updateEquipamento(equipamentoId, data as UpdateEquipamentoData);
+      } else {
+        // Criar novo equipamento
+        await createEquipamento(data as CreateEquipamentoData);
+      }
+    } catch (error) {
+      console.error('Erro ao processar equipamento:', error);
+      throw error; // Re-throw para que o modal possa capturar
     }
   }, [editingEquipamento, updateEquipamento, createEquipamento]);
 

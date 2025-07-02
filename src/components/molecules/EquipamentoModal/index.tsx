@@ -189,9 +189,11 @@ export default function EquipamentoModal({
         const createData: CreateEquipamentoData = dataToSave;
         await onSubmit(createData);
       }
+      
       onClose();
     } catch (error) {
       console.error('Erro ao salvar equipamento:', error);
+      showError('Erro ao salvar equipamento. Verifique os dados e tente novamente.');
     }
   };
 

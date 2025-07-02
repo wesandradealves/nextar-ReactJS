@@ -151,7 +151,7 @@ export const useEquipamentos = () => {
       cache.set(cacheKey, {
         data: result.data,
         pagination: result.pagination
-      }, 15 * 60 * 1000);
+      }, 15 * 60 * 1000, ['equipamentos']);
 
       return result.data;
     } catch (err) {
@@ -189,7 +189,7 @@ export const useEquipamentos = () => {
       setAllEquipamentos(equipamentos);
 
       // Cache por 10 minutos para estatísticas
-      cache.set(cacheKey, equipamentos, 10 * 60 * 1000);
+      cache.set(cacheKey, equipamentos, 10 * 60 * 1000, ['equipamentos']);
 
       return equipamentos;
     } catch (err) {
@@ -203,14 +203,14 @@ export const useEquipamentos = () => {
    */
   useEffect(() => {
     fetchEquipamentos();
-  }, [fetchEquipamentos]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Carregamento de todos os equipamentos para estatísticas
    */
   useEffect(() => {
     fetchAllEquipamentos();
-  }, [fetchAllEquipamentos]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Cria um novo equipamento
