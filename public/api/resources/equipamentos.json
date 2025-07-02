@@ -18,11 +18,11 @@
     "codigo": "MET002A",
     "modelo": "Davis Vantage Pro23",
     "setorId": "3",
-    "proximaManutencao": "2025-07-03T00:00:00.000Z",
+    "proximaManutencao": "2025-07-04T00:00:00.000Z",
     "observacoes": "Medição de velocidade e direção do vento",
-    "ativo": true,
+    "ativo": false,
     "dataCriacao": "2025-02-01T10:15:00.000Z",
-    "dataAtualizacao": "2025-07-02T10:45:48.455Z",
+    "dataAtualizacao": "2025-07-02T11:58:23.705Z",
     "manutencaosCount": 2
   },
   {

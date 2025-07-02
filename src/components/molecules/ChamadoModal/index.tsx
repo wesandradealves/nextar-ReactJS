@@ -6,7 +6,7 @@ import {
 } from '../FormModal';
 import { FormSelection } from '../FormSelection';
 import { FormList } from '../FormList';
-import { Input } from '../../atoms/Input';
+import { Input, DateInput } from '../../atoms';
 import { Select } from '../../atoms/Select';
 import Textarea from '../../atoms/Textarea';
 import { Chamado } from '../../../types';
@@ -468,11 +468,12 @@ export default function ChamadoModal({
         <FieldGroup>
           <SectionTitle>Data de Execução *</SectionTitle>
           <div>
-            <Input
-              type="date"
+            <DateInput
               value={formData.dataExecucao}
-              onChange={(e) => handleFieldChange('dataExecucao', e.target.value)}
+              onChange={(value) => handleFieldChange('dataExecucao', value)}
               disabled={isViewing}
+              required
+              placeholder="Data da execução"
             />
           </div>
         </FieldGroup>

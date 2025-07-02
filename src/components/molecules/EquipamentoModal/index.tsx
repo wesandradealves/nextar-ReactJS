@@ -12,7 +12,7 @@ import {
   ToggleText 
 } from '../FormModal';
 import { FormSelection } from '../FormSelection';
-import { Input } from '../../atoms/Input';
+import { Input, DateInput } from '../../atoms';
 import Textarea from '../../atoms/Textarea';
 import type { CreateEquipamentoData, UpdateEquipamentoData, Equipamento } from '@/types';
 import { useToast } from '../../../hooks/useToast';
@@ -310,7 +310,7 @@ export default function EquipamentoModal({
       </FieldGroup>
 
       <FieldGroup>
-        <SectionTitle>Localização e Manutenção</SectionTitle>
+        <SectionTitle>Localização e data de Manutenção</SectionTitle>
         <FormSelection
           options={setorOptions}
           value={formData.setorId}
@@ -318,11 +318,11 @@ export default function EquipamentoModal({
         />
 
         <div>
-          <Input
-            type="date"
+          <DateInput
             placeholder="Data da próxima manutenção"
             value={formData.proximaManutencao}
-            onChange={(e) => handleFieldChange('proximaManutencao', e.target.value)}
+            onChange={(value) => handleFieldChange('proximaManutencao', value)}
+            required
           />
         </div>
       </FieldGroup>
