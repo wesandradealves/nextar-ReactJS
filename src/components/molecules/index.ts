@@ -9,6 +9,7 @@ export { default as Modal } from './Modal';
 export { default as UserModal } from './UserModal';
 export { default as ChamadoModal } from './ChamadoModal';
 export { default as SetorModal } from './SetorModal';
+export { default as EquipamentoModal } from './EquipamentoModal';
 
 // Novos componentes padronizados v2.0.1
 export { FormModal } from './FormModal';

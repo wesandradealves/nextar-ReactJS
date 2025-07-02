@@ -81,6 +81,16 @@ export interface Equipamento {
   proximaManutencao: string;
   /** Observações adicionais sobre o equipamento */
   observacoes?: string;
+  /** Status ativo/inativo do equipamento */
+  ativo: boolean;
+  /** Data de criação do equipamento */
+  dataCriacao: string;
+  /** Data da última atualização */
+  dataAtualizacao?: string;
+  /** Número de manutenções realizadas (calculado) */
+  manutencaosCount?: number;
+  /** Index signature para compatibilidade com DataTable */
+  [key: string]: unknown;
 }
 
 /**
@@ -635,4 +645,86 @@ export interface SetorFilters {
   ativo?: boolean;
   /** Busca textual por nome ou descrição */
   searchTerm?: string;
+}
+
+// ========================================
+// TIPOS PARA EQUIPAMENTOS
+// ========================================
+
+/**
+ * Dados para criação de novo equipamento
+ * @interface CreateEquipamentoData
+ */
+export interface CreateEquipamentoData {
+  /** Nome do equipamento */
+  nome: string;
+  /** Código identificador hexadecimal único */
+  codigo: string;
+  /** Modelo do equipamento */
+  modelo: string;
+  /** ID do setor ao qual pertence */
+  setorId: string;
+  /** Data da próxima manutenção (ISO date string) */
+  proximaManutencao: string;
+  /** Observações adicionais sobre o equipamento */
+  observacoes?: string;
+  /** Status ativo/inativo do equipamento */
+  ativo: boolean;
+}
+
+/**
+ * Dados para atualização de equipamento existente
+ * @interface UpdateEquipamentoData
+ */
+export interface UpdateEquipamentoData {
+  /** Nome do equipamento */
+  nome?: string;
+  /** Código identificador hexadecimal único */
+  codigo?: string;
+  /** Modelo do equipamento */
+  modelo?: string;
+  /** ID do setor ao qual pertence */
+  setorId?: string;
+  /** Data da próxima manutenção (ISO date string) */
+  proximaManutencao?: string;
+  /** Observações adicionais sobre o equipamento */
+  observacoes?: string;
+  /** Status ativo/inativo do equipamento */
+  ativo?: boolean;
+}
+
+/**
+ * Filtros para consulta de equipamentos
+ * @interface EquipamentoFilters
+ */
+export interface EquipamentoFilters {
+  /** Filtrar por setor */
+  setorId?: string;
+  /** Filtrar por status ativo/inativo */
+  ativo?: boolean;
+  /** Busca textual por nome, código ou modelo */
+  searchTerm?: string;
+  /** Filtrar por data da próxima manutenção */
+  proximaManutencao?: string;
+}
+
+/**
+ * Dados do formulário de equipamentos
+ * @interface EquipamentoFormData
+ */
+export interface EquipamentoFormData {
+  /** Nome do equipamento */
+  nome: string;
+  /** Código identificador hexadecimal */
+  codigo: string;
+  /** Modelo do equipamento */
+  modelo: string;
+  /** ID do setor ao qual pertence */
+  setorId: string;
+  /** Data da próxima manutenção (ISO date string) */
+  proximaManutencao: string;
+  /** Observações adicionais sobre o equipamento */
+  observacoes: string;
+  /** Status ativo/inativo do equipamento */
+  ativo: boolean;
 }

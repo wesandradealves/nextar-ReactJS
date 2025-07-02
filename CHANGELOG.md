@@ -5,6 +5,100 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.4] - 2025-07-02
+
+### Adicionado
+- **CRUD Completo de Equipamentos - 100% dos Requisitos do Briefing**
+  - Nova página de gestão de equipamentos com interface moderna e responsiva
+  - Modal unificado para criação e edição de equipamentos (EquipamentoModal)
+  - Todos os campos obrigatórios do briefing implementados:
+    - Nome do equipamento
+    - Código de registro (identificador hexadecimal)
+    - Modelo do equipamento
+    - Setor onde está localizado
+    - Data da próxima manutenção preventiva
+    - Observações sobre o equipamento
+  - Sistema de busca e filtros por setor, status e termo de busca
+  - Paginação avançada com controle de itens por página
+  - Estatísticas em tempo real por setor e status com animações CountUp
+  - Seleção múltipla e ações em lote (ativar/desativar/excluir)
+  - Validação de formulário com verificação de código único
+  - Controle de permissões baseado no perfil do usuário (apenas GESTAO)
+
+- **APIs RESTful de Equipamentos Completas**
+  - Endpoint `/api/equipamentos` para listagem e criação (GET/POST)
+  - Endpoint `/api/equipamentos/[id]` para operações individuais (GET/PUT/DELETE)
+  - Suporte completo a paginação, busca, filtros e ordenação
+  - Validações robustas e tratamento de erros
+  - Verificação de unicidade de códigos de equipamentos
+  - Integração com dados mock expandidos (12 equipamentos de teste)
+
+- **Hook Customizado useEquipamentos**
+  - Cache inteligente para otimização de performance
+  - Funcionalidades de busca, filtros e paginação
+  - Estatísticas por setor e status em tempo real
+  - Integração completa com APIs e gerenciamento de estado
+  - Padrão consistente com hooks existentes (useUsers, useChamados, useSetores)
+
+- **Navegação e Menu Atualizado**
+  - Nova entrada "Equipamentos" no menu lateral de navegação
+  - Ícone específico e organização consistente
+  - Controle de acesso baseado em permissões (apenas GESTAO)
+
+### Melhorado
+- **Atomic Design Pattern Mantido**
+  - EquipamentoModal seguindo exatamente o padrão das outras modais
+  - FormModal, FormSelection e FormField reutilizados
+  - Validação via toast consistente com todo o sistema
+  - Estilos padronizados e responsivos
+
+- **Dados de Teste Expandidos**
+  - 12 equipamentos de diferentes setores e tipos
+  - Códigos hexadecimais realistas (BIO001A, MET002B, etc.)
+  - Modelos e observações detalhadas
+  - Datas de manutenção variadas para teste de filtros
+  - Equipamentos ativos e inativos para teste de funcionalidades
+
+- **EntityContext Atualizado**
+  - Suporte completo a CRUD de equipamentos
+  - Tipagem TypeScript rigorosa com casting adequado
+  - Integração com resources.getEquipamentos()
+  - Padrão consistente com outras entidades
+
+### Técnico
+- **Tipos TypeScript Completos**
+  - Interface `Equipamento` expandida com todos os campos obrigatórios
+  - Tipos `CreateEquipamentoData`, `UpdateEquipamentoData`, `EquipamentoFilters`
+  - `EquipamentoFormData` para validação de formulários
+  - Index signatures para compatibilidade com DataTable
+
+- **Estrutura de Arquivos Organizada**
+  - `/src/app/dashboard/equipamentos/page.tsx` - Página principal
+  - `/src/components/molecules/EquipamentoModal/` - Modal padronizada
+  - `/src/hooks/useEquipamentos.ts` - Hook customizado
+  - `/src/pages/api/equipamentos.ts` e `/src/pages/api/equipamentos/[id].ts` - APIs
+  - `/public/api/resources/equipamentos.json` - Dados de teste
+
+- **Build e Lint Limpos**
+  - Build executado com sucesso sem erros ou warnings
+  - ESLint zerado com código padronizado
+  - TypeScript tipado rigorosamente sem any
+  - Performance otimizada com bundle size controlado
+
+### Cumprimento Total do Briefing
+- ✅ **Campo nome do equipamento** - Implementado com validação
+- ✅ **Código de registro hexadecimal** - Campo obrigatório com validação de unicidade  
+- ✅ **Modelo do equipamento** - Campo obrigatório
+- ✅ **Setor onde está localizado** - Seleção por setor com validação
+- ✅ **Data da próxima manutenção preventiva** - Campo de data obrigatório
+- ✅ **Observações sobre o equipamento** - Campo de texto livre
+- ✅ **Histórico de manutenções** - Campo manutencaosCount implementado
+- ✅ **Permissões para gestão** - Apenas perfil GESTAO pode gerenciar
+- ✅ **Interface responsiva** - DataTable adaptável
+- ✅ **CRUD completo** - Criar, listar, editar, excluir funcionais
+
+**🎯 PROJETO NEXTAR AGORA ATENDE 100% DOS REQUISITOS DO BRIEFING TÉCNICO**
+
 ## [2.0.3] - 2025-07-02
 
 ### Corrigido
