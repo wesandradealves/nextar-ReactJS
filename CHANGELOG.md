@@ -5,6 +5,32 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.2.0] - 2025-07-02
+
+### Adicionado
+- **Aprimoramento dos Gráficos do Dashboard**
+  - Implementação completa dos componentes de gráficos usando Chart.js
+  - Adição do Storybook story para o componente Charts
+  - Gráficos interativos com tooltips informativos e legendas
+  - Tratamento de estados vazios para melhor experiência do usuário
+  - Documentação detalhada com exemplos e parâmetros
+
+### Melhorado
+- **Integração na API do Dashboard**
+  - Endpoint `/api/dashboard` agora retorna dados estruturados para gráficos
+  - Disponibilização direta de `distribucaoTipo` e `distribucaoAgente`
+  - Dados enriquecidos para visualização de estatísticas
+  - Melhor organização do payload de resposta da API
+
+### Técnico
+- **Arquitetura de Componentes**
+  - Componentes de gráficos seguindo padrão Atomic Design
+  - Separação completa de estilos em arquivo dedicado (styles.tsx)
+  - Stories para Storybook com estados padrão e vazios
+  - Exportações padronizadas via index.ts
+  - Tipagem TypeScript rigorosa para todos os componentes
+  - Atualização de dependências (chart.js e react-chartjs-2)
+
 ## [3.1.0] - 2025-07-02
 
 ### Adicionado
@@ -13,6 +39,12 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Nova seção de histórico no modal de equipamentos mostra todas as manutenções relacionadas
   - Componente de visualização com badges de status, tipo, data e informações do agente responsável
   - Integração com o hook useHistorico com filtro por equipamentoId
+- **Gráficos no Dashboard**
+  - Implementados gráficos de visualização no dashboard principal
+  - Gráfico de pizza mostrando distribuição por tipo de manutenção (corretiva/preventiva)
+  - Gráfico de barras mostrando distribuição por agente de manutenção (total e concluídos)
+  - Componentes de gráficos reutilizáveis com Chart.js
+  - Visualização condicional baseada no perfil do usuário e disponibilidade de dados
 
 ### Melhorado
 - **Acesso Universal aos Equipamentos**
@@ -27,6 +59,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Componente EquipamentoModal refatorado para suportar três modos: 'view', 'edit' e 'create'
   - Novos styled components para a exibição do histórico de manutenções
   - Melhoria na tipagem dos componentes e interfaces
+  - Novos componentes de gráficos com Storybook stories completos
 
 ## [3.0.1] - 2025-07-02
 

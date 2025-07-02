@@ -60,7 +60,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         : []
     };
 
-    res.status(200).json({ stats });
+    res.status(200).json({ 
+      stats,
+      distribucaoTipo: stats.distribucaoTipo,
+      distribucaoAgente: stats.distribucaoAgente
+    });
   } catch {
     res.status(500).json({ message: 'Erro ao carregar estatísticas do dashboard' });
   }
