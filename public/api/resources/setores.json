@@ -44,9 +44,9 @@
     "nome": "Setor Médico",
     "categoria": "Medicina",
     "descricao": "Atendimento médico e emergencial para a equipe da base",
-    "ativo": true,
+    "ativo": false,
     "dataCriacao": "2024-01-08T07:00:00.000Z",
-    "dataAtualizacao": "2024-01-08T07:00:00.000Z",
+    "dataAtualizacao": "2025-07-02T05:34:50.871Z",
     "equipamentosCount": 20
   },
   {

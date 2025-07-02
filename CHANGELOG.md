@@ -40,6 +40,16 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - **Arquitetura atomic design**: Imports reorganizados seguindo hierarquia correta
   - Integração perfeita com página de usuários existente
 
+- **SetorModal** padronizada seguindo atomic design
+  - Migração completa do Modal + FormContainer para FormModal
+  - Interface consistente com UserModal
+  - FormSelection para categorias científicas com cores específicas
+  - Toggle padronizado para status ativo/inativo
+  - Validações integradas com feedback visual
+  - Remoção de arquivos de estilos customizados (styles.tsx, types.ts)
+  - Redução significativa de código duplicado
+  - Layout responsivo e experiência do usuário melhorada
+
 ### Melhorado
 - **Consistência Visual**: Todas as modais seguem agora o mesmo padrão visual
 - **Manutenibilidade**: Redução significativa de código duplicado
