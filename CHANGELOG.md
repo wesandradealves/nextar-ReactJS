@@ -5,6 +5,15 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.2.1] - 2025-07-02
+
+### Corrigido
+- **Erros de Build e ESLint**
+  - Removidas variáveis não utilizadas no dashboard (`canCreateChamados`, `handleNavigate`, `router`, `isPesquisador`)
+  - Removido import não utilizado `ChartsContainer` do componente de gráficos
+  - Removida variável não utilizada `isCreating` do modal de equipamentos
+  - Build limpo sem warnings ou erros do TypeScript/ESLint
+
 ## [3.2.0] - 2025-07-02
 
 ### Adicionado

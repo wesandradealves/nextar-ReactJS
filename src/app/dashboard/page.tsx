@@ -7,7 +7,6 @@ import { Badge } from '@/components/atoms';
 import { DashboardCharts } from '@/components/molecules';
 import { PerfilUsuario } from '@/utils/enums';
 import CountUp from 'react-countup';
-import { useRouter } from 'next/navigation';
 import {
   DashboardContainer,
   Content,
@@ -33,7 +32,6 @@ import {
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: dashboardData } = useDashboard();
-  const router = useRouter();
 
   useMetadata({
     title: `Nextar - Dashboard - Olá, ${user?.nome ?? 'Usuário'}`,
@@ -58,16 +56,6 @@ export default function Dashboard() {
 
   // Verificar permissões do usuário
   const isGestao = user?.perfil === PerfilUsuario.GESTAO;
-  const isPesquisador = user?.perfil === PerfilUsuario.PESQUISADOR;
-  const canCreateChamados = isGestao || isPesquisador;
-
-  /**
-   * Navega para o path especificado
-   * @param path - Caminho para navegação
-   */
-  const handleNavigate = (path: string) => {
-    router.push(path);
-  };
 
   return (
     <DashboardContainer>

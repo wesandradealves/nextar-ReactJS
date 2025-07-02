@@ -13,7 +13,6 @@ import {
 import { Pie, Bar } from 'react-chartjs-2';
 import { TipoManutencao } from '@/utils/enums';
 import {
-  ChartsContainer,
   ChartCard,
   ChartTitle,
   ChartContent,

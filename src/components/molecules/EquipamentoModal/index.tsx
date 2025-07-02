@@ -150,7 +150,6 @@ export default function EquipamentoModal({
   
   const isEditing = mode === 'edit';
   const isViewing = mode === 'view';
-  const isCreating = mode === 'create';
 
   // Carregar histórico quando o equipamento for definido e modal aberto
   useEffect(() => {
