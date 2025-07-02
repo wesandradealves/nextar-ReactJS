@@ -6,15 +6,11 @@ import { useAuth } from '@/context/auth';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable } from '@/components/molecules';
 import { SetorModal } from '@/components/molecules';
-import { Button } from '@/components/atoms';
+import { Button, PageHeader } from '@/components/atoms';
 import type { Setor, TableColumn, TableAction, CreateSetorData, UpdateSetorData } from '@/types';
 import { PerfilUsuario, CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
 import { 
   SetoresPageContainer,
-  PageHeader,
-  PageTitle,
-  PageSubtitle,
-  HeaderActions,
   FilterSection,
   FilterButton,
   StatsContainer,
@@ -347,34 +343,16 @@ export default function SetoresPage() {
   return (
     <SetoresPageContainer>
       {/* Header da página */}
-      <PageHeader>
-        <div>
-          <PageTitle>Gestão de Setores</PageTitle>
-          <PageSubtitle>
-            Gerencie setores, categorias e equipamentos do sistema
-          </PageSubtitle>
-        </div>
-        
-        <HeaderActions>
-          {hasManagePermission && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={exportSetoresCSV}
-                disabled={loading || !setores.length}
-              >
-                Exportar CSV
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleCreateSetor}
-              >
-                + Novo Setor
-              </Button>
-            </>
-          )}
-        </HeaderActions>
-      </PageHeader>
+      <PageHeader
+        title="Gestão de Setores"
+        subtitle="Gerencie setores, categorias e equipamentos do sistema"
+        showExportButton={hasManagePermission}
+        showAddButton={hasManagePermission}
+        onExport={exportSetoresCSV}
+        onAdd={handleCreateSetor}
+        exportDisabled={loading || !setores.length}
+        addLabel="+ Novo "
+      />
 
       {/* Estatísticas */}
       <StatsContainer>

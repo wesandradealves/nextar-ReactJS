@@ -1,21 +1,15 @@
 import styled from 'styled-components';
 
+// =================================
+// CONTAINER PRINCIPAL
+// =================================
+
 export const Container = styled.div`
-  padding: 24px;
-`;
-
-export const Header = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-
-  h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 600;
-    color: #1F2937;
-  }
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 24px;
+  min-height: 100vh;
 `;
 
 export const FiltersContainer = styled.div`

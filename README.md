@@ -1,6 +1,6 @@
 # 🐧 NextAR - Sistema de Manutenção da Antártica
 
-[![Versão atual: 4.0.1](https://img.shields.io/badge/vers%C3%A3o-4.0.1-blue)](https://github.com/wesandradealves/nextar-ReactJS/releases)
+[![Versão atual: 4.0.3](https://img.shields.io/badge/vers%C3%A3o-4.0.3-blue)](https://github.com/wesandradealves/nextar-ReactJS/releases)
 
 Sistema de gestão de manutenção para estação científica da Antártica, desenvolvido com Next.js, TypeScript, styled-components e Tailwind CSS.
 

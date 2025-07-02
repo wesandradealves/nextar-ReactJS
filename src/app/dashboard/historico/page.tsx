@@ -1,20 +1,20 @@
 'use client';
 
 import React from 'react';
+import { useAuth } from '@/context/auth';
 import { useHistorico } from '@/hooks/useHistorico';
 import { useSetores } from '@/hooks/useSetores';
 import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useUsers } from '@/hooks/useUsers';
-import { Button } from '@/components/atoms/Button';
-import { Select } from '@/components/atoms/Select';
-import { DateInput } from '@/components/atoms/DateInput';
+import { Button, Select, DateInput, PageHeader } from '@/components/atoms';
 import { DataTable } from '@/components/molecules/DataTable';
 import { Badge } from '@/components/atoms/Badge';
 import { ChamadoEnriquecido } from '@/hooks/useHistorico';
-import { TipoManutencao, ChamadoStatus } from '@/utils/enums';
-import { HistoricoContainer, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer } from './styles';
+import { TipoManutencao, ChamadoStatus, PerfilUsuario } from '@/utils/enums';
+import { Container, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer } from './styles';
 
 const HistoricoPage: React.FC = () => {
+  const { user } = useAuth();
   const { 
     chamados, 
     loading, 
@@ -118,21 +118,19 @@ const HistoricoPage: React.FC = () => {
     }
   ];
 
+  // Verifica se o usuário atual pode exportar o histórico (apenas GESTAO)
+  const canExportHistorico = user?.perfil === PerfilUsuario.GESTAO;
+
   return (
-    <HistoricoContainer>
-      {/* Header */}
-      <div className="header">
-        <h1>Histórico de Manutenções</h1>
-        <p>Acompanhamento completo de todas as manutenções realizadas</p>
-        
-        <Button 
-          variant="secondary"
-          onClick={handleExport}
-          disabled={loading || chamados.length === 0}
-        >
-          Exportar CSV
-        </Button>
-      </div>
+    <Container>
+      <PageHeader
+        title="Histórico de Manutenções"
+        subtitle="Acompanhamento completo de todas as manutenções realizadas"
+        onExport={canExportHistorico ? handleExport : undefined}
+        showExportButton={canExportHistorico}
+        exportDisabled={loading || chamados.length === 0}
+        showAddButton={false}
+      />
 
       {/* Stats */}
       {stats && (
@@ -276,9 +274,6 @@ const HistoricoPage: React.FC = () => {
 
       {/* Exportação */}
       <ExportContainer>
-        <Button variant="outline" onClick={handleExport}>
-          📄 Exportar Histórico
-        </Button>
         <span className="export-info">
           {chamados.length} registros encontrados
         </span>
@@ -322,7 +317,7 @@ const HistoricoPage: React.FC = () => {
           Erro ao carregar histórico: {error}
         </div>
       )}
-    </HistoricoContainer>
+    </Container>
   );
 };
 

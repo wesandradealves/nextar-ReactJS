@@ -7,7 +7,7 @@ import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable } from '@/components/molecules';
 import { EquipamentoModal } from '@/components/molecules';
-import { Button } from '@/components/atoms';
+import { Button, PageHeader } from '@/components/atoms';
 import type { Equipamento, TableColumn, TableAction, CreateEquipamentoData, UpdateEquipamentoData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import { useMetadata } from '@/hooks/useMetadata';
@@ -15,10 +15,6 @@ import { useMetadata } from '@/hooks/useMetadata';
 // Usando os mesmos estilos da página de setores (podemos compartilhar)
 import { 
   SetoresPageContainer as EquipamentosPageContainer,
-  PageHeader,
-  PageTitle,
-  PageSubtitle,
-  HeaderActions,
   FilterSection,
   FilterButton,
   StatsContainer,
@@ -414,39 +410,19 @@ export default function EquipamentosPage() {
   return (
     <EquipamentosPageContainer>
       {/* Header da página */}
-      <PageHeader>
-        <div>
-          <PageTitle>
-            {hasManagePermission ? 'Gestão de Equipamentos' : 'Equipamentos'}
-          </PageTitle>
-          <PageSubtitle>
-            {hasManagePermission ? 
-              'Gerencie equipamentos, códigos e cronograma de manutenções' :
-              'Visualize equipamentos e histórico de manutenções'
-            }
-          </PageSubtitle>
-        </div>
-        
-        <HeaderActions>
-          {hasManagePermission && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={exportEquipamentosCSV}
-                disabled={loading || !equipamentos.length}
-              >
-                Exportar CSV
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleCreateEquipamento}
-              >
-                + Novo Equipamento
-              </Button>
-            </>
-          )}
-        </HeaderActions>
-      </PageHeader>
+      <PageHeader
+        title={hasManagePermission ? 'Gestão de Equipamentos' : 'Equipamentos'}
+        subtitle={hasManagePermission ? 
+          'Gerencie equipamentos, códigos e cronograma de manutenções' :
+          'Visualize equipamentos e histórico de manutenções'
+        }
+        showExportButton={hasManagePermission}
+        showAddButton={hasManagePermission}
+        onExport={exportEquipamentosCSV}
+        onAdd={handleCreateEquipamento}
+        exportDisabled={loading || !equipamentos.length}
+        addLabel="+ Novo "
+      />
 
       {/* Estatísticas */}
       <StatsContainer>

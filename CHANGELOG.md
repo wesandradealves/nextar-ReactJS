@@ -5,6 +5,38 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [4.0.3] - 2025-07-07
+
+### Segurança
+- **Restrição de Permissões para Exportação CSV**
+  - Limitação da exportação de CSV apenas para usuários com perfil GESTAO
+  - Adição de verificação de permissão nas páginas de chamados e histórico
+  - Ocultação do botão de exportação para usuários sem permissão
+  - Bloqueio de acesso à funcionalidade mesmo por manipulação do DOM
+
+## [4.0.2] - 2025-07-06
+
+### Adicionado
+- **Componente Atômico PageHeader**
+  - Criação de componente reutilizável para cabeçalhos de páginas
+  - Suporte a título, subtítulo, botão de exportação CSV e botão de adicionar
+  - Responsividade completa com adaptação para diferentes tamanhos de tela
+  - Documentação com storybook e tipagem TypeScript
+
+### Melhorado
+- **Padronização de Interface do Usuário**
+  - Refatoração de todas as páginas do dashboard para usar o componente PageHeader
+  - Remoção de elementos duplicados de header das páginas de usuários, setores, equipamentos, chamados e histórico
+  - Consistência visual entre todas as páginas do sistema
+  - Melhoria na experiência do usuário com layout padronizado
+
+### Corrigido
+- **Limpeza de Código Duplicado**
+  - Remoção de componentes estilizados duplicados em arquivos de estilo
+  - Eliminação de código redundante em templates de páginas
+  - Centralização da lógica de cabeçalho em um único componente
+  - Redução do tamanho total do bundle com menos código repetido
+
 ## [4.0.1] - 2025-07-05
 
 ### Corrigido

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
-export const HistoricoContainer = styled.div`
-  padding: 24px;
-  max-width: 1400px;
+export const Header = styled.div`
+  padding: 0 24px 24px;
   margin: 0 auto;
 
   .header {
@@ -45,6 +44,14 @@ export const HistoricoContainer = styled.div`
     color: #dc2626;
     margin-top: 16px;
   }
+`;
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 24px;
+  min-height: 100vh;
 `;
 
 export const StatsContainer = styled.div`

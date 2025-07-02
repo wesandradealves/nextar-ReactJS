@@ -5,15 +5,11 @@ import CountUp from 'react-countup';
 import { useAuth } from '@/context/auth';
 import { useUsers } from '@/hooks/useUsers';
 import { DataTable, UserModal } from '@/components/molecules';
-import { Button } from '@/components/atoms';
+import { Button, PageHeader } from '@/components/atoms';
 import type { User, TableColumn, TableAction, CreateUserData, UpdateUserData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import { 
   UsersPageContainer,
-  PageHeader,
-  PageTitle,
-  PageSubtitle,
-  HeaderActions,
   FilterSection,
   FilterButton,
   StatsContainer,
@@ -314,34 +310,16 @@ export default function UsersPage() {
   return (
     <UsersPageContainer>
       {/* Header da página */}
-      <PageHeader>
-        <div>
-          <PageTitle>Gestão de Usuários</PageTitle>
-          <PageSubtitle>
-            Gerencie usuários, perfis e permissões do sistema
-          </PageSubtitle>
-        </div>
-        
-        <HeaderActions>
-          {hasManagePermission && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={exportUsersCSV}
-                disabled={loading || !users.length}
-              >
-                Exportar CSV
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleCreateUser}
-              >
-                + Novo Usuário
-              </Button>
-            </>
-          )}
-        </HeaderActions>
-      </PageHeader>
+      <PageHeader
+        title="Gestão de Usuários"
+        subtitle="Gerencie usuários, perfis e permissões do sistema"
+        showExportButton={hasManagePermission}
+        showAddButton={hasManagePermission}
+        onExport={exportUsersCSV}
+        onAdd={handleCreateUser}
+        exportDisabled={loading || !users.length}
+        addLabel="+ Novo "
+      />
 
       {/* Estatísticas */}
       <StatsContainer>

@@ -6,11 +6,11 @@ import { useEntities } from '@/context/entities';
 import { useChamados } from '@/hooks/useChamados';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable, ChamadoModal } from '@/components/molecules';
-import { Button, Select } from '@/components/atoms';
+import { Select, PageHeader } from '@/components/atoms';
 import { SearchBox } from '@/components/molecules/SearchBox';
 import { Badge } from '@/components/atoms/Badge';
 import { PerfilUsuario, Chamado, User, Setor, Equipamento, TipoManutencao, Prioridade, ChamadoStatus, TableAction } from '@/types';
-import { Container, Header, FiltersContainer } from './styles';
+import { Container, FiltersContainer } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
 
 /**
@@ -514,29 +514,25 @@ export default function ChamadosPage() {
    * ```
    */
   const canCreateChamado = user?.perfil === PerfilUsuario.PESQUISADOR || user?.perfil === PerfilUsuario.GESTAO;
+  
+  /**
+   * Verifica se o usuário atual pode exportar chamados
+   * @decorator @authorization - Verifica permissões baseadas no perfil
+   * @constant {boolean} canExportChamados - True apenas se GESTAO
+   */
+  const canExportChamados = user?.perfil === PerfilUsuario.GESTAO;
 
   return (
     <Container>
-      <Header>
-        <h1>Chamados de Manutenção</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button 
-            variant="secondary"
-            onClick={exportChamadosCSV}
-            disabled={loading || chamados.length === 0}
-          >
-            Exportar CSV
-          </Button>
-          {canCreateChamado && (
-            <Button 
-              variant="primary"
-              onClick={handleCreateChamado}
-            >
-              Novo Chamado
-            </Button>
-          )}
-        </div>
-      </Header>
+      <PageHeader
+        title="Gestão de Chamados"
+        subtitle="Gerencie chamados de manutenção do sistema."
+        onExport={canExportChamados ? exportChamadosCSV : undefined}
+        exportDisabled={loading || chamados.length === 0}
+        showExportButton={canExportChamados}
+        onAdd={canCreateChamado ? handleCreateChamado : undefined}
+        showAddButton={canCreateChamado}
+      />
 
       <FiltersContainer>
         <SearchBox
