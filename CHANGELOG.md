@@ -5,6 +5,42 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [4.0.1] - 2025-07-05
+
+### Corrigido
+- **Correções de Tipagem no Sistema de Exportação CSV**
+  - Correção nas assinaturas dos formatadores para aceitar valores `unknown`
+  - Resolução de erros de TypeScript nos hooks de entidades (chamados, equipamentos, setores, usuários, histórico)
+  - Remoção de variáveis não utilizadas no hook useUsers
+  - Tipagem correta para o manipulador de peças utilizadas em useHistorico
+  - Melhoria no serviço de email para suporte a URLs de preview no ambiente de desenvolvimento
+
+## [4.0.0] - 2025-07-04
+
+### Adicionado
+- **Sistema de Exportação CSV para Todos os CRUDs**
+  - Implementação de botão de exportação CSV em todas as páginas de listagem
+  - Exportação completa de chamados, históricos, equipamentos, usuários e setores
+  - Formatação inteligente de datas, enums e campos especiais para CSV
+  - Utilitário centralizado para exportação com suporte a formatadores customizados
+  - Cabeçalhos traduzidos para melhor legibilidade
+  - Tratamento de campos complexos como peças utilizadas, observações aninhadas
+  - Escape automático de caracteres especiais (vírgulas, aspas)
+  - Download automático do arquivo com nome apropriado para cada entidade
+  - Feedback visual com toasts durante o processo de exportação
+  - Desativação automática do botão durante o loading ou sem dados
+
+### Técnico
+- **Arquitetura de Exportação**
+  - Implementação de utilitário `exportToCSV` em `src/utils/export.ts`
+  - Suporte a formatadores customizados por tipo de campo
+  - Tipagem TypeScript para segurança de tipos nos dados exportados
+  - Adição de método de exportação em cada hook de entidade
+  - Interface consistente entre todas as entidades do sistema
+  - Mapeamento automático de campos com tradução para português
+  - Performance otimizada mesmo com grandes volumes de dados
+  - Conversão e validação de tipos para garantir compatibilidade CSV
+
 ## [3.4.1] - 2025-07-03
 
 ### Ajustado
@@ -380,7 +416,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - **Lint e Build**
   - Removido prop `onModeChange` não utilizado da interface `ChamadoModalProps`
   - Removido import `useToast` não utilizado em `SetorModal`
-  - Removido função `handleModeChange` não utilizada em `page.tsx`
+  - Removida função `handleModeChange` não utilizada em `page.tsx`
   - Corrigidos todos os erros de TypeScript e ESLint
   - Build e lint executados com sucesso sem erros
 

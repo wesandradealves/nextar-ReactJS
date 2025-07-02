@@ -1,6 +1,6 @@
 # 🐧 NextAR - Sistema de Manutenção da Antártica
 
-[![Versão atual: 3.2.0](https://img.shields.io/badge/vers%C3%A3o-3.2.0-blue)](https://github.com/wesandradealves/nextar-ReactJS/releases)
+[![Versão atual: 4.0.1](https://img.shields.io/badge/vers%C3%A3o-4.0.1-blue)](https://github.com/wesandradealves/nextar-ReactJS/releases)
 
 Sistema de gestão de manutenção para estação científica da Antártica, desenvolvido com Next.js, TypeScript, styled-components e Tailwind CSS.
 
@@ -31,6 +31,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 O **NextAR** é um sistema de manutenção completo projetado para gerenciar equipamentos, chamados de manutenção e recursos humanos em uma estação científica da Antártica. O sistema oferece:
 
 - **CRUD completo** para usuários, setores, equipamentos e chamados
+- **Exportação CSV** de todas as entidades (chamados, equipamentos, setores, usuários, histórico)
 - **Gestão avançada de setores científicos** com 10 categorias especializadas
 - **Sistema de autenticação** baseado em perfis (Pesquisador, Agente, Gestão)
 - **Gestão avançada de usuários** com alteração de senhas por administradores
@@ -967,6 +968,8 @@ export const Interactive: Story = {
 };
 ```
 
+---
+
 **Funcionalidades:**
 - ✅ **Controles interativos** para todas as props
 - ✅ **Actions logger** para eventos
@@ -1003,12 +1006,7 @@ export const Interactive: Story = {
 └── 🏗️ Organisms/
     └── Header (5 stories)
 ```
-
-**✨ Novidades v2.0.6:**
-- **Componentes Demo**: Modais funcionam sem dependências de contexto
-- **Documentação Rica**: Descriptions detalhadas e exemplos realistas
-- **Stories Abrangentes**: Estados de loading, erro, sucesso, dados vazios
-- **Dados Realistas**: Equipamentos laboratoriais, usuários e setores científicos
+---
 
 ## ✨ Funcionalidades
 
@@ -1053,8 +1051,9 @@ export const Interactive: Story = {
 - **Feedback Visual** - Bolinha colorida (verde=ativo, vermelho=inativo)
 - **Atualização em Tempo Real** - Cache e estatísticas sincronizados
 - **Validação de Permissões** - Apenas perfil GESTÃO pode alterar status
-- **API Otimizada** - Suporte a atualizações parciais via PUT `/api/users/[id]`
-- **Estatísticas Dinâmicas** - Contadores de usuários ativos/inativos atualizados automaticamente
+- **API Expandida** - `/api/users/change-password` suporta alterações administrativas
+- **Segurança** - Logs de alteração identificam o administrador responsável
+- **UX Otimizada** - Textos explicativos específicos para operações administrativas
 
 #### **� Alteração de Senha Pessoal**
 - **Página de Perfil Integrada** - Seção "Segurança" na página `/dashboard/profile`
@@ -1178,7 +1177,7 @@ const ativarSetoresSelecionados = () => {
 - **Atribuição a Agentes** - Sistema de designação de responsáveis
 - **Integração Completa** - Vinculação com equipamentos, setores e usuários
 - **Permissões Baseadas no Perfil** - Visualização e edição condicionadas ao perfil do usuário
-- **Toast Notifications** - Feedback visual em todas as operações CRUD
+- **Toast Notifications** - Feedback visual em todas operações CRUD
 - **Componente Textarea Atômico** - Substituição de textareas nativos por componente padronizado
 - **Componente Select Atômico** - Substituição de selects nativos por componente padronizado
 - **Validação de Formulários** - Campos obrigatórios e validação em tempo real
@@ -1788,7 +1787,7 @@ O Storybook está configurado para:
 
 ---
 
-## 🚀 Deploy
+## Deploy
 
 ### **Build de Produção**
 ```bash
@@ -1805,31 +1804,10 @@ NODE_ENV=production
 
 ### **Docker (opcional)**
 ```dockerfile
-# Usando Dockerfile diretamente
+# Dockerfile já configurado
 docker build -t nextar .
 docker run -p 3000:3000 nextar
 ```
-
-### **Docker Compose (recomendado)**
-```bash
-# Executando com docker-compose
-docker-compose up
-
-# Executando em background
-docker-compose up -d
-
-# Parando os containers
-docker-compose down
-
-# Reconstruindo após alterações
-docker-compose up --build
-```
-
-O docker-compose.yml já está configurado para:
-- Mapear a porta 3001 do host para a porta 3000 do container
-- Configurar variáveis de ambiente a partir do arquivo .env
-- Montar volumes para desenvolvimento com hot reload
-- Otimizar cache de dependências
 
 ---
 

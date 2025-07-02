@@ -11,6 +11,7 @@ import type {
   UpdateUserData
 } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
+import { exportToCSV } from '@/utils/export';
 
 /**
  * Configuração padrão para paginação
@@ -606,6 +607,83 @@ export const useUsers = () => {
     fetchUsers();
   }, [fetchUsers]);
 
+  /**
+   * Exporta usuários para CSV
+   * @returns {boolean} Sucesso da operação
+   */
+  const exportUsersCSV = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Se não tiver dados carregados, busca todos
+      let usersToExport = allUsers;
+      if (!usersToExport || usersToExport.length === 0) {
+        const response = await fetch('/api/users?limit=1000');
+        if (!response.ok) {
+          throw new Error('Erro ao buscar usuários para exportação');
+        }
+        const result = await response.json();
+        usersToExport = result.data;
+      }
+      
+      // Remover campos sensíveis
+      const sanitizedUsers = usersToExport.map((user: User) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { senha, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+      
+      // Exportar para CSV
+      exportToCSV(sanitizedUsers, {
+        filename: 'usuarios-sistema',
+        headers: {
+          id: 'ID',
+          nome: 'Nome',
+          email: 'E-mail',
+          perfil: 'Perfil',
+          setor: 'Setor',
+          ativo: 'Ativo',
+          ultimoLogin: 'Último Login',
+          createdAt: 'Data de Criação',
+          updatedAt: 'Última Atualização'
+        },
+        formatters: {
+          ativo: (value: unknown) => value === true ? 'Sim' : 'Não',
+          perfil: (value: unknown) => {
+            const perfilMap: Record<string, string> = {
+              'gestao': 'Gestão',
+              'agente': 'Agente de Manutenção',
+              'pesquisador': 'Pesquisador'
+            };
+            return perfilMap[String(value)] || String(value);
+          },
+          ultimoLogin: (value: unknown) => value ? new Date(String(value)).toLocaleString('pt-BR') : 'Nunca',
+          createdAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : '',
+          updatedAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : ''
+        }
+      });
+      
+      toast.success(
+        'Exportação concluída',
+        'Os usuários foram exportados com sucesso'
+      );
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao exportar usuários:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar usuários';
+      
+      toast.error(
+        'Erro na exportação',
+        errorMessage
+      );
+      
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [allUsers, toast]);
+
   return {
     // Dados
     users: data,
@@ -643,6 +721,9 @@ export const useUsers = () => {
     
     // Cache info
     cacheKey,
-    hasCache: !!cache.get(cacheKey)
+    hasCache: !!cache.get(cacheKey),
+    
+    // Exportação
+    exportUsersCSV
   };
 };

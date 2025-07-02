@@ -10,6 +10,7 @@ import type {
   CreateEquipamentoData,
   UpdateEquipamentoData
 } from '@/types';
+import { exportToCSV } from '@/utils/export';
 
 /**
  * Configuração padrão para paginação
@@ -394,6 +395,73 @@ export const useEquipamentos = () => {
   }, [cache, fetchEquipamentos, fetchAllEquipamentos]);
 
   /**
+   * Exporta equipamentos para CSV
+   * @returns {boolean} Sucesso da operação
+   */
+  const exportEquipamentosCSV = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Se não tiver dados carregados, busca todos
+      let equipamentosToExport = allEquipamentos;
+      if (!equipamentosToExport || equipamentosToExport.length === 0) {
+        const response = await fetch('/api/equipamentos?limit=1000');
+        if (!response.ok) {
+          throw new Error('Erro ao buscar equipamentos para exportação');
+        }
+        const result = await response.json();
+        equipamentosToExport = result.data;
+      }
+      
+      // Formatadores para campos específicos
+      const formatters = {
+        dataProximaManutencao: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : 'Não agendada',
+        ativo: (value: unknown) => value === true ? 'Sim' : 'Não',
+        createdAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : '',
+        updatedAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : ''
+      };
+      
+      // Exportar para CSV
+      exportToCSV(equipamentosToExport, {
+        filename: 'equipamentos',
+        headers: {
+          id: 'ID',
+          nome: 'Nome',
+          codigo: 'Código',
+          modelo: 'Modelo',
+          setorId: 'ID do Setor',
+          dataProximaManutencao: 'Próxima Manutenção',
+          ativo: 'Ativo',
+          observacoes: 'Observações',
+          manutencaoCount: 'Quantidade de Manutenções',
+          createdAt: 'Data de Criação',
+          updatedAt: 'Última Atualização'
+        },
+        formatters
+      });
+      
+      toast.success(
+        'Exportação concluída',
+        'Os equipamentos foram exportados com sucesso'
+      );
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao exportar equipamentos:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar equipamentos';
+      
+      toast.error(
+        'Erro na exportação',
+        errorMessage
+      );
+      
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [allEquipamentos, toast]);
+
+  /**
    * Configuração de paginação para o componente
    */
   const pagination = useMemo(() => {
@@ -479,6 +547,9 @@ export const useEquipamentos = () => {
     // CRUD operations
     createEquipamento,
     updateEquipamento,
-    deleteEquipamento
+    deleteEquipamento,
+    
+    // Exportação
+    exportEquipamentosCSV
   };
 };

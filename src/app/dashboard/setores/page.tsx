@@ -74,7 +74,8 @@ export default function SetoresPage() {
     deleteSetor,
     filterByCategoria,
     filterByStatus,
-    clearFilters
+    clearFilters,
+    exportSetoresCSV
   } = useSetores();
 
   /**
@@ -356,12 +357,21 @@ export default function SetoresPage() {
         
         <HeaderActions>
           {hasManagePermission && (
-            <Button
-              variant="primary"
-              onClick={handleCreateSetor}
-            >
-              + Novo Setor
-            </Button>
+            <>
+              <Button
+                variant="secondary"
+                onClick={exportSetoresCSV}
+                disabled={loading || !setores.length}
+              >
+                Exportar CSV
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleCreateSetor}
+              >
+                + Novo Setor
+              </Button>
+            </>
           )}
         </HeaderActions>
       </PageHeader>

@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import type { Chamado, User, CreateChamadoData, UpdateChamadoData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import { resources } from '@/services/resources';
+import { exportToCSV } from '@/utils/export';
 
 /**
  * Configuração padrão para filtros
@@ -330,6 +331,93 @@ export function useChamados(currentUser: User | null) {
     }
   }, [refreshData, toast]);
 
+  /**
+   * Exporta os chamados atuais para um arquivo CSV
+   * @returns {boolean} Sucesso da operação
+   */
+  const exportChamadosCSV = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Se não tiver dados carregados, busca todos
+      let chamadosToExport = data;
+      if (!chamadosToExport || chamadosToExport.length === 0) {
+        chamadosToExport = await resources.getChamados();
+      }
+      
+      // Formatadores para campos específicos
+      const formatters = {
+        dataAbertura: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : '',
+        dataExecucao: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : 'Não finalizado',
+        status: (value: unknown) => {
+          const statusMap: Record<string, string> = {
+            'ABERTO': 'Aberto',
+            'EM_PROGRESSO': 'Em Progresso',
+            'CONCLUIDO': 'Concluído'
+          };
+          return statusMap[String(value)] || String(value);
+        },
+        tipo: (value: unknown) => {
+          const tipoMap: Record<string, string> = {
+            'PREVENTIVA': 'Preventiva',
+            'CORRETIVA': 'Corretiva'
+          };
+          return tipoMap[String(value)] || String(value);
+        },
+        prioridade: (value: unknown) => {
+          const prioridadeMap: Record<string, string> = {
+            'BAIXA': 'Baixa',
+            'MEDIA': 'Média',
+            'ALTA': 'Alta',
+            'CRITICA': 'Crítica'
+          };
+          return prioridadeMap[String(value)] || String(value);
+        }
+      };
+      
+      // Exportar para CSV
+      exportToCSV(chamadosToExport, {
+        filename: 'chamados-manutencao',
+        headers: {
+          id: 'ID',
+          titulo: 'Título',
+          descricao: 'Descrição',
+          tipo: 'Tipo',
+          status: 'Status',
+          prioridade: 'Prioridade',
+          dataAbertura: 'Data de Abertura',
+          dataExecucao: 'Data de Execução',
+          setorId: 'Setor ID',
+          equipamentoId: 'Equipamento ID',
+          agenteId: 'Agente ID',
+          solicitanteId: 'Solicitante ID',
+          observacoes: 'Observações',
+          pecasUtilizadas: 'Peças Utilizadas'
+        },
+        formatters
+      });
+      
+      toast.success(
+        'Exportação concluída',
+        'Os chamados foram exportados com sucesso'
+      );
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao exportar chamados:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar chamados';
+      
+      toast.error(
+        'Erro na exportação',
+        errorMessage
+      );
+      
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [data, toast]);
+
   return {
     // Dados
     chamados: data,
@@ -347,6 +435,9 @@ export function useChamados(currentUser: User | null) {
     // CRUD Operations
     createChamado,
     updateChamado,
-    deleteChamado
+    deleteChamado,
+    
+    // Exportação
+    exportChamadosCSV
   };
 }

@@ -3,6 +3,7 @@ import { useCache } from '@/context/cache';
 import { useToast } from '@/hooks/useToast';
 import type { Chamado } from '@/types';
 import { TipoManutencao, ChamadoStatus } from '@/utils/enums';
+import { exportToCSV } from '@/utils/export';
 
 /**
  * Filtros para histórico de manutenções
@@ -293,49 +294,145 @@ export const useHistorico = () => {
   }, [cache, fetchGlobalStats, fetchHistorico]);
 
   /**
-   * Exportar histórico (função básica - pode ser expandida)
+   * Exporta o histórico filtrado para CSV
    */
   const exportarHistorico = useCallback(async () => {
     try {
-      toast.info('Preparando exportação...');
+      setLoading(true);
       
-      // Buscar todos os dados sem paginação
-      const queryParams = buildQueryParams(filters, { page: 1, limit: 10000 });
-      const response = await fetch(`/api/historico?${queryParams}`);
+      // Buscar todos os dados para exportação (sem paginação)
+      const params = new URLSearchParams();
       
+      // Aplicar filtros apenas se estiverem definidos
+      if (filters.tipo) params.append('tipo', filters.tipo);
+      if (filters.status) params.append('status', filters.status);
+      if (filters.agenteId) params.append('agenteId', filters.agenteId);
+      if (filters.setorId) params.append('setorId', filters.setorId);
+      if (filters.equipamentoId) params.append('equipamentoId', filters.equipamentoId);
+      if (filters.dataInicio) params.append('dataInicio', filters.dataInicio);
+      if (filters.dataFim) params.append('dataFim', filters.dataFim);
+      
+      // Definir limite alto para trazer todos os registros
+      params.append('limit', '1000');
+      
+      const response = await fetch(`/api/historico?${params.toString()}`);
       if (!response.ok) {
-        throw new Error('Erro ao exportar dados');
+        throw new Error('Erro ao buscar dados para exportação');
       }
       
       const result = await response.json();
+      const chamadosData = result.data || [];
       
-      // Preparar dados para exportação
-      const csvData = result.data.map((chamado: ChamadoEnriquecido) => ({
-        'ID': chamado.id,
-        'Data Abertura': chamado.dataAbertura ? new Date(chamado.dataAbertura).toLocaleDateString('pt-BR') : '',
-        'Data Execução': chamado.dataExecucao ? new Date(chamado.dataExecucao).toLocaleDateString('pt-BR') : '',
-        'Tipo': chamado.tipo === TipoManutencao.CORRETIVA ? 'Corretiva' : 'Preventiva',
-        'Status': chamado.status,
-        'Prioridade': chamado.prioridade,
-        'Título': chamado.titulo || chamado.descricao,
-        'Setor': chamado.setorNome,
-        'Equipamento': chamado.equipamentoNome,
-        'Código Equipamento': chamado.equipamentoCodigo,
-        'Agente': chamado.agenteNome,
-        'Solicitante': chamado.solicitanteNome,
-        'Tempo Execução (dias)': chamado.tempoExecucao || '',
-        'Observações': chamado.observacoes || ''
-      }));
+      // Usar dados já enriquecidos da API
+      const exportData = chamadosData;
       
-      // Simular download (implementação básica)
-      console.log('Dados para exportação:', csvData);
-      toast.success(`${csvData.length} registros preparados para exportação`);
+      // Formatadores para campos específicos
+      const formatters: Record<string, (value: unknown) => string> = {
+        dataAbertura: (value: unknown) => {
+          if (typeof value === 'string') {
+            return value ? new Date(value).toLocaleDateString('pt-BR') : 'N/A';
+          }
+          return 'N/A';
+        },
+        dataExecucao: (value: unknown) => {
+          if (typeof value === 'string') {
+            return value ? new Date(value).toLocaleDateString('pt-BR') : 'Não finalizado';
+          }
+          return 'Não finalizado';
+        },
+        tempoExecucao: (value: unknown) => {
+          if (typeof value === 'number') {
+            if (value === 0) return 'Não concluído';
+            if (value < 60) return `${value} minutos`;
+            if (value < 1440) return `${Math.floor(value / 60)} horas`;
+            return `${Math.floor(value / 1440)} dias`;
+          }
+          return 'Não concluído';
+          return 'Não concluído';
+        },
+        status: (value: unknown) => {
+          const statusMap: Record<string, string> = {
+            'ABERTO': 'Aberto',
+            'EM_PROGRESSO': 'Em Progresso',
+            'CONCLUIDO': 'Concluído'
+          };
+          if (typeof value === 'string') {
+            return statusMap[value] || value;
+          }
+          return String(value || '');
+        },
+        tipo: (value: unknown) => {
+          const tipoMap: Record<string, string> = {
+            'PREVENTIVA': 'Preventiva',
+            'CORRETIVA': 'Corretiva'
+          };
+          if (typeof value === 'string') {
+            return tipoMap[value] || value;
+          }
+          return String(value || '');
+        },
+        prioridade: (value: unknown) => {
+          const prioridadeMap: Record<string, string> = {
+            'BAIXA': 'Baixa',
+            'MEDIA': 'Média',
+            'ALTA': 'Alta',
+            'CRITICA': 'Crítica'
+          };
+          if (typeof value === 'string') {
+            return prioridadeMap[value] || value;
+          }
+          return String(value || '');
+        },
+        pecasUtilizadas: (value: unknown) => {
+          if (Array.isArray(value)) {
+            if (!value.length) return 'Nenhuma peça utilizada';
+            return value.map((p: {nome?: string; quantidade?: number | string}) => `${p.nome || 'Sem nome'} (${p.quantidade || 0})`).join('; ');
+          }
+          return 'Nenhuma peça utilizada';
+        }
+      };
       
+      // Exportar para CSV
+      exportToCSV(exportData, {
+        filename: 'historico-manutencoes',
+        headers: {
+          id: 'ID',
+          titulo: 'Título',
+          tipo: 'Tipo',
+          status: 'Status',
+          prioridade: 'Prioridade',
+          dataAbertura: 'Data de Abertura',
+          dataExecucao: 'Data de Execução',
+          agenteNome: 'Agente',
+          setorNome: 'Setor',
+          equipamentoNome: 'Equipamento',
+          solicitanteNome: 'Solicitante',
+          observacoes: 'Observações',
+          pecasUtilizadas: 'Peças Utilizadas'
+        },
+        formatters
+      });
+      
+      toast.success(
+        'Exportação concluída',
+        `${exportData.length} registros exportados com sucesso`
+      );
+      
+      return true;
     } catch (error) {
-      toast.error('Erro ao exportar histórico');
-      console.error('Erro na exportação:', error);
+      console.error('Erro ao exportar histórico:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar histórico';
+      
+      toast.error(
+        'Erro na exportação',
+        errorMessage
+      );
+      
+      return false;
+    } finally {
+      setLoading(false);
     }
-  }, [buildQueryParams, filters, toast]);
+  }, [filters, toast]);
 
   // Carregamento inicial
   useEffect(() => {
