@@ -5,6 +5,15 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.3.2] - 2025-07-02
+
+### Melhorado
+- **Configuração Docker**
+  - Ajustado mapeamento de portas no docker-compose.yml para evitar conflitos (3001:3000)
+  - Validada configuração do ambiente Docker para garantir funcionamento correto
+  - Confirmada integração do arquivo .env para configurações de ambiente
+  - Testado build e execução em ambiente containerizado
+
 ## [3.2.1] - 2025-07-02
 
 ### Corrigido
@@ -1469,6 +1478,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Interface responsiva e não intrusiva
 
 ### Melhorado
+
 - **Performance Geral**
   - Redução de 50-90% nas requisições de API
   - Cache inteligente com cleanup automático
@@ -1552,51 +1562,5 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Mobile-first approach
   - Testes em diferentes resoluções
   - Navigation adaptável
-
----
-
-## [1.0.0] - 2025-06-27
-
-### Inicial
-- **Configuração Base do Projeto**
-  - Next.js 15.3.3 com App Router
-  - TypeScript e ESLint configurados
-  - Tailwind CSS e Styled Components
-  - Storybook para desenvolvimento de componentes
-
-- **Sistema de Autenticação**
-  - Context API para gerenciamento de estado
-  - Login com validação de credenciais
-  - Middleware para proteção de rotas
-  - Cookies seguros para persistência
-
-- **APIs Internas**
-  - Endpoints para users, chamados, equipamentos, setores
-  - Dados mockados em JSON
-  - Dashboard com estatísticas básicas
-  - Sistema de permissões por perfil
-
-- **Componentes Base**
-  - Spinner de loading global
-  - Estrutura inicial de páginas
-  - Sistema de contextos aninhados
-  - Configuração de build e deploy
-
-### Técnico
-- **Padrão de Contextos**: AuthProvider → EntitiesProvider → LoaderProvider
-- **Estrutura de Dados**: ENUMs centralizados, tipos TypeScript
-- **APIs**: /api/users, /api/setores, /api/equipamentos, /api/chamados
-- **Middleware**: Controle de autenticação e redirecionamentos
-
----
-
-## Convenções
-
-### Tipos de Mudança
-- **Adicionado** - Novas funcionalidades
-- **Corrigido** - Correções de bugs
-- **Melhorado** - Melhorias em funcionalidades existentes
-- **Técnico** - Mudanças técnicas e refatorações
-- **Documentação** - Atualizações na documentação
 
 
