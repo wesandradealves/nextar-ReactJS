@@ -1,8 +1,8 @@
 # 🐧 NextAR - Sistema de Manutenção da Antártica
 
-Sistema de gestão de manutenção para estação científica da Antártica, desenvolvido com Next.js, TypeScript, styled-components e Tailwind CSS.
-
 [![Versão atual: 3.2.0](https://img.shields.io/badge/vers%C3%A3o-3.2.0-blue)](https://github.com/wesandradealves/nextar-ReactJS/releases)
+
+Sistema de gestão de manutenção para estação científica da Antártica, desenvolvido com Next.js, TypeScript, styled-components e Tailwind CSS.
 
 ## 📋 Índice
 
@@ -16,7 +16,6 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 - [Sistema de Cache Multicamadas](#sistema-de-cache-multicamadas)
 - [Atomic Design Pattern](#atomic-design-pattern)
 - [Visualização de Dados](#visualização-de-dados)
-- [Histórico de Manutenções](#histórico-de-manutenções)
 - [Funcionalidades](#funcionalidades)
 - [Sistema de Notificações (Toasts)](#sistema-de-notificações-toasts)
 - [Sistema de Criptografia de Senhas](#sistema-de-criptografia-de-senhas)
@@ -56,7 +55,6 @@ O **NextAR** é um sistema de manutenção completo projetado para gerenciar equ
 - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitário
 - [React Hook Form](https://react-hook-form.com/) - Formulários performáticos
 - [js-cookie](https://github.com/js-cookie/js-cookie) - Gestão de cookies
-- [Chart.js](https://www.chartjs.org/) - Biblioteca de visualização de dados
 - [React-ChartJS-2](https://react-chartjs-2.js.org/) - Componentes React para Chart.js
 
 ### **Backend**
@@ -602,7 +600,7 @@ Combinação de atoms que formam componentes mais complexos.
 - **SetorModal**: Modal para CRUD de setores com categorias científicas 
 - **ChamadoModal**: Modal para CRUD de chamados com diferentes modos 
 - **EquipamentoModal**: Modal para CRUD de equipamentos com dados técnicos 
-- **Charts**: Componentes de visualização com gráficos de pizza e barras
+- **Charts**: Componentes de visualização com gráficos de pizza e barras 
 - **FormContainer**: Container de formulário com validação integrada
 
 ```tsx
@@ -969,2169 +967,871 @@ export const Interactive: Story = {
 };
 ```
 
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 🧩 Componentes Implementados
-
-### **🔬 Atoms (Componentes Básicos)**
-
-#### **Input**
-Campo de formulário reutilizável com múltiplos tipos e estados.
-
-```tsx
-<Input
-  type="email"
-  placeholder="seu@email.com"
-  hasError={!!error}
-  disabled={loading}
-  required
-/>
-```
-
-**Características:**
-- ✅ Tipos: text, email, password, number, tel, url, search
-- ✅ Estados: normal, error, disabled, readonly
-- ✅ Ícones integrados (ex: lupa para search)
-- ✅ Validação visual automática
-
-#### **Badge**
-Tags/etiquetas para status, categorias e indicadores.
-
-```tsx
-<Badge variant="success" size="small">Concluído</Badge>
-<Badge variant="warning" dot />
-<Badge variant="danger" onClick={handleClick}>Urgente</Badge>
-```
-
-**Características:**
-- ✅ Variantes: default, primary, secondary, success, warning, danger
-- ✅ Tamanhos: small, medium, large
-- ✅ Modo dot (apenas indicador)
-- ✅ Estados clicáveis
-
-### **🧬 Molecules (Componentes Compostos)**
-
-#### **FormField**
-Combinação completa de Label + Input + validação.
-
-```tsx
-<FormField
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Digite seu email"
-  required
-  error={errors.email}
-  helpText="Será usado para notificações"
-/>
-```
-
-**Características:**
-- ✅ Label com indicador de obrigatório (*)
-- ✅ Input integrado com estados
-- ✅ Mensagens de erro estilizadas
-- ✅ Texto de ajuda opcional
-- ✅ Validação visual automática
-
-#### **SearchBox**
-Campo de busca com funcionalidades avançadas.
-
-```tsx
-<SearchBox
-  placeholder="Buscar equipamentos..."
-  onSearch={handleSearch}
-  onClear={handleClear}
-  loading={isSearching}
-/>
-```
-
-**Características:**
-- ✅ Input de busca estilizado
-- ✅ Botão de busca integrado
-- ✅ Botão de limpeza (quando tem conteúdo)
-- ✅ Estado de loading
-- ✅ Busca ao pressionar Enter
-
-#### **UserCard**
-Card de usuário com avatar, informações e status.
-
-```tsx
-<UserCard
-  name="João Silva"
-  email="joao@antartica.gov.br"
-  profile={PerfilUsuario.PESQUISADOR}
-  isOnline={true}
-  clickable
-  onClick={handleUserClick}
-/>
-```
-
-**Características:**
-- ✅ Avatar com iniciais geradas automaticamente
-- ✅ Indicador de status online/offline
-- ✅ Badge de perfil colorido
-- ✅ Tamanhos: small, medium, large
-- ✅ Estados clicáveis com hover
-
-### **🏗️ Organisms (Seções Complexas)**
-
-#### **Header**
-Cabeçalho completo com navegação e funcionalidades.
-
-```tsx
-<Header
-  userName={user.nome}
-  userProfile={user.perfil}
-  isOnline={true}
-  onLogout={handleLogout}
-  onProfileClick={handleProfileClick}
-/>
-```
-
-**Características:**
-- ✅ Logo clicável
-- ✅ Menu de navegação principal
-- ✅ SearchBox integrado
-- ✅ UserCard no menu dropdown
-- ✅ Menu mobile responsivo
-- ✅ Logout integrado
-
-### **📱 Responsividade**
-
-Todos os componentes são totalmente responsivos:
-
-```scss
-// Breakpoints integrados
-@media (max-width: 768px) {
-  // Adaptações mobile
-}
-
-@media (max-width: 1024px) {
-  // Adaptações tablet  
-}
-```
-
-**Comportamentos:**
-- ✅ Header: Menu collapse em mobile
-- ✅ SearchBox: Esconde em telas menores
-- ✅ UserCard: Adapta tamanhos automaticamente
-- ✅ FormField: Layout vertical em mobile
-
-### **🎨 Tematização**
-
-Sistema de cores consistente:
-
-```tsx
-const colors = {
-  primary: '#667eea',
-  secondary: '#6b7280', 
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  default: '#f3f4f6'
-};
-```
-
-**Aplicação:**
-- ✅ Badges com cores semânticas
-- ✅ Estados de erro padronizados
-- ✅ Hover states consistentes
-- ✅ Focus rings para acessibilidade
-
-### **📚 Storybook - Documentação Interativa**
-
-O projeto inclui Storybook completo com todas as variações dos componentes.
-
-#### **Executar o Storybook**
-```bash
-npm run storybook
-# Acesse: http://localhost:6006
-```
-
-#### **Stories Implementadas**
-
-**Atoms:**
-- ✅ **Logo.stories**: 5 variações (tamanhos, contextos)
-- ✅ **Button.stories**: 12 variações (tipos, estados, tamanhos)
-- ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
-- ✅ **Input.stories**: 10 variações (tipos, estados, validação)
-- ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
-
-**Molecules:**
-- ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
-- ✅ **SearchBox.stories**: 6 variações + exemplo interativo
-- ✅ **UserCard.stories**: 10 variações (perfis, tamanhos, online)
-
-**Organisms:**
-- ✅ **Header.stories**: 5 variações + exemplo de página completa
-
-#### **Recursos do Storybook**
-
-```tsx
-// Exemplo de story com controles
-export const Interactive: Story = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger'],
-    },
-  },
-};
-```
-
-## 📊 Visualização de Dados
-
-O sistema implementa **gráficos interativos** usando Chart.js e react-chartjs-2 para visualização de dados no dashboard.
-
-### 📈 **Componentes de Gráficos**
-
-O sistema implementa dois tipos principais de gráficos:
-
-```
-src/components/molecules/Charts/
-├── index.tsx           # Componente principal e subcomponentes
-├── styles.tsx          # Styled components
-└── Charts.stories.tsx  # Stories do Storybook
-```
-
-#### **1. Gráfico de Pizza (Distribuição por Tipo)**
-
-Visualiza a distribuição de manutenções por tipo (Corretiva/Preventiva):
-
-```tsx
-import { MaintenanceTypeChart } from '@/components/molecules/Charts';
-
-// Dados para o gráfico
-const distribucaoTipo = {
-  [TipoManutencao.CORRETIVA]: 42,   // 42 manutenções corretivas
-  [TipoManutencao.PREVENTIVA]: 58    // 58 manutenções preventivas
-};
-
-// Renderizando o gráfico
-<MaintenanceTypeChart distribucaoTipo={distribucaoTipo} />
-```
-
-**Características:**
-- **Interativo**: Tooltip com valores e percentuais
-- **Legendas personalizadas**: Indicadores de cores e valores
-- **Responsivo**: Adaptação a diferentes tamanhos de tela
-- **Estado vazio**: Tratamento adequado para ausência de dados
-
-#### **2. Gráfico de Barras (Distribuição por Agente)**
-
-Visualiza a distribuição de chamados por agente de manutenção:
-
-```tsx
-import { MaintenanceAgentChart } from '@/components/molecules/Charts';
-
-// Dados para o gráfico
-const distribucaoAgente = [
-  { 
-    agenteId: '1', 
-    nomeAgente: 'Carlos Silva', 
-    quantidade: 25,              // Total de chamados
-    quantidadeConcluidos: 20     // Chamados concluídos
-  },
-  // ... outros agentes
-];
-
-// Renderizando o gráfico
-<MaintenanceAgentChart distribucaoAgente={distribucaoAgente} />
-```
-
-**Características:**
-- **Duas séries**: Total de chamados e chamados concluídos
-- **Limitado a 6 agentes**: Visualização otimizada dos principais agentes
-- **Formatação de eixos**: Valores inteiros no eixo Y
-- **Responsivo**: Adaptação a diferentes tamanhos de tela
-
-#### **3. Componente Agregador (DashboardCharts)**
-
-Componente principal que agrupa os gráficos no dashboard:
-
-```tsx
-import { DashboardCharts } from '@/components/molecules/Charts';
-
-// Uso na página de dashboard
-<DashboardCharts 
-  distribucaoTipo={dashboardData.distribucaoTipo}
-  distribucaoAgente={dashboardData.distribucaoAgente}
-/>
-```
-
-### 🔄 **Integração com API**
-
-Os dados para os gráficos são fornecidos pela API do dashboard:
-
-```typescript
-// src/pages/api/dashboard.ts
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // ...
-  res.status(200).json({ 
-    stats,
-    distribucaoTipo: stats.distribucaoTipo,
-    distribucaoAgente: stats.distribucaoAgente
-  });
-}
-```
-
-### 📱 **Responsividade e Acessibilidade**
-
-- **Layout responsivo**: Adaptação para mobile e desktop
-- **Estados de carregamento**: Indicação visual durante loading
-- **Mensagem de ausência de dados**: Feedback quando não há dados
-- **Alto contraste**: Cores com boa diferenciação
-- **Tooltips informativos**: Dados detalhados ao passar o mouse
-
-### 🔍 **Stories no Storybook**
-
-Os componentes de gráficos possuem stories completos no Storybook:
-
-```typescript
-// src/components/molecules/Charts/Charts.stories.tsx
-export const Default: Story = {
-  args: {
-    distribucaoTipo: mockDistribuicaoTipo,
-    distribucaoAgente: mockDistribuicaoAgente
-  }
-};
-
-export const EmptyData: Story = {
-  args: {
-    distribucaoTipo: { [TipoManutencao.CORRETIVA]: 0, [TipoManutencao.PREVENTIVA]: 0 },
-    distribucaoAgente: []
-  }
-};
-
-export const TypeChart: StoryObj<typeof MaintenanceTypeChart> = {
-  // ...configuração para o gráfico de pizza isolado
-};
-
-export const AgentChart: StoryObj<typeof MaintenanceAgentChart> = {
-  // ...configuração para o gráfico de barras isolado
-};
-```
-
----
-
-## 📋 Histórico de Manutenções
-
-O sistema implementa um módulo completo de histórico de manutenções, permitindo visualização, filtragem e exportação de dados.
-
-### 📑 **Página de Histórico**
-
-A página `/dashboard/historico` permite consulta avançada de manutenções:
-
-```
-src/app/dashboard/historico/
-├── layout.tsx       # Layout específico
-├── page.tsx         # Componente principal
-└── styles.tsx       # Styled components
-```
-
-**Características:**
-- **Filtros avançados**: Tipo, status, agente, equipamento, setor e período
-- **Estatísticas em tempo real**: Cards por status e tipo
-- **Paginação inteligente**: Para grandes volumes de dados
-- **Exportação de dados**: Download do histórico filtrado
-- **Validação de filtros**: Especialmente para datas início/fim
-
-### 🔍 **Visualização por Equipamento**
-
-Cada equipamento possui seu histórico completo de manutenções:
-
-```tsx
-// No modal de equipamento
-<EquipamentoModal
-  equipamento={selectedEquipamento}
-  mode="view"      // Modo visualização
-  onClose={closeModal}
-/>
-```
-
-**Características do histórico no modal:**
-- **Lista completa**: Todas as manutenções do equipamento
-- **Badges coloridos**: Indicação visual de status e tipo
-- **Dados do agente**: Informações de quem realizou a manutenção
-- **Datas formatadas**: Data de abertura e execução em formato BR
-- **Ordenação cronológica**: Manutenções mais recentes primeiro
-
-### 🔄 **Hook Customizado**
-
-O hook `useHistorico` gerencia todos os dados e operações:
-
-```typescript
-// Uso do hook
+**Funcionalidades:**
+- ✅ **Controles interativos** para todas as props
+- ✅ **Actions logger** para eventos
+- ✅ **Documentação automática** com JSDoc
+- ✅ **Testes visuais** com múltiplos cenários
+- ✅ **Responsividade** testável
+- ✅ **Casos extremos** (nomes longos, sem dados)
+
+#### **Navegação no Storybook**
+
+```
+📚 Storybook Structure (284+ Stories)
+├── 🔬 Atoms/
+│   ├── Badge (6 stories)
+│   ├── Button (8 stories)
+│   ├── DateInput (7 stories) 
+│   ├── Input (6 stories)
+│   ├── Logo (4 stories)
+│   ├── Select (5 stories)
+│   ├── Spinner (5 stories)
+│   └── Textarea (6 stories)
+├── 🧬 Molecules/
+│   ├── ChamadoModal (6 stories) 
+│   ├── EquipamentoModal (7 stories) 
+│   ├── FormField (4 stories)
+│   ├── FormList (7 stories) 
+│   ├── FormModal (5 stories) 
+│   ├── FormSelection (4 stories) 
+│   ├── Modal (4 stories) 
+│   ├── SearchBox (3 stories)
+│   ├── SetorModal (6 stories) 
+│   ├── UserCard (5 stories)
+│   └── UserModal (5 stories) 
+└── 🏗️ Organisms/
+    └── Header (5 stories)
+```
+
+**✨ Novidades v2.0.6:**
+- **Componentes Demo**: Modais funcionam sem dependências de contexto
+- **Documentação Rica**: Descriptions detalhadas e exemplos realistas
+- **Stories Abrangentes**: Estados de loading, erro, sucesso, dados vazios
+- **Dados Realistas**: Equipamentos laboratoriais, usuários e setores científicos
+
+## ✨ Funcionalidades
+
+### **🔐 Autenticação**
+- Login com email/senha
+- 3 perfis de usuário: Pesquisador, Agente, Gestão
+- Sistema de permissões granular
+- Persistência segura com cookies
+- Middleware de proteção de rotas
+
+### **🏗️ Sistema de Template Dashboard**
+- Layout unificado com header persistente
+- Navegação hierárquica `/dashboard/*`
+- Otimização de performance com cache integrado
+- Experiência de usuário consistente
+
+### **👤 Gestão de Perfil do Usuário**
+- **Página `/dashboard/profile`** - Edição de perfil do usuário autenticado
+- **Formulário inteligente** - Pré-preenchimento automático de dados
+- **Validação robusta** - Nome (mín. 2 caracteres) e email (formato válido)
+- **API dedicada** - Endpoints GET/PUT `/api/profile` com validação de email único
+- **UX otimizada** - Mensagens de sucesso/erro e reset de formulário
+
+### **👥 Gestão de Usuários**
+- **Página `/dashboard/usuarios`** - Interface completa para gestão de usuários
+- **CRUD Completo** - Criar, listar, editar e excluir usuários
+- **Permissões** - Acesso restrito ao perfil GESTÃO
+- **DataTable Avançado** - Paginação (10/25/50/100), ordenação e filtros
+- **Busca em Tempo Real** - Por nome, email, perfil e status
+- **Modais Modernos** - Interface com FormContainer para criação/edição
+- **Validação Robusta** - Email único, campos obrigatórios e formatos
+- **Cache Otimizado** - TTL de 5 minutos com invalidação inteligente
+- **Seleção Múltipla** - Ações em lote (ativar/desativar)
+- **Estatísticas** - Contadores por perfil em tempo real
+- **Proteções** - Não pode excluir a si mesmo ou último GESTÃO
+
+#### **🔄 Sistema de Ativação/Desativação**
+- **Controle de Status** - Ativar/desativar usuários individualmente
+- **Interface Dupla** - Checkbox funcional + span clicável (UX aprimorada)
+- **Feedback Visual** - Bolinha colorida (verde=ativo, vermelho=inativo)
+- **Atualização em Tempo Real** - Cache e estatísticas sincronizados
+- **Validação de Permissões** - Apenas perfil GESTÃO pode alterar status
+- **API Otimizada** - Suporte a atualizações parciais via PUT `/api/users/[id]`
+- **Estatísticas Dinâmicas** - Contadores de usuários ativos/inativos atualizados automaticamente
+
+#### **� Alteração de Senha Pessoal**
+- **Página de Perfil Integrada** - Seção "Segurança" na página `/dashboard/profile`
+- **Validação Robusta** - Senha atual obrigatória + nova senha mínimo 6 caracteres
+- **Confirmação de Senha** - Campo de confirmação com validação em tempo real
+- **Prevenção de Reutilização** - Impede usar a mesma senha atual como nova senha
+- **Hook Dedicado** - `useChangePassword` com tratamento de erros e loading states
+- **Feedback Instantâneo** - Toasts de sucesso/erro integrados com react-toastify
+- **Interface Intuitiva** - Formulário separado com campos tipo password
+- **Reset Automático** - Campos limpos após alteração bem-sucedida
+- **🔒 Logout Automático** - Por segurança, desconecta automaticamente em 5 segundos
+- **Contador Visual** - Toast com aviso e contagem regressiva antes do logout
+- **Redirecionamento Seguro** - Redireciona para login após desconexão automática
+
+#### **�🔑 Gestão de Senhas por Administradores**
+- **Alteração Administrativa** - Gestores podem alterar senhas de qualquer usuário
+- **Campo Opcional** - Campo senha aparece na edição apenas para perfil GESTÃO
+- **Sem Confirmação Atual** - Administradores não precisam da senha atual do usuário
+- **Interface Intuitiva** - Placeholder explicativo e campo opcional no modal de edição
+- **Validação Rigorosa** - Endpoint valida permissões de gestão antes de alterar
+- **API Expandida** - `/api/users/change-password` suporta alterações administrativas
+- **Segurança** - Logs de alteração identificam o administrador responsável
+- **UX Otimizada** - Textos explicativos específicos para operações administrativas
+
+### **🏢 Gestão de Setores** 
+- **Página `/dashboard/setores`** - Interface completa para gestão de setores científicos
+- **CRUD Completo** - Criar, listar, editar e excluir setores com feedback visual
+- **Modal Unificado (SetorModal)** - Interface única para criação e edição de setores
+- **10 Categorias Científicas** - Biologia, Meteorologia, Geologia, Oceanografia, Glaciologia, Física Atmosférica, Química Ambiental, Astronomia, Logística e Tecnologia
+- **Sistema de Filtros** - Por categoria, status (ativo/inativo) e busca textual
+- **Paginação Avançada** - Controle de 10, 25, 50 ou 100 itens por página
+- **Estatísticas em Tempo Real** - Contadores animados por categoria
+- **Seleção Múltipla** - Ações em lote para ativar, desativar ou excluir múltiplos setores
+- **Validação Robusta** - Nome único obrigatório e verificação de duplicatas
+- **Hook Dedicado (useSetores)** - Cache inteligente, filtros e integração com APIs
+- **Interface Responsiva** - Funciona perfeitamente em mobile e desktop
+- **Controle de Status** - Toggle visual para ativar/desativar setores
+- **Seleção Visual de Categoria** - Interface colorida com badges específicas por categoria
+- **Permissões Granulares** - Acesso baseado no perfil do usuário (Gestão tem controle total)
+
+#### **🔄 APIs RESTful de Setores**
+- **GET `/api/setores`** - Listagem com paginação, busca, filtros e ordenação
+- **POST `/api/setores`** - Criação com validação de nome único
+- **GET `/api/setores/[id]`** - Busca individual por ID
+- **PUT `/api/setores/[id]`** - Edição com validação de nome único (exceto próprio)
+- **DELETE `/api/setores/[id]`** - Exclusão com verificação de dependências
+
+#### **🎯 Funcionalidades Avançadas**
+- **Cache Inteligente** - TTL de 1 hora com invalidação automática em mudanças
+- **Busca em Tempo Real** - Filtro instantâneo por nome, categoria ou status
+- **Ordenação Dinâmica** - Por nome, categoria, status ou data de criação
+- **Estatísticas por Categoria** - Contadores visuais com animações suaves
+- **Integração Completa** - Usado em modais de chamados e equipamentos
+- **Feedback Visual** - Toasts informativos para todas as operações
+- **Validação de Frontend e Backend** - Dupla camada de validação para segurança
+- **Gestão de Estado Otimizada** - Sem re-renders desnecessários
+
+#### **🎨 Interface e UX**
+- **Design Moderno** - Cards responsivos com badges coloridas por categoria
+- **Cores Específicas por Categoria** - Cada categoria científica tem sua identidade visual
+- **Animações Suaves** - Transições elegantes e feedback visual imediato
+- **Formulário Intuitivo** - Seleção visual de categoria e toggle de status
+- **DataTable Avançado** - Mesma interface dos usuários e chamados
+- **Ações Padronizadas** - Ícones consistentes: 👁️ (visualizar), ✏️ (editar), 🗑️ (excluir)
+
+#### **🔒 Controle de Permissões**
+- **Perfil GESTÃO** - Acesso completo (criar, editar, excluir, ativar/desativar)
+- **Perfil AGENTE** - Apenas visualização e uso em formulários
+- **Perfil PESQUISADOR** - Apenas visualização
+- **Validação de API** - Verificação de permissões em todas as operações
+
+#### **📊 Dados e Estrutura**
+- **Campos Completos** - Nome, categoria, descrição, status ativo, data de criação
+- **Categorias ENUMs** - Lista centralizada em `src/utils/enums.ts`
+- **Tipos TypeScript** - `Setor`, `CreateSetorData`, `UpdateSetorData`, `SetorFilters`
+- **Dados Mock Expandidos** - Arquivo `public/api/resources/setores.json` completo
+- **Integração com Outros Módulos** - Usado em chamados e equipamentos
+
+**Exemplo de uso:**
+```tsx
+// Hook para gestão de setores
 const { 
-  data,                // Dados paginados
-  loading,             // Estado de carregamento
-  filters,             // Filtros ativos
-  stats,               // Estatísticas globais
-  pagination,          // Controle de paginação
-  setFilters,          // Atualiza filtros
-  setPagination,       // Controle de página/limite
-  exportHistorico,     // Função de exportação
-  fetchHistoricoByEquipamento // Filtra por equipamento
-} = useHistorico();
+  data: setores, 
+  loading, 
+  error, 
+  pagination, 
+  filters, 
+  search,
+  stats,
+  selectedItems,
+  refetch 
+} = useSetores();
+
+// Filtrar por categoria
+const filtrarPorCategoria = (categoria: string) => {
+  filters.categoria = categoria;
+  refetch();
+};
+
+// Ações em lote
+const ativarSetoresSelecionados = () => {
+  batchUpdate(selectedItems, { ativo: true });
+};
 ```
 
-### 🔐 **Controle de Acesso Granular**
+### **🔧 Gestão de Equipamentos**
+- Vinculação a setores
+- Controle de manutenção preventiva
+- Códigos únicos hexadecimais
 
-- **Acesso restrito**: Apenas perfil GESTÃO pode acessar a página completa
-- **Visualização universal**: Todos os perfis podem ver histórico de equipamentos
-- **Middleware automático**: Proteção de rotas e redirecionamento
-- **Validação na API**: Verificação de permissões nos endpoints
+### **📋 Gestão de Chamados** 
+- **Página `/dashboard/chamados`** - Interface completa para gestão de chamados de manutenção
+- **CRUD Completo** - Criar, listar, editar e excluir chamados com feedback visual
+- **Modal Unificado** - Interface única para visualização, edição e criação
+- **Transição de Modos** - Botão "Editar" funcional que alterna entre visualização e edição
+- **Tipos de Manutenção** - Corretiva (falhas) e Preventiva (conservação)
+- **Status Dinâmicos** - Aberto, Em Progresso, Concluído com badges coloridos
+- **Prioridades** - Baixa (verde), Média (laranja), Alta (vermelha)
+- **Filtros Avançados** - Por tipo, status, prioridade, setor e agente responsável
+- **Filtro "Sem Agente"** - Localiza chamados não atribuídos (undefined, null, "", "n/a", etc.)
+- **Atribuição a Agentes** - Sistema de designação de responsáveis
+- **Integração Completa** - Vinculação com equipamentos, setores e usuários
+- **Permissões Baseadas no Perfil** - Visualização e edição condicionadas ao perfil do usuário
+- **Toast Notifications** - Feedback visual em todas as operações CRUD
+- **Componente Textarea Atômico** - Substituição de textareas nativos por componente padronizado
+- **Componente Select Atômico** - Substituição de selects nativos por componente padronizado
+- **Validação de Formulários** - Campos obrigatórios e validação em tempo real
+- **Hook useChamados Otimizado** - Eliminação completa de loops infinitos e dependências estáveis
+- **Performance Aprimorada** - Gestão de cache inteligente sem re-renders desnecessários
+- **Filtros Responsivos** - Interface responsiva funciona perfeitamente em mobile e desktop
+- **Atualização Automática** - Lista atualiza automaticamente após operações CRUD
+- **Gerenciamento de Peças** - Sistema de controle de peças utilizadas na manutenção
+- **Observações de Finalização** - Campo para documentar trabalhos realizados
+- **Estados de Loading** - Feedback visual durante todas as operações assíncronas
 
-### 🗃️ **API Dedicada**
+### **📊 Histórico de Manutenções** 
+- **Página `/dashboard/historico`** - Interface completa para consulta do histórico de manutenções
+- **Filtros Avançados** - Por tipo de manutenção, status, agente responsável, equipamento, setor e período
+- **Dados Enriquecidos** - Histórico com nomes dos agentes, equipamentos e setores (não apenas IDs)
+- **Estatísticas em Tempo Real** - Cards com totais por status e tipo de manutenção
+- **Tabela Responsiva** - Visualização organizada com badges coloridos para status e tipos
+- **Paginação Inteligente** - Controle de paginação quando há muitos registros
+- **Exportação de Dados** - Funcionalidade para exportar histórico filtrado
+- **Acesso Restrito** - Disponível apenas para perfis de gestão
+- **Cache Otimizado** - Sistema de cache inteligente para melhor performance
+- **Filtros de Data** - Seleção de período com validação de data início/fim
+- **Busca Contextual** - Filtros por relacionamentos (equipamento → setor)
 
-O endpoint `/api/historico` fornece todos os dados necessários:
+#### **🔍 Funcionalidades de Filtro**
+- **Tipo de Manutenção** - Preventiva ou Corretiva
+- **Status** - Aberto, Em Andamento ou Concluído
+- **Agente Responsável** - Todos os agentes do sistema
+- **Equipamento** - Todos os equipamentos cadastrados
+- **Setor** - Todos os setores ativos
+- **Período** - Data de início e fim com validação
 
+#### **📈 Estatísticas Avançadas**
+- **Total de Manutenções** - Contador geral do histórico
+- **Por Status** - Quantidade de manutenções concluídas, em andamento e abertas
+- **Por Tipo** - Distribuição entre manutenções preventivas e corretivas
+- **Atualização em Tempo Real** - Estatísticas sincronizadas com filtros aplicados
+
+#### **🛡️ Controle de Acesso**
+- **Perfil GESTÃO** - Acesso completo ao histórico e todas as funcionalidades
+- **Perfil AGENTE** - Sem acesso (redirecionamento automático)
+- **Perfil PESQUISADOR** - Sem acesso (redirecionamento automático)
+- **Middleware de Proteção** - Verificação automática de permissões
+
+#### **⚡ Performance e UX**
+- **Hook Dedicado** - `useHistorico` com gestão de estado otimizada
+- **Cache Inteligente** - TTL configurável com invalidação automática
+- **Loading States** - Feedback visual durante carregamento de dados
+- **Tratamento de Erros** - Mensagens contextuais para falhas de rede
+- **Interface Responsiva** - Funciona perfeitamente em mobile e desktop
+
+**📊 Transições Controladas:**
+- ✅ **ABERTO** → **EM PROGRESSO** (apenas agente atribuído ou gestão)
+- ✅ **EM PROGRESSO** → **CONCLUÍDO** (apenas agente atribuído ou gestão)
+- ✅ **CONCLUÍDO** = Estado final (não editável)
+
+**🎯 Permissões Granulares:**
+- ✅ **Gestão**: pode editar qualquer chamado e alterar status (exceto finalizados)
+- ✅ **Agente**: pode alterar status apenas dos seus chamados atribuídos
+- ✅ **Pesquisador**: pode apenas visualizar e criar (não editar status)
+
+**🛡️ Validações:**
+- ✅ Não permite pular etapas no workflow (ex: Aberto → Concluído)
+- ✅ Opções de status dinâmicas baseadas no estado atual
+- ✅ Chamados finalizados são completamente imutáveis
+- ✅ Campos obrigatórios para finalização (observações mínimo 10 caracteres)
+- ✅ Interface específica por status com validações em tempo real
+
+**🎨 Interface:**
+- ✅ Labels padronizados usando ENUMs centralizados
+- ✅ Mensagens informativas contextuais para cada status
+- ✅ Aviso visual destacado para chamados finalizados
+- ✅ Campos condicionais que aparecem apenas quando necessários
+- ✅ Feedback em tempo real sobre transições possíveis
+
+**⚙️ Validações:**
+- ✅ Status "CONCLUÍDO" exige observações de finalização obrigatórias
+- ✅ Validação de comprimento mínimo para observações (10 caracteres)
+- ✅ Prevenção de submissão com dados inválidos
+- ✅ Controle de quem pode alterar cada campo baseado no perfil
+
+---
+
+## 🧩 Componentes Avançados
+
+### **📊 DataTable Reutilizável**
+Componente molecule altamente configurável para listagem de dados:
+
+**Funcionalidades:**
+- **Paginação dinâmica** - 10, 25, 50, 100 itens por página
+- **Ordenação** - Clique nos headers para ordenar crescente/decrescente
+- **Filtros integrados** - Busca em tempo real por qualquer campo
+- **Seleção múltipla** - Checkboxes para ações em lote
+- **Ações por linha** - Botões de editar, excluir, visualizar
+- **Responsivo** - Adapta colunas para mobile
+- **Loading states** - Skeleton e spinners integrados
+- **Cache inteligente** - Otimização automática de performance
+
+**Exemplo de uso:**
+```tsx
+<DataTable
+  data={users}
+  columns={[
+    { key: 'nome', label: 'Nome', sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'perfil', label: 'Perfil', filterable: true }
+  ]}
+  pagination={{ page: 1, limit: 10, total: 50, totalPages: 5 }}
+  onPageChange={handlePageChange}
+  onSort={handleSort}
+  selectedRows={selectedItems}
+  onSelectionChange={setSelectedItems}
+  actions={[
+    { label: 'Editar', onClick: handleEdit, icon: '✏️' },
+    { label: 'Excluir', onClick: handleDelete, variant: 'danger' }
+  ]}
+/>
+```
+
+### **🎭 Sistema de Modais**
+Sistema de modais moderno com portal e animações:
+
+**Componentes:**
+- **Modal** - Componente base reutilizável
+- **UserModal** - Modal específico para CRUD de usuários
+- **ConfirmModal** - Modal de confirmação para ações críticas
+
+**Funcionalidades:**
+- **Portal rendering** - Renderização fora da árvore DOM
+- **Backdrop blur** - Fundo desfocado com transparência
+- **Animações CSS** - Transições suaves de entrada/saída
+- **Escape key** - Fechamento com tecla ESC
+- **Click outside** - Fechamento ao clicar fora
+- **Focus trap** - Navegação por teclado restrita ao modal
+- **Scroll lock** - Previne scroll da página de fundo
+
+**Exemplo de uso:**
+```tsx
+<UserModal
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  user={selectedUser}
+  onSubmit={handleSubmit}
+  mode="create" // ou "edit"
+  title="Criar Usuário"
+/>
+```
+
+### **🔔 Sistema de Notificações (Toasts)**
+Sistema moderno de notificações usando **react-toastify** para feedback visual consistente:
+
+**Funcionalidades:**
+- **4 tipos de notificação** - Success, Error, Warning, Info
+- **Posicionamento otimizado** - Canto superior direito
+- **Auto-close configurável** - 5s (success/info), 6s (warning), 7s (error)
+- **Interação manual** - Click para fechar, hover para pausar
+- **Animações suaves** - Entrada/saída com transições
+- **Responsivo** - Adapta-se a diferentes tamanhos de tela
+
+**Hook personalizado `useToast`:**
+```tsx
+import { useToast } from '@/hooks/useToast';
+
+const { success, error, warning, info } = useToast();
+
+// Exemplos de uso
+success('Usuário criado com sucesso!');
+error('Erro ao processar solicitação', 'Verifique os dados informados');
+warning('Atenção: Dados podem estar desatualizados');
+info('Nova versão disponível');
+```
+
+**Integração automática:**
+- **Hook useUsers** - Feedback em todas operações CRUD
+- **Alteração de senhas** - Confirmação de sucesso/erro
+- **Ativação/Desativação** - Status de operações
+- **Formulários** - Validação e submissão
+- **APIs** - Respostas de erro padronizadas
+
+**Configuração global:**
+```tsx
+// CSS importado automaticamente no layout
+import 'react-toastify/dist/ReactToastify.css';
+
+// ToastContainer configurado no ClientProviders
+<ToastContainer
+  position="top-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  closeOnClick={true}
+  pauseOnHover={true}
+  draggable={true}
+/>
+```
+
+**Vantagens da migração:**
+- ✅ **Biblioteca estabelecida** - Manutenção e atualizações contínuas
+- ✅ **Menor bundle size** - Remoção de código customizado
+- ✅ **Melhor acessibilidade** - Suporte nativo a screen readers
+- ✅ **Performance otimizada** - Renderização e animações eficientes
+- ✅ **Documentação robusta** - Comunidade ativa e exemplos
+
+---
+
+## 🔐 Sistema de Criptografia de Senhas
+
+### **Implementação MD5**
+O sistema utiliza criptografia MD5 para armazenamento seguro de senhas:
+
+- **Hash MD5** - Senhas nunca armazenadas em texto plano
+- **Verificação segura** - Comparação de hashes para autenticação
+- **Fluxos protegidos** - Login, registro e alteração de senha criptografados
+
+### **Credenciais de Teste**
+| Email | Senha | Perfil |
+|-------|-------|---------|
+| admin@nextar.com | admin123 | Gestão |
+| ana.silva@antartica.br | admin123 | Gestão |
+| joao.costa@antartica.br | agente123 | Agente |
+| maria.santos@antartica.br | pesq123 | Pesquisador |
+
+### **Fluxos de Segurança**
+
+#### **Login Seguro**
+1. Usuário envia email + senha em texto plano
+2. Sistema gera hash MD5 da senha enviada
+3. Compara com hash armazenado
+4. Retorna usuário (sem senha) + token se válido
+
+#### **Criação de Usuário**
+1. Senha recebida em texto plano via API
+2. Sistema gera hash MD5 antes de salvar
+3. Usuário retornado sem campo senha
+
+#### **Alteração de Senha**
+1. **Usuário alterando própria senha** - Fornece senha atual + nova senha
+2. **Administrador alterando senha de outro usuário** - Apenas nova senha (sem senha atual)
+3. Sistema verifica permissões e criptografa nova senha
+4. Processo com validação de segurança e logs de auditoria
+
+### **Endpoints de Segurança**
+```
+POST /api/auth/login
+Body: { email: string, password: string }
+Response: { user: User (sem senha), token: string }
+
+PUT /api/users/change-password
+# Alteração própria
+Body: { userId: string, currentPassword: string, newPassword: string }
+
+# Alteração administrativa (apenas GESTAO)
+Body: { userId: string, adminUserId: string, newPassword: string, isAdminChange: true }
+
+Response: { success: boolean, message: string }
+```
+
+### **Implementação Técnica**
 ```typescript
-// GET /api/historico
-// Parâmetros:
-// - tipo: TipoManutencao
-// - status: ChamadoStatus
-// - agenteId: string
-// - equipamentoId: string
-// - setorId: string
-// - dataInicio: string (YYYY-MM-DD)
-// - dataFim: string (YYYY-MM-DD)
-// - page: number
-// - limit: number
-```
+// src/utils/crypto.ts
+import CryptoJS from 'crypto-js';
 
-**Resposta:**
-```json
-{
-  "data": [...],         // Chamados filtrados e paginados
-  "pagination": {        // Informações de paginação
-    "page": 1,
-    "limit": 10,
-    "total": 128,
-    "totalPages": 13
-  },
-  "stats": {             // Estatísticas globais
-    "totalChamados": 128,
-    "porStatus": {...},
-    "porTipo": {...}
-  }
+export function hashPassword(password: string): string {
+  return CryptoJS.MD5(password).toString();
+}
+
+export function verifyPassword(password: string, hashedPassword: string): boolean {
+  const inputHash = hashPassword(password);
+  return inputHash === hashedPassword;
 }
 ```
 
+### **Arquivos de Criptografia**
+- `src/utils/crypto.ts` - Funções de hash e verificação
+- `public/api/resources/users.json` - Senhas em hash MD5
+- `src/pages/api/auth/login.ts` - Login com verificação MD5
+- `src/pages/api/users.ts` - CRUD com criptografia
+- `src/pages/api/users/change-password.ts` - Alteração segura
+
 ---
+
+## 🔐 Fluxo de Autenticação Implementado
+
+> **📝 Documentação Centralizada**: Esta seção consolida toda a documentação do sistema de autenticação implementado, incluindo fluxos, middleware, cookies e testes.
+
+### ✅ **Sistema Completo de Login/Logout/Redirecionamento**
+
+#### **🚀 Fluxo Implementado:**
+
+##### **1. Login Bem-sucedido:**
+```
+Usuario envia email/senha 
+    ↓
+Validação MD5 no backend 
+    ↓
+Context Auth salva user em:
+    • localStorage
+    • Cookie 'nextar_user' (7 dias)
+    ↓
+Middleware detecta cookie
+    ↓
+Redirecionamento automático para /dashboard
+```
+
+##### **2. Acesso Direto a Rotas:**
+```
+Usuário acessa qualquer rota
+    ↓
+Middleware verifica cookie 'nextar_user'
+    ↓
+Se AUTENTICADO:
+    • /login → redireciona para /dashboard
+    • Outras rotas → permite acesso
+    ↓
+Se NÃO AUTENTICADO:
+    • Qualquer rota protegida → redireciona para /login
+    • /login → permite acesso
+```
+
+##### **3. Logout:**
+```
+Usuário clica em "Sair"
+    ↓
+Context Auth remove:
+    • localStorage
+    • Cookie 'nextar_user'
+    ↓
+Middleware detecta ausência do cookie
+    ↓
+Redirecionamento automático para /login
+```
+
+### 📁 **Arquivos do Sistema de Autenticação e Dashboard:**
+
+1. **`src/middleware.ts`** - Controle de rotas e redirecionamento
+2. **`src/context/auth.tsx`** - Gestão de cookies + localStorage
+3. **`src/app/dashboard/layout.tsx`** - Template unificado com header persistente
+4. **`src/app/dashboard/page.tsx`** - Página principal do dashboard
+5. **`src/app/dashboard/profile/page.tsx`** - Edição de perfil do usuário
+6. **`src/app/login/page.tsx`** - Formulário com React Hook Form
+7. **`src/hooks/useProfile.ts`** - Hook especializado para operações de perfil
+8. **`src/pages/api/profile.ts`** - API endpoints para gestão de perfil
+
+### 🔧 **Funcionalidades Implementadas:**
+
+#### **Template Dashboard (`src/app/dashboard/layout.tsx`):**
+- ✅ Header persistente em todas as subpáginas do dashboard
+- ✅ Navegação centralizada e otimizada
+- ✅ Gestão de logout com redirecionamento
+- ✅ Link funcional para perfil do usuário
+
+#### **Módulo de Perfil (`src/app/dashboard/profile/`):**
+- ✅ Formulário pré-preenchido com dados do usuário
+- ✅ Validação robusta (nome mín. 2 chars, email válido)
+- ✅ Integração com FormContainer para UX consistente
+- ✅ Mensagens de sucesso/erro integradas
+- ✅ API dedicada com validação de email único
+
+#### **Middleware (`src/middleware.ts`):**
+- ✅ Detecta autenticação via cookie `nextar_user`
+- ✅ Protege rotas: `/dashboard`, `/users`, `/chamados`, etc.
+- ✅ Redireciona `/` baseado na autenticação
+- ✅ Bloqueia acesso a `/login` se já autenticado
+- ✅ Redireciona para `/login` se não autenticado
+
+#### **Auth Context (`src/context/auth.tsx`):**
+- ✅ Login salva em localStorage + cookies
+- ✅ Logout remove localStorage + cookies  
+- ✅ Recuperação automática de sessão
+- ✅ Sincronização localStorage ↔ cookies
+
+#### **Dashboard (`src/app/dashboard/page.tsx`):**
+- ✅ Página inicial pós-login com estatísticas animadas
+- ✅ Exibe dados do usuário logado
+- ✅ Interface moderna com métricas em tempo real
+- ✅ Sistema de cache otimizado integrado
+
+### 🍪 **Gestão de Cookies:**
+
+```typescript
+// Login - salva cookie com 7 dias de expiração
+Cookies.set('nextar_user', JSON.stringify(user), { 
+  expires: 7,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict'
+});
+
+// Logout - remove cookie
+Cookies.remove('nextar_user');
+
+// Middleware - verifica cookie
+const userCookie = request.cookies.get('nextar_user');
+const isAuthenticated = !!userCookie?.value;
+```
+
+### 🛡️ **Rotas Protegidas:**
+
+```typescript
+export const config = {
+  matcher: [
+    '/',           // Redireciona baseado na auth
+    '/login',      // Bloqueia se autenticado
+    '/dashboard/:path*',
+    '/users/:path*',
+    '/chamados/:path*',
+    '/equipamentos/:path*',
+    '/setores/:path*'
+  ]
+};
+```
+
+### 🎯 **Credenciais de Teste Completas:**
+
+| Email | Senha | Perfil | Redirecionamento |
+|-------|-------|---------|------------------|
+| admin@nextar.com | admin123 | Gestão | /login → /dashboard |
+| carlos.oliveira@antartica.br | agente123 | Agente | /login → /dashboard |
+| maria.santos@antartica.br | pesq123 | Pesquisador | /login → /dashboard |
+
+### 🔄 **Como Testar o Fluxo:**
+
+1. **Acesse `http://localhost:3000`**
+   - Deve redirecionar para `/login`
+
+2. **Faça login com credenciais de teste**
+   - Deve redirecionar automaticamente para `/dashboard`
+
+3. **Tente acessar `/login` logado**
+   - Deve redirecionar para `/dashboard`
+
+4. **Clique em "Sair" no dashboard**
+   - Deve redirecionar para `/login`
+
+5. **Tente acessar `/dashboard` sem login**
+   - Deve redirecionar para `/login`
+
+---
+
+## 🌐 API Endpoints
+
+### **Autenticação**
+```
+POST /api/auth/login
+Body: { email: string, password: string }
+Response: { user: User, token: string }
+```
+
+### **Usuários**
+```
+GET    /api/users
+Query: page?, limit?, search?, perfil?, sortBy?, sortOrder?
+Response: { 
+  data: User[], 
+  pagination: { page, limit, total, totalPages },
+  sorting: { sortBy, sortOrder }
+}
+
+POST   /api/users
+Body: { nome: string, email: string, senha: string, perfil: PerfilUsuario, telefone?, setor?, observacoes? }
+Response: { user: User }
+
+GET    /api/users/[id]
+Response: { user: User }
+
+PUT    /api/users/[id]
+Body: { nome?, email?, senha?, perfil?, telefone?, setor?, observacoes?, ativo? }
+Response: { user: User }
+Note: Suporte completo a atualizações parciais. Apenas campos fornecidos são validados/atualizados.
+      Validações condicionais aplicadas apenas aos campos presentes no body.
+      Ideal para operações específicas como toggle de status: { "ativo": false }
+
+DELETE /api/users/[id]
+Response: { message: string }
+
+PUT    /api/users/change-password
+Body: { userId: string, currentPassword: string, newPassword: string }
+Response: { message: string }
+```
+
+### **Perfil do Usuário**
+```
+GET    /api/profile
+Response: { user: User }
+
+PUT    /api/profile
+Body: { nome?: string, email?: string, telefone?: string, observacoes? }
+Response: { user: User }
+```
+
+### **Setores** 
+```
+GET    /api/setores
+Query: page?, limit?, search?, categoria?, ativo?, sortBy?, sortOrder?
+Response: { 
+  data: Setor[], 
+  pagination: { page, limit, total, totalPages },
+  sorting: { sortBy, sortOrder },
+  stats: { total, ativo, inativo, porCategoria: object }
+}
+
+POST   /api/setores
+Body: { nome: string, categoria: string, descricao?: string, ativo?: boolean }
+Response: { setor: Setor }
+
+GET    /api/setores/[id]
+Response: { setor: Setor }
+
+PUT    /api/setores/[id]
+Body: { nome?: string, categoria?: string, descricao?: string, ativo?: boolean }
+Response: { setor: Setor }
+Note: Validação de nome único (exceto o próprio setor sendo editado)
+
+DELETE /api/setores/[id]
+Response: { message: string }
+Note: Verifica dependências antes de excluir
+```
+
+### **Equipamentos**
+```
+GET    /api/equipamentos?setorId=string
+POST   /api/equipamentos
+Body: { nome: string, codigo: string, modelo: string, setorId: string, proximaManutencao: string }
+```
+
+### **Chamados**
+```
+GET    /api/chamados?status=string&agenteId=string&tipo=string
+POST   /api/chamados
+PUT    /api/chamados?id=string
+Body: { tipo: TipoManutencao, prioridade: Prioridade, descricao: string, setorId: string }
+```
+
+### **Dashboard**
+```
+GET    /api/dashboard
+Response: { totalChamados: number, distribucaoStatus: object, distribucaoTipo: object }
+```
+
+---
+
+## 💻 Desenvolvimento
+
+### **ENUMs e Tipos**
+```typescript
+// src/utils/enums.ts
+export enum ChamadoStatus {
+  ABERTO = 'aberto',
+  EM_PROGRESSO = 'em_progresso',
+  CONCLUIDO = 'concluido'
+}
+
+// src/types/index.ts
+export interface Chamado {
+  id: string;
+  tipo: TipoManutencao;
+  status: ChamadoStatus;
+  prioridade: Prioridade;
+  // ...
+}
+```
+
+### **Context Pattern**
+```typescript
+// Usando contextos
+const { user, login, logout } = useAuth();
+const { chamados, createChamado } = useEntities();
+const { setLoading } = useLoader();
+```
+
+### **Styled Components + Tailwind**
+```tsx
+// Combinando as duas abordagens
+const StyledButton = styled.button`
+  background: ${props => props.theme.colors.primary};
+`;
+
+<StyledButton className="px-4 py-2 rounded-lg hover:shadow-lg transition-shadow">
+  Botão Híbrido
+</StyledButton>
+```
+
+### **Linting e Formatação**
+```bash
+# Executar linting
+npm run lint
+
+# Corrigir automaticamente
+npm run lint -- --fix
+
+# Modo watch para desenvolvimento
+npm run lint:watch
+```
+
+### **Storybook**
+```bash
+# Executar Storybook
+npm run storybook
+
+# Acesse em: http://localhost:6006
+```
+
+O Storybook está configurado para:
+- **Componentes isolados** para desenvolvimento
+- **Documentação automática** com addon-docs
+- **Temas** pré-configurados (light, dark, antarctic)
+- **Styled Components** + **LoaderProvider** integrados
+- **Story exemplo** do componente Spinner funcionando
+
+---
+
+## 🚀 Deploy
+
+### **Build de Produção**
+```bash
+npm run build
+npm start
+```
+
+### **Variáveis de Ambiente**
+```env
+# .env.local
+NEXT_PUBLIC_API_URL=https://your-api.com
+NODE_ENV=production
+```
+
+### **Docker (opcional)**
+```dockerfile
+# Dockerfile já configurado
+docker build -t nextar .
+docker run -p 3000:3000 nextar
+```
+
+---
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit: `git commit -m 'feat: adicionar nova funcionalidade'`
+4. Push: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
+
+### **Padrão de Commits**
+```
+feat: nova funcionalidade
+fix: correção de bug
+refactor: refatoração de código
+docs: atualização de documentação
+style: formatação/estilo
+test: adição de testes
+```
+
+## 👨‍💻 Autor: Wesley Alves 
+[http://github.com/wesandradealves] http://github.com/wesandradealves
+
+**Desenvolvido para desafio técnico**
+- Sistema de manutenção científica da Antártica
+- Stack: Next.js, TypeScript, Styled Components, Tailwind
+- Arquitetura moderna com contextos e APIs internas
