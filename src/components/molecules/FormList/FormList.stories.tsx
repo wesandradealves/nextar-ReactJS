@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FormList } from './index';
+import { FormList, type FormListProps } from './index';
 import { useState } from 'react';
 
 const meta: Meta<typeof FormList> = {
@@ -67,21 +67,6 @@ Componente de lista dinâmica para formulários.
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// Template base
-const FormListTemplate = (args: StoryObj<typeof FormList>) => {
-  const [items, setItems] = useState(args.items || []);
-  
-  return (
-    <div style={{ width: '600px' }}>
-      <FormList
-        {...args}
-        items={items}
-        onChange={setItems}
-      />
-    </div>
-  );
-};
 
 // Campos para peças utilizadas
 const pecasFields = [
@@ -188,7 +173,6 @@ export const PecasUtilizadas: Story = {
 };
 
 export const ListaContatos: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Contatos de Emergência',
     items: [
@@ -204,7 +188,8 @@ export const ListaContatos: Story = {
     emptyText: 'Adicione contatos de emergência',
     emptyIcon: '📞',
     maxItems: 5,
-    allowEdit: true
+    allowEdit: true,
+    onChange: () => {}
   },
   parameters: {
     docs: {
@@ -216,7 +201,6 @@ export const ListaContatos: Story = {
 };
 
 export const ListaTarefas: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Lista de Tarefas',
     items: [
@@ -237,7 +221,8 @@ export const ListaTarefas: Story = {
     addButtonText: 'Adicionar Tarefa',
     emptyText: 'Nenhuma tarefa adicionada',
     emptyIcon: '📝',
-    allowEdit: true
+    allowEdit: true,
+    onChange: () => {}
   },
   parameters: {
     docs: {
@@ -249,7 +234,6 @@ export const ListaTarefas: Story = {
 };
 
 export const ListaVazia: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Lista de Materiais',
     items: [],
@@ -264,7 +248,8 @@ export const ListaVazia: Story = {
     addButtonText: 'Adicionar Material',
     emptyText: 'Nenhum material adicionado ainda',
     emptyIcon: '📦',
-    allowEdit: true
+    allowEdit: true,
+    onChange: () => {}
   },
   parameters: {
     docs: {
@@ -276,7 +261,6 @@ export const ListaVazia: Story = {
 };
 
 export const LimiteMaximo: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Lista Limitada (máx 3)',
     items: [
@@ -296,7 +280,8 @@ export const LimiteMaximo: Story = {
     emptyText: 'Lista vazia',
     emptyIcon: '📋',
     maxItems: 3,
-    allowEdit: true
+    allowEdit: true,
+    onChange: () => {}
   },
   parameters: {
     docs: {
@@ -308,7 +293,6 @@ export const LimiteMaximo: Story = {
 };
 
 export const SomenteVisualizacao: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Itens (Somente Leitura)',
     items: [
@@ -319,7 +303,8 @@ export const SomenteVisualizacao: Story = {
     addButtonText: 'Adicionar',
     emptyText: 'Nenhum item',
     emptyIcon: '👁️',
-    allowEdit: false
+    allowEdit: false,
+    onChange: () => {}
   },
   parameters: {
     docs: {
@@ -331,7 +316,6 @@ export const SomenteVisualizacao: Story = {
 };
 
 export const ComValidacao: Story = {
-  render: FormListTemplate,
   args: {
     title: 'Lista com Validação',
     items: [],
@@ -369,7 +353,8 @@ export const ComValidacao: Story = {
     addButtonText: 'Adicionar Item',
     emptyText: 'Adicione itens com validação',
     emptyIcon: '✅',
-    allowEdit: true
+    allowEdit: true,
+    onChange: () => {}
   },
   parameters: {
     docs: {
