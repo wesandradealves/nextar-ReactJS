@@ -19,6 +19,14 @@ export interface InputProps {
   readOnly?: boolean;
   /** Se o input tem erro */
   hasError?: boolean;
+  /** Tamanho máximo do input */
+  maxLength?: number;
+  /** Data mínima permitida (para type="date") */
+  min?: string;
+  /** Data máxima permitida (para type="date") */
+  max?: string;
+  /** Estilos CSS inline */
+  style?: React.CSSProperties;
   /** Classes CSS adicionais */
   className?: string;
   /** ID do input */

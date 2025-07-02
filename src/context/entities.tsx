@@ -44,7 +44,7 @@ interface EntitiesContextProps {
   
   // CRUD operations para Equipamentos
   /** Criar novo equipamento */
-  createEquipamento: (equipamento: Omit<Equipamento, 'id'>) => void;
+  createEquipamento: (equipamento: Omit<Equipamento, 'id' | 'dataCriacao' | 'dataAtualizacao' | 'manutencaosCount'>) => void;
   /** Atualizar equipamento existente */
   updateEquipamento: (id: string, updates: Partial<Equipamento>) => void;
   /** Deletar equipamento */
@@ -241,11 +241,15 @@ export const EntitiesProvider = ({ children }: { children: React.ReactNode }) =>
    * Cria um novo equipamento
    * @param equipamento - Dados do equipamento (sem id)
    */
-  const createEquipamento = (equipamento: Omit<Equipamento, 'id'>) => {
-    const newEquipamento: Equipamento = {
-      ...equipamento,
+  const createEquipamento = (equipamentoData: Omit<Equipamento, 'id' | 'dataCriacao' | 'dataAtualizacao' | 'manutencaosCount'>) => {
+    const now = new Date().toISOString();
+    const newEquipamento = {
+      ...equipamentoData,
       id: Date.now().toString(),
-    };
+      dataCriacao: now,
+      dataAtualizacao: now,
+      manutencaosCount: 0
+    } as Equipamento;
     setEquipamentos(prev => [...prev, newEquipamento]);
   };
 

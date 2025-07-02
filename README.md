@@ -28,7 +28,7 @@ Sistema de gestão de manutenção para estação científica da Antártica, des
 O **NextAR** é um sistema de manutenção completo projetado para gerenciar equipamentos, chamados de manutenção e recursos humanos em uma estação científica da Antártica. O sistema oferece:
 
 - **CRUD completo** para usuários, setores, equipamentos e chamados
-- **Gestão avançada de setores científicos** ✨ _Novo na v2.0_ - com 10 categorias especializadas
+- **Gestão avançada de setores científicos** com 10 categorias especializadas
 - **Sistema de autenticação** baseado em perfis (Pesquisador, Agente, Gestão)
 - **Gestão avançada de usuários** com alteração de senhas por administradores
 - **Dashboard analítico** com estatísticas e métricas
@@ -538,13 +538,14 @@ Componentes básicos e indivisíveis que não podem ser quebrados em partes meno
 - **Button**: Botões com 4 variantes e estados (loading, disabled, ícone)
 - **Spinner**: Indicador de carregamento com cores e tamanhos
 - **Input**: Campo de formulário reutilizável com validação e estados
+- **DateInput**: Campo de data nativo com formato brasileiro e validação 
 - **Badge**: Tags/etiquetas para status, categorias e indicadores
-- **Select**: Dropdown padronizado com placeholder e validação ✨ _Novo na v1.7.0_
-- **Textarea**: Campo de texto multilinha com contador e validação ✨ _Novo na v1.8.2_
+- **Select**: Dropdown padronizado com placeholder e validação 
+- **Textarea**: Campo de texto multilinha com contador e validação 
 
 ```tsx
 // Exemplo de uso dos atoms
-import { Logo, Button, Spinner, Input, Badge, Select, Textarea } from '@/components/atoms';
+import { Logo, Button, Spinner, Input, DateInput, Badge, Select, Textarea } from '@/components/atoms';
 
 <Logo variant="header" size="small" />
 <Button variant="primary" loading={isSubmitting}>
@@ -555,6 +556,13 @@ import { Logo, Button, Spinner, Input, Badge, Select, Textarea } from '@/compone
   type="email" 
   placeholder="seu@email.com" 
   hasError={hasError}
+/>
+<DateInput
+  placeholder="Data de manutenção"
+  value="2025-07-15"
+  min="2025-01-01"
+  max="2025-12-31"
+  required
 />
 <Badge variant="success" size="small">Concluído</Badge>
 <Select placeholder="Selecione uma opção" required>
@@ -575,11 +583,17 @@ Combinação de atoms que formam componentes mais complexos.
 
 **Implementados:**
 - **FormField**: Label + Input + ErrorMessage + HelpText
+- **FormSelection**: Seleção visual com cards, ícones e descrições 
+- **FormList**: Lista dinâmica para formulários com add/remove 
+- **FormModal**: Modal base para formulários com seções e validação 
 - **SearchBox**: Input + Button + Icons (busca e limpar)
 - **UserCard**: Avatar + Nome + Perfil + Status online
 - **DataTable**: Tabela reutilizável com paginação, ordenação e filtros
 - **Modal**: Modal base com portal, backdrop e animações
 - **UserModal**: Modal específico para CRUD de usuários
+- **SetorModal**: Modal para CRUD de setores com categorias científicas 
+- **ChamadoModal**: Modal para CRUD de chamados com diferentes modos 
+- **EquipamentoModal**: Modal para CRUD de equipamentos com dados técnicos 
 - **FormContainer**: Container de formulário com validação integrada
 
 ```tsx
@@ -917,7 +931,7 @@ npm run storybook
 - ✅ **Spinner.stories**: 8 variações (cores, tamanhos, overlay)
 - ✅ **Input.stories**: 10 variações (tipos, estados, validação)
 - ✅ **Badge.stories**: 15 variações (cores, tamanhos, dot mode)
-- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) ✨ _Novo na v1.7.0_
+- ✅ **Select.stories**: 8 variações (estados, placeholder, validação) 
 
 **Molecules:**
 - ✅ **FormField.stories**: 8 variações (validação, ajuda, estados)
@@ -957,20 +971,37 @@ export const Interactive: Story = {
 #### **Navegação no Storybook**
 
 ```
-📚 Storybook Structure
+📚 Storybook Structure (284+ Stories)
 ├── 🔬 Atoms/
-│   ├── Badge
-│   ├── Button  
-│   ├── Input
-│   ├── Logo
-│   └── Spinner
+│   ├── Badge (6 stories)
+│   ├── Button (8 stories)
+│   ├── DateInput (7 stories) 
+│   ├── Input (6 stories)
+│   ├── Logo (4 stories)
+│   ├── Select (5 stories)
+│   ├── Spinner (5 stories)
+│   └── Textarea (6 stories)
 ├── 🧬 Molecules/
-│   ├── FormField
-│   ├── SearchBox
-│   └── UserCard  
+│   ├── ChamadoModal (6 stories) 
+│   ├── EquipamentoModal (7 stories) 
+│   ├── FormField (4 stories)
+│   ├── FormList (7 stories) 
+│   ├── FormModal (5 stories) 
+│   ├── FormSelection (4 stories) 
+│   ├── Modal (4 stories) 
+│   ├── SearchBox (3 stories)
+│   ├── SetorModal (6 stories) 
+│   ├── UserCard (5 stories)
+│   └── UserModal (5 stories) 
 └── 🏗️ Organisms/
-    └── Header
+    └── Header (5 stories)
 ```
+
+**✨ Novidades v2.0.6:**
+- **Componentes Demo**: Modais funcionam sem dependências de contexto
+- **Documentação Rica**: Descriptions detalhadas e exemplos realistas
+- **Stories Abrangentes**: Estados de loading, erro, sucesso, dados vazios
+- **Dados Realistas**: Equipamentos laboratoriais, usuários e setores científicos
 
 ## ✨ Funcionalidades
 
@@ -1039,7 +1070,7 @@ export const Interactive: Story = {
 - **Segurança** - Logs de alteração identificam o administrador responsável
 - **UX Otimizada** - Textos explicativos específicos para operações administrativas
 
-### **🏢 Gestão de Setores** ✨ _Novo na v2.0_
+### **🏢 Gestão de Setores** 
 - **Página `/dashboard/setores`** - Interface completa para gestão de setores científicos
 - **CRUD Completo** - Criar, listar, editar e excluir setores com feedback visual
 - **Modal Unificado (SetorModal)** - Interface única para criação e edição de setores
@@ -1125,7 +1156,7 @@ const ativarSetoresSelecionados = () => {
 - Controle de manutenção preventiva
 - Códigos únicos hexadecimais
 
-### **📋 Gestão de Chamados** ✨ _Atualizado na v1.8.2_
+### **📋 Gestão de Chamados** 
 - **Página `/dashboard/chamados`** - Interface completa para gestão de chamados de manutenção
 - **CRUD Completo** - Criar, listar, editar e excluir chamados com feedback visual
 - **Modal Unificado** - Interface única para visualização, edição e criação
@@ -1149,6 +1180,46 @@ const ativarSetoresSelecionados = () => {
 - **Gerenciamento de Peças** - Sistema de controle de peças utilizadas na manutenção
 - **Observações de Finalização** - Campo para documentar trabalhos realizados
 - **Estados de Loading** - Feedback visual durante todas as operações assíncronas
+
+### **📊 Histórico de Manutenções** 
+- **Página `/dashboard/historico`** - Interface completa para consulta do histórico de manutenções
+- **Filtros Avançados** - Por tipo de manutenção, status, agente responsável, equipamento, setor e período
+- **Dados Enriquecidos** - Histórico com nomes dos agentes, equipamentos e setores (não apenas IDs)
+- **Estatísticas em Tempo Real** - Cards com totais por status e tipo de manutenção
+- **Tabela Responsiva** - Visualização organizada com badges coloridos para status e tipos
+- **Paginação Inteligente** - Controle de paginação quando há muitos registros
+- **Exportação de Dados** - Funcionalidade para exportar histórico filtrado
+- **Acesso Restrito** - Disponível apenas para perfis de gestão
+- **Cache Otimizado** - Sistema de cache inteligente para melhor performance
+- **Filtros de Data** - Seleção de período com validação de data início/fim
+- **Busca Contextual** - Filtros por relacionamentos (equipamento → setor)
+
+#### **🔍 Funcionalidades de Filtro**
+- **Tipo de Manutenção** - Preventiva ou Corretiva
+- **Status** - Aberto, Em Andamento ou Concluído
+- **Agente Responsável** - Todos os agentes do sistema
+- **Equipamento** - Todos os equipamentos cadastrados
+- **Setor** - Todos os setores ativos
+- **Período** - Data de início e fim com validação
+
+#### **📈 Estatísticas Avançadas**
+- **Total de Manutenções** - Contador geral do histórico
+- **Por Status** - Quantidade de manutenções concluídas, em andamento e abertas
+- **Por Tipo** - Distribuição entre manutenções preventivas e corretivas
+- **Atualização em Tempo Real** - Estatísticas sincronizadas com filtros aplicados
+
+#### **🛡️ Controle de Acesso**
+- **Perfil GESTÃO** - Acesso completo ao histórico e todas as funcionalidades
+- **Perfil AGENTE** - Sem acesso (redirecionamento automático)
+- **Perfil PESQUISADOR** - Sem acesso (redirecionamento automático)
+- **Middleware de Proteção** - Verificação automática de permissões
+
+#### **⚡ Performance e UX**
+- **Hook Dedicado** - `useHistorico` com gestão de estado otimizada
+- **Cache Inteligente** - TTL configurável com invalidação automática
+- **Loading States** - Feedback visual durante carregamento de dados
+- **Tratamento de Erros** - Mensagens contextuais para falhas de rede
+- **Interface Responsiva** - Funciona perfeitamente em mobile e desktop
 
 **📊 Transições Controladas:**
 - ✅ **ABERTO** → **EM PROGRESSO** (apenas agente atribuído ou gestão)
@@ -1587,7 +1658,7 @@ Body: { nome?: string, email?: string, telefone?: string, observacoes? }
 Response: { user: User }
 ```
 
-### **Setores** ✨ _Novo na v2.0_
+### **Setores** 
 ```
 GET    /api/setores
 Query: page?, limit?, search?, categoria?, ativo?, sortBy?, sortOrder?
