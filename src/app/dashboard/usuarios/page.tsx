@@ -71,6 +71,7 @@ export default function UsersPage() {
     createUser,
     updateUser,
     deleteUser,
+    changeUserPasswordAsAdmin,
     filterByProfile,
     clearFilters
   } = useUsers();
@@ -277,15 +278,20 @@ export default function UsersPage() {
     setEditingUser(undefined);
   }, []);
 
-  const handleSubmitUser = useCallback(async (data: CreateUserData | UpdateUserData, userId?: string) => {
-    if (userId && editingUser) {
+  const handleSubmitUser = useCallback(async (userData: Partial<User>) => {
+    if (editingUser) {
       // Editar usuário existente
-      await updateUser(userId, data as UpdateUserData);
+      await updateUser(editingUser.id, userData as UpdateUserData);
     } else {
       // Criar novo usuário
-      await createUser(data as CreateUserData);
+      await createUser(userData as CreateUserData);
     }
   }, [editingUser, updateUser, createUser]);
+
+  const handleChangePassword = useCallback(async (userId: string, newPassword: string) => {
+    if (!currentUser) return;
+    await changeUserPasswordAsAdmin(userId, currentUser.id, newPassword);
+  }, [changeUserPasswordAsAdmin, currentUser]);
 
   // Verificar permissões de acesso
   if (!hasManagePermission) {
@@ -460,9 +466,10 @@ export default function UsersPage() {
       <UserModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleSubmitUser}
+        onSave={handleSubmitUser}
+        onChangePassword={handleChangePassword}
         user={editingUser}
-        isLoading={loading}
+        isSaving={loading}
       />
     </UsersPageContainer>
   );

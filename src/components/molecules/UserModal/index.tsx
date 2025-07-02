@@ -1,304 +1,323 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import Modal from '../Modal';
-import FormContainer from '../FormContainer';
-import { Button } from '../../atoms';
-import { useAuth } from '@/context/auth';
-import type { CreateUserData, UpdateUserData } from '@/types';
-import { PerfilUsuario } from '@/utils/enums';
-import type { FormFieldConfig } from '../FormContainer/types';
-import { UserModalProps } from './types';
-import {
-  FormSection,
-  FieldGroup,
-  ProfileSelectContainer,
-  ProfileOption,
-  ProfileLabel,
-  ProfileDescription
-} from './styles';
+import React, { useEffect, useState } from 'react';
+import { 
+  FormModal, 
+  FieldGroup, 
+  SectionTitle, 
+  ToggleContainer, 
+  ToggleSwitch, 
+  ToggleInput, 
+  ToggleSlider, 
+  ToggleInfo, 
+  ToggleTitle, 
+  ToggleText 
+} from '../FormModal';
+import { FormSelection } from '../FormSelection';
+import { Input } from '../../atoms/Input';
+import { User } from '../../../types';
+import { PerfilUsuario } from '../../../utils/enums';
+import { useAuth } from '../../../context/auth';
 
 /**
- * Modal de Criação/Edição de Usuário
- * Utiliza FormContainer para validação e Modal para apresentação
+ * Props do UserModal
+ */
+export interface UserModalProps {
+  /** Se o modal está aberto */
+  isOpen: boolean;
+  /** Função para fechar o modal */
+  onClose: () => void;
+  /** Usuário para edição (undefined para criação) */
+  user?: User;
+  /** Callback para salvar usuário */
+  onSave: (userData: Partial<User>) => Promise<void>;
+  /** Callback para alterar senha (apenas para gestores) */
+  onChangePassword?: (userId: string, newPassword: string) => Promise<void>;
+  /** Se está salvando */
+  isSaving?: boolean;
+}
+
+/**
+ * Modal para criação e edição de usuários
  * 
+ * @version 2.0.1
  * @description
- * Modal responsável por:
- * - Criar novos usuários
- * - Editar usuários existentes
- * - Validação de campos em tempo real
- * - Seleção de perfil visual
- * - Integração com API de usuários
+ * Modal padronizado usando os novos componentes:
+ * - FormModal para estrutura base
+ * - FormSelection para seleção de perfil
+ * - Validações integradas
+ * - Layout responsivo
+ * - Alteração de senha para gestores (apenas em edição)
  */
 export default function UserModal({
   isOpen,
   onClose,
-  onSubmit,
   user,
-  isLoading = false
+  onSave,
+  onChangePassword,
+  isSaving = false
 }: UserModalProps) {
   const { user: currentUser } = useAuth();
-  const [selectedProfile, setSelectedProfile] = useState<PerfilUsuario>(
-    user?.perfil || PerfilUsuario.PESQUISADOR
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    perfil: PerfilUsuario.PESQUISADOR
+  });
 
-  const isEditing = Boolean(user);
-  const modalTitle = isEditing ? 'Editar Usuário' : 'Novo Usuário';
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  });
 
-  // Reset form quando modal abrir/fechar
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const isEditing = !!user;
+  const isManager = currentUser?.perfil === PerfilUsuario.GESTAO;
+  const canChangePassword = isEditing && isManager && onChangePassword;
+
+  // Carrega dados do usuário para edição
   useEffect(() => {
-    if (isOpen) {
-      setSelectedProfile(user?.perfil || PerfilUsuario.PESQUISADOR);
-      setIsSubmitting(false);
+    if (user && isOpen) {
+      setFormData({
+        nome: user.nome || '',
+        email: user.email || '',
+        perfil: user.perfil || PerfilUsuario.PESQUISADOR
+      });
+    } else if (!user && isOpen) {
+      // Reset para criação
+      setFormData({
+        nome: '',
+        email: '',
+        perfil: PerfilUsuario.PESQUISADOR
+      });
     }
-  }, [isOpen, user]);
-
-  // Configuração dos campos do formulário
-  const formFields: FormFieldConfig[] = [
-    {
-      id: 'nome',
-      label: 'Nome Completo',
-      type: 'text',
-      placeholder: 'Ex: João Silva',
-      required: true,
-      defaultValue: user?.nome || '',
-      validation: {
-        minLength: 2,
-        maxLength: 100,
-        pattern: /^[a-zA-ZÀ-ÿ\s]+$/,
-      },
-      helpText: 'Nome completo do usuário'
-    },
-    {
-      id: 'email',
-      label: 'E-mail',
-      type: 'email',
-      placeholder: 'Ex: joao@empresa.com',
-      required: true,
-      defaultValue: user?.email || '',
-      validation: {
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        maxLength: 255,
-      },
-      helpText: 'Endereço de e-mail para login e comunicações'
-    },
-    {
-      id: 'usuario',
-      label: 'Nome de Usuário',
-      type: 'text',
-      placeholder: 'Ex: joao.silva',
-      required: true,
-      defaultValue: user?.usuario || '',
-      validation: {
-        minLength: 3,
-        maxLength: 50,
-        pattern: /^[a-zA-Z0-9._-]+$/,
-      },
-      helpText: 'Usado para fazer login no sistema'
-    },
-    // Campo senha: obrigatório na criação, opcional na edição para gestores
-    ...(!isEditing || (isEditing && currentUser?.perfil === PerfilUsuario.GESTAO) ? [{
-      id: 'senha',
-      label: isEditing ? 'Nova Senha (opcional)' : 'Senha',
-      type: 'password' as const,
-      placeholder: isEditing ? 'Deixe vazio para manter senha atual' : 'Mínimo 6 caracteres',
-      required: !isEditing, // Obrigatório apenas na criação
-      validation: {
-        minLength: 6,
-        maxLength: 100,
-      },
-      helpText: isEditing 
-        ? 'Como gestor, você pode alterar a senha deste usuário. Deixe vazio para manter a senha atual.' 
-        : 'Senha deve ter pelo menos 6 caracteres'
-    }] : []),
-    {
-      id: 'setor',
-      label: 'Setor',
-      type: 'text',
-      placeholder: 'Ex: TI, RH, Financeiro',
-      required: true,
-      defaultValue: user?.setor || '',
-      validation: {
-        minLength: 2,
-        maxLength: 100,
-      },
-      helpText: 'Setor ou departamento do usuário'
-    }
-  ];
-
-  /**
-   * Submit do formulário
-   */
-  const handleSubmit = useCallback(async (formData: Record<string, string>) => {
-    setIsSubmitting(true);
     
+    // Reset password fields
+    setPasswordData({
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setShowPasswordFields(false);
+    setErrors({});
+  }, [user, isOpen]);
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.nome.trim()) {
+      newErrors.nome = 'Nome é obrigatório';
+    } else if (formData.nome.trim().length < 3) {
+      newErrors.nome = 'Nome deve ter pelo menos 3 caracteres';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email é obrigatório';
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'Email inválido';
+      }
+    }
+
+    // Validação de senha (apenas se campos estão visíveis)
+    if (showPasswordFields) {
+      if (!passwordData.newPassword.trim()) {
+        newErrors.newPassword = 'Nova senha é obrigatória';
+      } else if (passwordData.newPassword.length < 6) {
+        newErrors.newPassword = 'Senha deve ter pelo menos 6 caracteres';
+      }
+
+      if (!passwordData.confirmPassword.trim()) {
+        newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+      } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+        newErrors.confirmPassword = 'Senhas não conferem';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) return;
+
     try {
-      if (isEditing && user) {
-        // Dados para edição (sem senha se não informada)
-        const updateData: UpdateUserData = {
-          nome: formData.nome,
-          email: formData.email,
-          usuario: formData.usuario,
-          setor: formData.setor,
-          perfil: selectedProfile,
-          ...(formData.senha && { senha: formData.senha })
-        };
-        
-        await onSubmit(updateData, user.id);
-      } else {
-        // Dados para criação
-        const createData: CreateUserData = {
-          nome: formData.nome,
-          email: formData.email,
-          usuario: formData.usuario,
-          senha: formData.senha,
-          setor: formData.setor,
-          perfil: selectedProfile
-        };
-        
-        await onSubmit(createData);
+      // Salvar dados do usuário
+      await onSave(formData);
+      
+      // Se tem alteração de senha, executar separadamente
+      if (showPasswordFields && passwordData.newPassword && onChangePassword && user) {
+        await onChangePassword(user.id, passwordData.newPassword);
       }
       
       onClose();
     } catch (error) {
       console.error('Erro ao salvar usuário:', error);
-      // Erro será tratado pelo hook useUsers
-    } finally {
-      setIsSubmitting(false);
     }
-  }, [isEditing, user, selectedProfile, onSubmit, onClose]);
+  };
 
-  /**
-   * Profiles disponíveis
-   */
-  const profiles = [
+  const handleFieldChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Remove erro quando usuário começa a digitar
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handlePasswordChange = (field: 'newPassword' | 'confirmPassword', value: string) => {
+    setPasswordData(prev => ({ ...prev, [field]: value }));
+    
+    // Remove erro quando usuário começa a digitar
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const profileOptions = [
     {
-      value: PerfilUsuario.PESQUISADOR,
+      id: PerfilUsuario.PESQUISADOR,
       label: 'Pesquisador',
-      description: 'Acesso básico para consultas e relatórios',
-      color: '#10b981'
+      description: 'Pode visualizar e criar chamados de manutenção',
+      color: '#3b82f6',
+      icon: '🔬'
     },
     {
-      value: PerfilUsuario.AGENTE,
-      label: 'Agente',
-      description: 'Pode gerenciar chamados e equipamentos',
-      color: '#3b82f6'
+      id: PerfilUsuario.AGENTE,
+      label: 'Agente de Manutenção',
+      description: 'Executa manutenções e atualiza status dos chamados',
+      color: '#10b981',
+      icon: '🔧'
     },
     {
-      value: PerfilUsuario.GESTAO,
+      id: PerfilUsuario.GESTAO,
       label: 'Gestão',
-      description: 'Acesso completo ao sistema',
-      color: '#8b5cf6'
+      description: 'Administra usuários, setores e tem acesso completo ao sistema',
+      color: '#f59e0b',
+      icon: '👑'
     }
   ];
 
-  /**
-   * Footer do modal
-   */
-  const modalFooter = (
-    <>
-      <Button
-        variant="secondary"
-        onClick={onClose}
-        disabled={isSubmitting || isLoading}
-      >
-        Cancelar
-      </Button>
-      <Button
-        variant="primary"
-        onClick={() => {
-          // Trigger form submission
-          const form = document.getElementById('user-form') as HTMLFormElement;
-          if (form) {
-            form.requestSubmit();
-          }
-        }}
-        disabled={isSubmitting || isLoading}
-        loading={isSubmitting}
-      >
-        {isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
-      </Button>
-    </>
-  );
+  const isFormValid = formData.nome.trim() && formData.email.trim() && !Object.keys(errors).length;
 
   return (
-    <Modal
+    <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={modalTitle}
+      title={isEditing ? 'Editar Usuário' : 'Novo Usuário'}
+      subtitle={isEditing ? 'Atualize as informações do usuário' : 'Preencha os dados do novo usuário'}
+      confirmText={isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
+      onConfirm={handleSave}
+      isLoading={isSaving}
+      isConfirmDisabled={!isFormValid}
       size="medium"
-      footer={modalFooter}
-      closeOnOverlayClick={!isSubmitting && !isLoading}
-      closeOnEsc={!isSubmitting && !isLoading}
     >
-      <FormSection>
-        <FormContainer
-          fields={formFields}
-          onSubmit={handleSubmit}
-          initialValues={{
-            nome: user?.nome || '',
-            email: user?.email || '',
-            usuario: user?.usuario || '',
-            setor: user?.setor || '',
-            ...(isEditing && { senha: '' })
-          }}
-          validateOnChange
-          validateOnBlur
-          submitText={isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
-          showReset={false}
-          showSubmit={false}
-          formId="user-form"
-        >
-          {/* Seleção de Perfil */}
-          <FieldGroup>
-            <ProfileSelectContainer>
-              <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
-                Perfil de Acesso *
-              </h4>
-              
-              {profiles.map((profile) => (
-                <ProfileOption
-                  key={profile.value}
-                  $selected={selectedProfile === profile.value}
-                  $color={profile.color}
-                  onClick={() => setSelectedProfile(profile.value)}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div
-                      style={{
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        border: `2px solid ${selectedProfile === profile.value ? profile.color : '#d1d5db'}`,
-                        backgroundColor: selectedProfile === profile.value ? profile.color : 'transparent',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      {selectedProfile === profile.value && (
-                        <div
-                          style={{
-                            width: '6px',
-                            height: '6px',
-                            borderRadius: '50%',
-                            backgroundColor: 'white'
-                          }}
-                        />
-                      )}
-                    </div>
-                    
-                    <div>
-                      <ProfileLabel>{profile.label}</ProfileLabel>
-                      <ProfileDescription>{profile.description}</ProfileDescription>
-                    </div>
+      <FieldGroup>
+        <div>
+          <Input
+            placeholder="Nome completo"
+            value={formData.nome}
+            onChange={(e) => handleFieldChange('nome', e.target.value)}
+          />
+          {errors.nome && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#ef4444', 
+              marginTop: '4px' 
+            }}>
+              {errors.nome}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <Input
+            type="email"
+            placeholder="Email do usuário"
+            value={formData.email}
+            onChange={(e) => handleFieldChange('email', e.target.value)}
+          />
+          {errors.email && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#ef4444', 
+              marginTop: '4px' 
+            }}>
+              {errors.email}
+            </div>
+          )}
+        </div>
+      </FieldGroup>
+
+      <FieldGroup>
+        <SectionTitle>Perfil do Usuário</SectionTitle>
+        <FormSelection
+          options={profileOptions}
+          value={formData.perfil}
+          onChange={(value) => handleFieldChange('perfil', value)}
+        />
+      </FieldGroup>
+
+      {canChangePassword && (
+        <FieldGroup>
+          <ToggleContainer style={{ width: '100%' }}>
+            <ToggleSwitch>
+              <ToggleInput
+                type="checkbox"
+                checked={showPasswordFields}
+                onChange={(e) => setShowPasswordFields(e.target.checked)}
+              />
+              <ToggleSlider $checked={showPasswordFields} />
+            </ToggleSwitch>
+            <ToggleInfo>
+              <ToggleTitle>Redefinir senha</ToggleTitle>
+              <ToggleText>
+                {showPasswordFields ? 'Campos habilitados' : 'Clique para habilitar'}
+              </ToggleText>
+            </ToggleInfo>
+          </ToggleContainer>
+
+          {showPasswordFields && (
+            <>
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Nova senha (mínimo 6 caracteres)"
+                  value={passwordData.newPassword}
+                  onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                />
+                {errors.newPassword && (
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#ef4444', 
+                    marginTop: '4px' 
+                  }}>
+                    {errors.newPassword}
                   </div>
-                </ProfileOption>
-              ))}
-            </ProfileSelectContainer>
-          </FieldGroup>
-        </FormContainer>
-      </FormSection>
-    </Modal>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Confirme a nova senha"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                />
+                {errors.confirmPassword && (
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#ef4444', 
+                    marginTop: '4px' 
+                  }}>
+                    {errors.confirmPassword}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </FieldGroup>
+      )}
+    </FormModal>
   );
 }

@@ -5,6 +5,91 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.1] - 2025-07-02
+
+### Adicionado
+- **Padronização de Modais de Formulário v2.0.1**
+  - Novo sistema de estilos padronizados em `formStyles.tsx` para consistência visual
+  - Componente `FormModal` genérico para todas as modais de CRUD
+  - Componente `FormSelection` reutilizável para seleções (perfis, categorias, etc.)
+  - Componente `FormList` para listas dinâmicas (peças utilizadas, observações, etc.)
+  - Layout responsivo automático para dispositivos móveis
+  - Estados visuais consistentes (hover, focus, disabled, loading)
+
+- **Atomic Design Aprimorado**
+  - Componentes atômicos e moleculares mais consistentes
+  - Reutilização de styled components padronizados
+  - Redução de duplicação de código entre modais
+  - Sistema de cores e espaçamentos unificado
+  - **Hierarquia de imports corrigida**: componentes de estilo agora são exportados através do `FormModal`
+  - Eliminação de imports redundantes, mantendo a estrutura atômica
+
+### Refatorado
+- **UserModal** completamente refatorada usando novos componentes padronizados
+  - Interface mais limpa e consistente
+  - Validações integradas com feedback visual
+  - Melhor experiência do usuário com FormSelection para perfis
+  - **Funcionalidade de alteração de senha** implementada para gestores
+  - Toggle visual para habilitar/desabilitar campos de senha durante edição
+  - Validação robusta de senhas com confirmação
+  - Integração com API `changeUserPasswordAsAdmin` existente
+  - Apenas gestores podem alterar senhas de outros usuários
+  - Feedback visual com toasts de sucesso/erro
+  - **UI/UX aprimorado**: Removido label redundante "Alterar Senha"
+  - **Layout otimizado**: ToggleContainer agora ocupa 100% da largura disponível
+  - **Arquitetura atomic design**: Imports reorganizados seguindo hierarquia correta
+  - Integração perfeita com página de usuários existente
+
+### Melhorado
+- **Consistência Visual**: Todas as modais seguem agora o mesmo padrão visual
+- **Manutenibilidade**: Redução significativa de código duplicado
+- **Acessibilidade**: Melhor navegação por teclado e foco
+- **Responsividade**: Layout otimizado para todos os tamanhos de tela
+- **TypeScript**: Tipagem mais rigorosa e interfaces bem definidas
+
+### Técnico
+- Build e lint executados com sucesso
+- Compatibilidade mantida com todas as funcionalidades existentes
+- Estrutura preparada para refatoração das demais modais (SetorModal, ChamadoModal)
+- Documentação técnica completa com exemplos de uso
+
+- **Sistema de Validação Melhorado**
+  - Validação inline com feedback visual imediato
+  - Mensagens de erro padronizadas e acessíveis
+  - Suporte a validação customizada por campo
+  - Estados de loading e disabled consistentes
+
+### Melhorado
+- **Componentes de Modal**
+  - Footer padronizado com ações responsivas
+  - Suporte a ações customizadas e múltiplos botões
+  - Melhor acessibilidade (ESC, Enter+Ctrl, foco)
+  - Layout adaptativo para diferentes tamanhos de tela
+
+- **Experiência do Desenvolvedor**
+  - TypeScript tipado rigorosamente em todos os componentes
+  - Documentação JSDoc completa com exemplos
+  - Props organizadas e bem documentadas
+  - Facilidade para criar novas modais seguindo o padrão
+
+- **Performance**
+  - Componentes otimizados para re-renderização
+  - Estados locais eficientes
+  - Validação debounced para melhor UX
+
+### Técnico
+- **Arquitetura**
+  - Separação clara entre estilos, lógica e apresentação
+  - Padrão consistente para todos os formulários
+  - Base sólida para futuras modais de CRUD
+  - Facilita manutenção e evolução dos componentes
+
+- **Ferramentas**
+  - Storybook 7.x com stories interativas
+  - Styled Components com temas dinâmicos
+  - TypeScript strict mode habilitado
+  - ESLint e Prettier configurados
+
 ## [2.0.0] - 2025-01-17
 
 ### Adicionado
