@@ -4,6 +4,7 @@ import { useAuth } from '@/context/auth';
 import { useMetadata } from '@/hooks/useMetadata';
 import { useDashboard } from '@/hooks/useApi';
 import { Badge } from '@/components/atoms';
+import { DashboardCharts } from '@/components/molecules';
 import { PerfilUsuario } from '@/utils/enums';
 import CountUp from 'react-countup';
 import { useRouter } from 'next/navigation';
@@ -46,6 +47,14 @@ export default function Dashboard() {
     chamadosResolvidos: 0,
     usuariosAtivos: 0
   };
+
+  // Dados para os gráficos
+  const distribucaoTipo = dashboardData?.distribucaoTipo || {
+    1: 0, // TipoManutencao.CORRETIVA
+    2: 0  // TipoManutencao.PREVENTIVA
+  };
+
+  const distribucaoAgente = dashboardData?.distribucaoAgente || [];
 
   // Verificar permissões do usuário
   const isGestao = user?.perfil === PerfilUsuario.GESTAO;
@@ -128,6 +137,14 @@ export default function Dashboard() {
             </StatLabel>
           </StatCard>
         </StatsGrid>
+
+        {/* Gráficos do Dashboard */}
+        {(isGestao || distribucaoAgente.length > 0) && (
+          <DashboardCharts 
+            distribucaoTipo={distribucaoTipo}
+            distribucaoAgente={distribucaoAgente}
+          />
+        )}
 
         {/* <QuickActions>
           <ActionTitle>🚀 Ações Rápidas</ActionTitle>

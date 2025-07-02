@@ -16,6 +16,9 @@ export { FormModal } from './FormModal';
 export { FormSelection } from './FormSelection';
 export { FormList } from './FormList';
 
+// Gráficos do Dashboard v3.1.0
+export { DashboardCharts, MaintenanceTypeChart, MaintenanceAgentChart } from './Charts';
+
 // Exportações dos tipos
 export type { FormFieldProps } from './FormField/types';
 export type { SearchBoxProps } from './SearchBox/types';
