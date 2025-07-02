@@ -15,6 +15,12 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Corrigidos todos os erros de TypeScript e ESLint
   - Build e lint executados com sucesso sem erros
 
+- **Padronização de Validações**
+  - SetorModal migrada para sistema de toast (useToast)
+  - Removido sistema de errors inline da SetorModal
+  - Todas as 3 modais principais agora usam validação via toast
+  - Consistência total no feedback de validação do sistema
+
 ### Refatorado
 - **ChamadoModal Completamente Padronizada**
   - Migração completa para estrutura atomic design usando FormModal

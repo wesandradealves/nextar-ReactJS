@@ -16,6 +16,7 @@ import { Input } from '../../atoms/Input';
 import Textarea from '../../atoms/Textarea';
 import type { CreateSetorData, UpdateSetorData, Setor } from '@/types';
 import { CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
+import { useToast } from '../../../hooks/useToast';
 
 /**
  * Props do SetorModal
@@ -36,12 +37,12 @@ export interface SetorModalProps {
 /**
  * Modal para criação e edição de setores
  * 
- * @version 2.0.1
+ * @version 2.0.3
  * @description
  * Modal padronizado usando os novos componentes:
  * - FormModal para estrutura base
  * - FormSelection para seleção de categoria
- * - Validações integradas
+ * - Validações integradas via toast
  * - Layout responsivo
  */
 export default function SetorModal({
@@ -51,14 +52,14 @@ export default function SetorModal({
   onSubmit,
   isLoading = false
 }: SetorModalProps) {
+  const { error: showError } = useToast();
+  
   const [formData, setFormData] = useState({
     nome: '',
     descricao: '',
     categoria: CATEGORIAS_CIENTIFICAS[0] as string,
     ativo: true
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
   
   const isEditing = !!setor;
 
@@ -80,26 +81,26 @@ export default function SetorModal({
         ativo: true
       });
     }
-    setErrors({});
   }, [setor, isOpen]);
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
     if (!formData.nome.trim()) {
-      newErrors.nome = 'Nome é obrigatório';
+      showError('Nome é obrigatório');
+      return false;
     } else if (formData.nome.trim().length < 3) {
-      newErrors.nome = 'Nome deve ter pelo menos 3 caracteres';
+      showError('Nome deve ter pelo menos 3 caracteres');
+      return false;
     } else if (formData.nome.trim().length > 100) {
-      newErrors.nome = 'Nome deve ter no máximo 100 caracteres';
+      showError('Nome deve ter no máximo 100 caracteres');
+      return false;
     }
 
     if (formData.descricao && formData.descricao.length > 500) {
-      newErrors.descricao = 'Descrição deve ter no máximo 500 caracteres';
+      showError('Descrição deve ter no máximo 500 caracteres');
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSave = async () => {
@@ -133,11 +134,6 @@ export default function SetorModal({
 
   const handleFieldChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Remove erro quando usuário começa a digitar
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
   };
 
   const categoryOptions = CATEGORIAS_CIENTIFICAS.map(categoria => {
@@ -163,7 +159,7 @@ export default function SetorModal({
     };
   });
 
-  const isFormValid = formData.nome.trim() && !Object.keys(errors).length;
+  const isFormValid = formData.nome.trim();
 
   return (
     <FormModal
@@ -184,15 +180,6 @@ export default function SetorModal({
             value={formData.nome}
             onChange={(e) => handleFieldChange('nome', e.target.value)}
           />
-          {errors.nome && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#ef4444', 
-              marginTop: '4px' 
-            }}>
-              {errors.nome}
-            </div>
-          )}
         </div>
 
         <div>
@@ -203,15 +190,6 @@ export default function SetorModal({
             rows={3}
             maxLength={500}
           />
-          {errors.descricao && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#ef4444', 
-              marginTop: '4px' 
-            }}>
-              {errors.descricao}
-            </div>
-          )}
         </div>
       </FieldGroup>
 
