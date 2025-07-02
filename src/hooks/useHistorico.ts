@@ -236,7 +236,7 @@ export const useHistorico = () => {
     } finally {
       setLoading(false);
     }
-  }, [buildQueryParams, cache, toast, pagination, stats]);
+  }, [buildQueryParams, cache, toast, pagination]); // Removido 'stats' da dependência
 
   /**
    * Atualiza filtros e recarrega dados
