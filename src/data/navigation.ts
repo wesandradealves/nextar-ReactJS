@@ -40,6 +40,13 @@ export const navigationItems: NavItem[] = [
     // Apenas gestão pode gerenciar equipamentos
     permissions: [PerfilUsuario.GESTAO]
   },
+  {
+    href: '/dashboard/historico',
+    label: 'Histórico',
+    icon: '',
+    // Apenas gestão pode acessar histórico completo
+    permissions: [PerfilUsuario.GESTAO]
+  },
   // {
   //   href: '/equipamentos',
   //   label: 'Equipamentos',

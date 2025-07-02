@@ -5,6 +5,65 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.7] - 2025-07-02
+
+### Adicionado
+- **Módulo de Histórico de Manutenções Completo**
+  - Nova página `/dashboard/historico` para consulta avançada de manutenções
+  - Sistema de filtros avançados por tipo, status, agente, equipamento, setor e período
+  - Dados enriquecidos com nomes dos relacionamentos (agentes, equipamentos, setores)
+  - Estatísticas em tempo real com cards informativos por status e tipo
+  - Hook dedicado `useHistorico` com gestão de estado otimizada
+  - API RESTful `/api/historico` com suporte a filtros e paginação
+  - Componente de tabela responsiva com badges coloridos para status e tipos
+  - Sistema de paginação inteligente para grandes volumes de dados
+  - Funcionalidade de exportação de histórico filtrado
+  - Validação de filtros de data com campos início/fim
+  - Cache otimizado com TTL configurável para melhor performance
+
+- **Controle de Acesso Granular ao Histórico**
+  - Acesso restrito apenas para perfil GESTÃO
+  - Middleware de proteção automática para rotas do histórico
+  - Redirecionamento automático para usuários sem permissão
+  - Validação de permissões na API do histórico
+
+- **Interface e UX Aprimoradas**
+  - Layout responsivo que funciona em mobile e desktop
+  - Estados de loading com feedback visual durante carregamento
+  - Tratamento de erros com mensagens contextuais
+  - Filtros organizados em grupos lógicos
+  - Botões de ação para limpeza de filtros e atualização
+  - Contador de registros encontrados
+  - Navegação integrada no menu principal do dashboard
+
+### Corrigido
+- **Problemas de Lint e Compilação**
+  - Removidos imports não utilizados em `useHistorico.ts` e `pages/api/historico.ts`
+  - Corrigida tipagem das colunas da tabela do histórico
+  - Ajustados parâmetros de renderização da função `render` nas colunas
+  - Eliminados warnings de TypeScript relacionados ao módulo de histórico
+
+### Melhorado
+- **Consistência dos Hooks de Dados**
+  - Padronização do uso de `allSetores`, `allEquipamentos` e `allUsers` nos filtros
+  - Melhoria da integração entre hooks de dados existentes
+  - Otimização da gestão de cache entre módulos relacionados
+
+### Técnico
+- **Estrutura de Arquivos Organizada**
+  - Arquivo de layout específico para o histórico em `src/app/dashboard/historico/layout.tsx`
+  - Componente de página principal em `src/app/dashboard/historico/page.tsx`
+  - Estilos dedicados em `src/app/dashboard/historico/styles.tsx`
+  - Hook especializado em `src/hooks/useHistorico.ts`
+  - API endpoint em `src/pages/api/historico.ts`
+
+- **Tipagens TypeScript Completas**
+  - Interface `ChamadoEnriquecido` para dados do histórico
+  - Interface `HistoricoFilters` para filtros avançados
+  - Interface `HistoricoStats` para estatísticas
+  - Interface `HistoricoPagination` para controle de paginação
+  - Tipos exportados do hook para reutilização
+
 ## [2.0.6] - 2025-07-02
 
 ### Adicionado

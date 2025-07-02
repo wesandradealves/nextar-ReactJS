@@ -44,7 +44,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       distribucaoTipo: {
         [TipoManutencao.CORRETIVA]: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length : 0,
         [TipoManutencao.PREVENTIVA]: Array.isArray(chamados) ? chamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length : 0
-      }
+      },
+      
+      // Distribuição por agente (para gráficos)
+      distribucaoAgente: Array.isArray(chamados) && Array.isArray(usuarios) ? 
+        usuarios
+          .filter(u => u.perfil === 'agente' && u.ativo)
+          .map(agente => ({
+            agenteId: agente.id,
+            nomeAgente: agente.nome,
+            quantidade: chamados.filter(c => c.agenteId === agente.id).length,
+            quantidadeConcluidos: chamados.filter(c => c.agenteId === agente.id && c.status === ChamadoStatus.CONCLUIDO).length
+          }))
+          .sort((a, b) => b.quantidade - a.quantidade) // Ordenar por quantidade decrescente
+        : []
     };
 
     res.status(200).json({ stats });
