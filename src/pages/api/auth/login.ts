@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getUsersData } from '@/utils/storage';
 import { verifyPassword } from '@/utils/crypto';
+import { emailService } from '@/services/email';
 
 /**
  * API endpoint para autenticação de usuários
@@ -67,6 +68,26 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // Simular token (em produção seria JWT real)
     const token = `mock-token-${user.id}-${Date.now()}`;
+    
+    // Capturar informações do cliente para notificação de login
+    const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'IP não disponível';
+    const userAgent = req.headers['user-agent'] || 'Dispositivo desconhecido';
+    
+    // Enviar email de notificação de login de forma assíncrona (não bloqueia a resposta)
+    emailService.sendLoginNotification(user, ipAddress as string, userAgent)
+      .then(emailResult => {
+        if (emailResult.success) {
+          console.log(`Email de notificação de login enviado para ${user.email}`);
+          if (emailResult.previewUrl) {
+            console.log(`Preview do email: ${emailResult.previewUrl}`);
+          }
+        } else {
+          console.error(`Falha ao enviar email de notificação: ${emailResult.error}`);
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao enviar notificação de login:', error);
+      });
 
     res.status(200).json({
       user: userWithoutPassword,

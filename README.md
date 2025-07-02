@@ -1018,6 +1018,8 @@ export const Interactive: Story = {
 - Sistema de permissões granular
 - Persistência segura com cookies
 - Middleware de proteção de rotas
+- Notificação de login por email (v3.4.0+)
+- Detecção de dispositivo e IP para segurança
 
 ### **🏗️ Sistema de Template Dashboard**
 - Layout unificado com header persistente

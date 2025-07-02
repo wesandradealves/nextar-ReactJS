@@ -5,6 +5,37 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.4.1] - 2025-07-03
+
+### Ajustado
+- **Sistema de Notificação de Login por Email**
+  - Validação completa do funcionamento do sistema de notificação
+  - Adicionado suporte para Gmail com senha de aplicativo
+  - Documentação atualizada com instruções detalhadas para configuração do Gmail
+  - Testes finais realizados em ambiente de desenvolvimento
+
+## [3.4.0] - 2025-07-02
+
+### Adicionado
+- **Sistema de Notificação de Login por Email**
+  - Implementação de serviço de email usando Nodemailer
+  - Envio automático de notificação quando login é realizado
+  - Email contém detalhes do acesso: data/hora, IP, dispositivo e perfil
+  - Integração com serviço de teste Ethereal para facilitar validação
+  - Documentação detalhada em EMAIL_CONFIG.md para equipe de revisão
+  - Configurável via variáveis de ambiente (.env.local)
+  - Template de email responsivo e informativo
+  - Logs de envio e preview URLs no console
+  - Preparado para integração com serviços SMTP reais em produção
+
+### Técnico
+- **Arquitetura de Email**
+  - Serviço singleton para gestão de emails
+  - Tratamento de erros e logs para falhas de envio
+  - Envio assíncrono para não bloquear resposta da API
+  - Tipos TypeScript para segurança e autocompleção
+  - Compatibilidade com ambientes de desenvolvimento e produção
+
 ## [3.3.2] - 2025-07-02
 
 ### Melhorado
