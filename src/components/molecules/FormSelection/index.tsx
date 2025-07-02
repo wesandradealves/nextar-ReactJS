@@ -48,6 +48,8 @@ export interface FormSelectionProps {
   className?: string;
   /** Se deve mostrar radio/checkbox visual */
   showIndicator?: boolean;
+  /** Se o componente inteiro está desabilitado */
+  disabled?: boolean;
 }
 
 /**
@@ -83,10 +85,11 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
   values = [],
   onMultipleChange,
   className,
-  showIndicator = true
+  showIndicator = true,
+  disabled = false
 }) => {
-  const handleOptionClick = (optionId: string, disabled?: boolean) => {
-    if (disabled) return;
+  const handleOptionClick = (optionId: string, itemDisabled?: boolean) => {
+    if (disabled || itemDisabled) return;
 
     if (multiple && onMultipleChange) {
       const newValues = values.includes(optionId)
@@ -98,10 +101,12 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, optionId: string, disabled?: boolean) => {
+  const handleKeyDown = (e: React.KeyboardEvent, optionId: string, itemDisabled?: boolean) => {
+    if (disabled || itemDisabled) return;
+    
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleOptionClick(optionId, disabled);
+      handleOptionClick(optionId, itemDisabled);
     }
   };
 
@@ -110,7 +115,10 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
   };
 
   return (
-    <SelectionContainer className={className}>
+    <SelectionContainer 
+      className={className}
+      style={{ opacity: disabled ? 0.7 : 1 }}
+    >
       {options.map((option) => (
         <SelectionOption
           key={option.id}
@@ -119,13 +127,13 @@ export const FormSelection: React.FC<FormSelectionProps> = ({
           $size={size}
           onClick={() => handleOptionClick(option.id, option.disabled)}
           onKeyDown={(e) => handleKeyDown(e, option.id, option.disabled)}
-          tabIndex={option.disabled ? -1 : 0}
+          tabIndex={(disabled || option.disabled) ? -1 : 0}
           role={multiple ? 'checkbox' : 'radio'}
           aria-checked={isSelected(option.id)}
-          aria-disabled={option.disabled}
+          aria-disabled={disabled || option.disabled}
           style={{
-            opacity: option.disabled ? 0.5 : 1,
-            cursor: option.disabled ? 'not-allowed' : 'pointer'
+            opacity: (disabled || option.disabled) ? 0.5 : 1,
+            cursor: (disabled || option.disabled) ? 'not-allowed' : 'pointer'
           }}
         >
           <RadioContainer>
