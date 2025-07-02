@@ -73,7 +73,8 @@ export default function UsersPage() {
     deleteUser,
     changeUserPasswordAsAdmin,
     filterByProfile,
-    clearFilters
+    clearFilters,
+    exportUsersCSV
   } = useUsers();
 
   /**
@@ -323,12 +324,21 @@ export default function UsersPage() {
         
         <HeaderActions>
           {hasManagePermission && (
-            <Button
-              variant="primary"
-              onClick={handleCreateUser}
-            >
-              + Novo Usuário
-            </Button>
+            <>
+              <Button
+                variant="secondary"
+                onClick={exportUsersCSV}
+                disabled={loading || !users.length}
+              >
+                Exportar CSV
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleCreateUser}
+              >
+                + Novo Usuário
+              </Button>
+            </>
           )}
         </HeaderActions>
       </PageHeader>

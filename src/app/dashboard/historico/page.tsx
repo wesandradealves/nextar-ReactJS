@@ -120,12 +120,21 @@ const HistoricoPage: React.FC = () => {
 
   return (
     <HistoricoContainer>
+      {/* Header */}
       <div className="header">
         <h1>Histórico de Manutenções</h1>
-        <p>Consulte o histórico completo de manutenções com filtros avançados</p>
+        <p>Acompanhamento completo de todas as manutenções realizadas</p>
+        
+        <Button 
+          variant="secondary"
+          onClick={handleExport}
+          disabled={loading || chamados.length === 0}
+        >
+          Exportar CSV
+        </Button>
       </div>
 
-      {/* Estatísticas */}
+      {/* Stats */}
       {stats && (
         <StatsContainer>
           <StatCard>

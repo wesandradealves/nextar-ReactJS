@@ -80,7 +80,8 @@ export default function EquipamentosPage() {
     deleteEquipamento,
     filterBySetor,
     filterByStatus,
-    clearFilters
+    clearFilters,
+    exportEquipamentosCSV
   } = useEquipamentos();
 
   // Hook de setores para filtros
@@ -428,12 +429,21 @@ export default function EquipamentosPage() {
         
         <HeaderActions>
           {hasManagePermission && (
-            <Button
-              variant="primary"
-              onClick={handleCreateEquipamento}
-            >
-              + Novo Equipamento
-            </Button>
+            <>
+              <Button
+                variant="secondary"
+                onClick={exportEquipamentosCSV}
+                disabled={loading || !equipamentos.length}
+              >
+                Exportar CSV
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleCreateEquipamento}
+              >
+                + Novo Equipamento
+              </Button>
+            </>
           )}
         </HeaderActions>
       </PageHeader>
