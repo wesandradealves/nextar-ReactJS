@@ -5,6 +5,29 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.1.0] - 2025-07-02
+
+### Adicionado
+- **Histórico de Manutenções por Equipamento**
+  - Implementada visualização detalhada do histórico de manutenções de cada equipamento
+  - Nova seção de histórico no modal de equipamentos mostra todas as manutenções relacionadas
+  - Componente de visualização com badges de status, tipo, data e informações do agente responsável
+  - Integração com o hook useHistorico com filtro por equipamentoId
+
+### Melhorado
+- **Acesso Universal aos Equipamentos**
+  - Todos os perfis de usuário agora podem visualizar os equipamentos (antes restrito à gestão)
+  - Novo modo de visualização (view-only) para equipamentos com todos os campos desabilitados
+  - Botão "Visualizar" adicionado às ações da tabela para todos os usuários
+  - Gestão mantém acesso exclusivo para edição e exclusão de equipamentos
+
+### Técnico
+- **Componentes Aprimorados**
+  - Adicionada propriedade `disabled` ao componente FormSelection para suportar visualização somente leitura
+  - Componente EquipamentoModal refatorado para suportar três modos: 'view', 'edit' e 'create'
+  - Novos styled components para a exibição do histórico de manutenções
+  - Melhoria na tipagem dos componentes e interfaces
+
 ## [3.0.1] - 2025-07-02
 
 ### Corrigido
