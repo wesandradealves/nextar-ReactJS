@@ -5,7 +5,7 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
-## [2.0.7] - 2025-07-02
+## [3.0.0] - 2025-07-02
 
 ### Adicionado
 - **Módulo de Histórico de Manutenções Completo**
