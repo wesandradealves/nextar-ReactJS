@@ -301,7 +301,7 @@ export const useHistorico = () => {
       setLoading(true);
       
       // Buscar todos os dados para exportação (sem paginação)
-      let params = new URLSearchParams();
+      const params = new URLSearchParams();
       
       // Aplicar filtros apenas se estiverem definidos
       if (filters.tipo) params.append('tipo', filters.tipo);
@@ -327,42 +327,68 @@ export const useHistorico = () => {
       const exportData = chamadosData;
       
       // Formatadores para campos específicos
-      const formatters = {
-        dataAbertura: (value: string) => value ? new Date(value).toLocaleDateString('pt-BR') : 'N/A',
-        dataExecucao: (value: string) => value ? new Date(value).toLocaleDateString('pt-BR') : 'Não finalizado',
-        tempoExecucao: (value: number | null) => {
-          if (value === null) return 'Não concluído';
-          if (value < 60) return `${value} minutos`;
-          if (value < 1440) return `${Math.floor(value / 60)} horas`;
-          return `${Math.floor(value / 1440)} dias`;
+      const formatters: Record<string, (value: unknown) => string> = {
+        dataAbertura: (value: unknown) => {
+          if (typeof value === 'string') {
+            return value ? new Date(value).toLocaleDateString('pt-BR') : 'N/A';
+          }
+          return 'N/A';
         },
-        status: (status: string) => {
+        dataExecucao: (value: unknown) => {
+          if (typeof value === 'string') {
+            return value ? new Date(value).toLocaleDateString('pt-BR') : 'Não finalizado';
+          }
+          return 'Não finalizado';
+        },
+        tempoExecucao: (value: unknown) => {
+          if (typeof value === 'number') {
+            if (value === 0) return 'Não concluído';
+            if (value < 60) return `${value} minutos`;
+            if (value < 1440) return `${Math.floor(value / 60)} horas`;
+            return `${Math.floor(value / 1440)} dias`;
+          }
+          return 'Não concluído';
+          return 'Não concluído';
+        },
+        status: (value: unknown) => {
           const statusMap: Record<string, string> = {
             'ABERTO': 'Aberto',
             'EM_PROGRESSO': 'Em Progresso',
             'CONCLUIDO': 'Concluído'
           };
-          return statusMap[status] || status;
+          if (typeof value === 'string') {
+            return statusMap[value] || value;
+          }
+          return String(value || '');
         },
-        tipo: (tipo: string) => {
+        tipo: (value: unknown) => {
           const tipoMap: Record<string, string> = {
             'PREVENTIVA': 'Preventiva',
             'CORRETIVA': 'Corretiva'
           };
-          return tipoMap[tipo] || tipo;
+          if (typeof value === 'string') {
+            return tipoMap[value] || value;
+          }
+          return String(value || '');
         },
-        prioridade: (prioridade: string) => {
+        prioridade: (value: unknown) => {
           const prioridadeMap: Record<string, string> = {
             'BAIXA': 'Baixa',
             'MEDIA': 'Média',
             'ALTA': 'Alta',
             'CRITICA': 'Crítica'
           };
-          return prioridadeMap[prioridade] || prioridade;
+          if (typeof value === 'string') {
+            return prioridadeMap[value] || value;
+          }
+          return String(value || '');
         },
-        pecasUtilizadas: (pecas: any[]) => {
-          if (!pecas || !pecas.length) return 'Nenhuma peça utilizada';
-          return pecas.map(p => `${p.nome} (${p.quantidade})`).join('; ');
+        pecasUtilizadas: (value: unknown) => {
+          if (Array.isArray(value)) {
+            if (!value.length) return 'Nenhuma peça utilizada';
+            return value.map((p: {nome?: string; quantidade?: number | string}) => `${p.nome || 'Sem nome'} (${p.quantidade || 0})`).join('; ');
+          }
+          return 'Nenhuma peça utilizada';
         }
       };
       

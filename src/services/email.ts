@@ -28,7 +28,7 @@ class EmailService {
    * @param userAgent Informações do navegador/dispositivo
    * @returns Promise com resultado do envio
    */
-  async sendLoginNotification(user: User, ipAddress: string, userAgent: string): Promise<any> {
+  async sendLoginNotification(user: User, ipAddress: string, userAgent: string): Promise<{ success: boolean; message: string; previewUrl?: string; error?: string }> {
     try {
       // Formatação da data em português brasileiro
       const dateTime = new Date().toLocaleString('pt-BR', {
@@ -83,20 +83,24 @@ class EmailService {
       console.log('Notificação de login enviada:', info.messageId);
       
       // No ambiente de desenvolvimento com Ethereal, exibe URL para preview do email
+      let previewUrl: string | undefined;
       if (process.env.NODE_ENV === 'development') {
-        console.log('URL de preview do email:', nodemailer.getTestMessageUrl(info));
+        const testUrl = nodemailer.getTestMessageUrl(info);
+        previewUrl = testUrl ? String(testUrl) : undefined;
+        console.log('URL de preview do email:', previewUrl);
       }
       
       return {
         success: true,
-        messageId: info.messageId,
-        previewUrl: process.env.NODE_ENV === 'development' ? nodemailer.getTestMessageUrl(info) : null
+        message: `Email enviado com sucesso: ${info.messageId}`,
+        previewUrl
       };
     } catch (error) {
       console.error('Erro ao enviar notificação de login:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Erro desconhecido no envio do email'
+        message: error instanceof Error ? error.message : 'Erro desconhecido no envio do email',
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
       };
     }
   }

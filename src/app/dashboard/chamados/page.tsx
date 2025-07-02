@@ -59,7 +59,8 @@ export default function ChamadosPage() {
     handleFilterChange,
     createChamado,
     updateChamado,
-    deleteChamado
+    deleteChamado,
+    exportChamadosCSV
   } = useChamados(user);
 
   // Estados do modal
@@ -518,14 +519,23 @@ export default function ChamadosPage() {
     <Container>
       <Header>
         <h1>Chamados de Manutenção</h1>
-        {canCreateChamado && (
+        <div style={{ display: 'flex', gap: '10px' }}>
           <Button 
-            variant="primary"
-            onClick={handleCreateChamado}
+            variant="secondary"
+            onClick={exportChamadosCSV}
+            disabled={loading || chamados.length === 0}
           >
-            Novo Chamado
+            Exportar CSV
           </Button>
-        )}
+          {canCreateChamado && (
+            <Button 
+              variant="primary"
+              onClick={handleCreateChamado}
+            >
+              Novo Chamado
+            </Button>
+          )}
+        </div>
       </Header>
 
       <FiltersContainer>

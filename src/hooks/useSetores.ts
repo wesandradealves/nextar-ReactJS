@@ -11,6 +11,7 @@ import type {
   UpdateSetorData
 } from '@/types';
 import { CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
+import { exportToCSV } from '@/utils/export';
 
 /**
  * Configuração padrão para paginação
@@ -385,6 +386,75 @@ export const useSetores = () => {
     ]);
   }, [cache, fetchSetores, fetchAllSetores]);
 
+  /**
+   * Exporta setores para CSV
+   * @returns {boolean} Sucesso da operação
+   */
+  const exportSetoresCSV = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Se não tiver dados carregados, busca todos
+      let setoresToExport = allSetores;
+      if (!setoresToExport || setoresToExport.length === 0) {
+        const response = await fetch('/api/setores?limit=1000');
+        if (!response.ok) {
+          throw new Error('Erro ao buscar setores para exportação');
+        }
+        const result = await response.json();
+        setoresToExport = result.data;
+      }
+      
+      // Formatadores para campos específicos
+      const formatters = {
+        ativo: (value: unknown) => value === true ? 'Sim' : 'Não',
+        categoria: (value: unknown) => {
+          const categorias = Object.entries(CATEGORIAS_CIENTIFICAS);
+          const categoria = categorias.find(([key]) => key === value);
+          return categoria ? categoria[1] : String(value);
+        },
+        createdAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : '',
+        updatedAt: (value: unknown) => value ? new Date(String(value)).toLocaleDateString('pt-BR') : ''
+      };
+      
+      // Exportar para CSV
+      exportToCSV(setoresToExport, {
+        filename: 'setores-cientificos',
+        headers: {
+          id: 'ID',
+          nome: 'Nome',
+          descricao: 'Descrição',
+          categoria: 'Categoria Científica',
+          ativo: 'Ativo',
+          responsavel: 'Responsável',
+          localizacao: 'Localização',
+          createdAt: 'Data de Criação',
+          updatedAt: 'Última Atualização'
+        },
+        formatters
+      });
+      
+      toast.success(
+        'Exportação concluída',
+        'Os setores foram exportados com sucesso'
+      );
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao exportar setores:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar setores';
+      
+      toast.error(
+        'Erro na exportação',
+        errorMessage
+      );
+      
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [allSetores, toast]);
+
   // Carregar dados na inicialização e quando query/filtros mudarem
   useEffect(() => {
     fetchSetores();
@@ -472,6 +542,9 @@ export const useSetores = () => {
     createSetor,
     updateSetor,
     deleteSetor,
-    refresh
+    refresh,
+    
+    // Exportação
+    exportSetoresCSV
   };
 };
