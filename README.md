@@ -538,13 +538,14 @@ Componentes básicos e indivisíveis que não podem ser quebrados em partes meno
 - **Button**: Botões com 4 variantes e estados (loading, disabled, ícone)
 - **Spinner**: Indicador de carregamento com cores e tamanhos
 - **Input**: Campo de formulário reutilizável com validação e estados
+- **DateInput**: Campo de data nativo com formato brasileiro e validação ✨ _Novo na v2.0.6_
 - **Badge**: Tags/etiquetas para status, categorias e indicadores
 - **Select**: Dropdown padronizado com placeholder e validação ✨ _Novo na v1.7.0_
 - **Textarea**: Campo de texto multilinha com contador e validação ✨ _Novo na v1.8.2_
 
 ```tsx
 // Exemplo de uso dos atoms
-import { Logo, Button, Spinner, Input, Badge, Select, Textarea } from '@/components/atoms';
+import { Logo, Button, Spinner, Input, DateInput, Badge, Select, Textarea } from '@/components/atoms';
 
 <Logo variant="header" size="small" />
 <Button variant="primary" loading={isSubmitting}>
@@ -555,6 +556,13 @@ import { Logo, Button, Spinner, Input, Badge, Select, Textarea } from '@/compone
   type="email" 
   placeholder="seu@email.com" 
   hasError={hasError}
+/>
+<DateInput
+  placeholder="Data de manutenção"
+  value="2025-07-15"
+  min="2025-01-01"
+  max="2025-12-31"
+  required
 />
 <Badge variant="success" size="small">Concluído</Badge>
 <Select placeholder="Selecione uma opção" required>
@@ -575,11 +583,17 @@ Combinação de atoms que formam componentes mais complexos.
 
 **Implementados:**
 - **FormField**: Label + Input + ErrorMessage + HelpText
+- **FormSelection**: Seleção visual com cards, ícones e descrições ✨ _Novo na v2.0.6_
+- **FormList**: Lista dinâmica para formulários com add/remove ✨ _Novo na v2.0.6_
+- **FormModal**: Modal base para formulários com seções e validação ✨ _Novo na v2.0.6_
 - **SearchBox**: Input + Button + Icons (busca e limpar)
 - **UserCard**: Avatar + Nome + Perfil + Status online
 - **DataTable**: Tabela reutilizável com paginação, ordenação e filtros
 - **Modal**: Modal base com portal, backdrop e animações
 - **UserModal**: Modal específico para CRUD de usuários
+- **SetorModal**: Modal para CRUD de setores com categorias científicas ✨ _Novo na v2.0.6_
+- **ChamadoModal**: Modal para CRUD de chamados com diferentes modos ✨ _Novo na v2.0.6_
+- **EquipamentoModal**: Modal para CRUD de equipamentos com dados técnicos ✨ _Novo na v2.0.6_
 - **FormContainer**: Container de formulário com validação integrada
 
 ```tsx
@@ -957,20 +971,37 @@ export const Interactive: Story = {
 #### **Navegação no Storybook**
 
 ```
-📚 Storybook Structure
+📚 Storybook Structure (284+ Stories)
 ├── 🔬 Atoms/
-│   ├── Badge
-│   ├── Button  
-│   ├── Input
-│   ├── Logo
-│   └── Spinner
+│   ├── Badge (6 stories)
+│   ├── Button (8 stories)
+│   ├── DateInput (7 stories) ✨ _Novo na v2.0.6_
+│   ├── Input (6 stories)
+│   ├── Logo (4 stories)
+│   ├── Select (5 stories)
+│   ├── Spinner (5 stories)
+│   └── Textarea (6 stories)
 ├── 🧬 Molecules/
-│   ├── FormField
-│   ├── SearchBox
-│   └── UserCard  
+│   ├── ChamadoModal (6 stories) ✨ _Novo na v2.0.6_
+│   ├── EquipamentoModal (7 stories) ✨ _Novo na v2.0.6_
+│   ├── FormField (4 stories)
+│   ├── FormList (7 stories) ✨ _Novo na v2.0.6_
+│   ├── FormModal (5 stories) ✨ _Novo na v2.0.6_
+│   ├── FormSelection (4 stories) ✨ _Novo na v2.0.6_
+│   ├── Modal (4 stories) ✨ _Novo na v2.0.6_
+│   ├── SearchBox (3 stories)
+│   ├── SetorModal (6 stories) ✨ _Novo na v2.0.6_
+│   ├── UserCard (5 stories)
+│   └── UserModal (5 stories) ✨ _Novo na v2.0.6_
 └── 🏗️ Organisms/
-    └── Header
+    └── Header (5 stories)
 ```
+
+**✨ Novidades v2.0.6:**
+- **Componentes Demo**: Modais funcionam sem dependências de contexto
+- **Documentação Rica**: Descriptions detalhadas e exemplos realistas
+- **Stories Abrangentes**: Estados de loading, erro, sucesso, dados vazios
+- **Dados Realistas**: Equipamentos laboratoriais, usuários e setores científicos
 
 ## ✨ Funcionalidades
 

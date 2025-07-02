@@ -5,6 +5,76 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.0.6] - 2025-07-02
+
+### Adicionado
+- **Padronização de Campos de Data com DateInput Nativo**
+  - Novo componente `DateInput` usando `input type="date"` nativo
+  - Conversão automática para formato brasileiro (dd/mm/aaaa)
+  - Suporte a propriedades `min`, `max` e validação nativa do navegador
+  - Substituição de campos de texto com máscara por datepicker nativo
+  - Implementação nos modais `ChamadoModal` e `EquipamentoModal`
+  - Experiência consistente de seleção de data em todo o sistema
+
+- **Stories Completos do Storybook para Todos os Componentes**
+  - **Componentes Atômicos**: Stories para `DateInput` com validação e cenários diversos
+  - **Componentes Moleculares**: Stories completos para todos os modais
+    - `FormModal`: Stories com diferentes tamanhos e estados de loading
+    - `FormSelection`: Stories com diferentes tipos de opções e validação
+    - `FormList`: Stories com validação, diferentes campos e limite de itens
+    - `Modal`: Stories básicos do componente modal
+    - `UserModal`: Componente demo sem dependências de contexto com perfis
+    - `SetorModal`: Componente demo com seleção de categoria científica
+    - `ChamadoModal`: Componente demo com modos create/edit/view e tipos de manutenção
+    - `EquipamentoModal`: Componente demo com dados técnicos e toggles de status
+  - **Abordagem Demo Simplificada**: Componentes `*ModalDemo` sem dependências de contexto
+  - **Documentação Rica**: Descriptions detalhadas, argTypes e exemplos realistas
+  - **Cenários Abrangentes**: Estados de loading, erro, sucesso, dados vazio, usuários inativos
+
+### Corrigido
+- **Problemas de Build e Módulos**
+  - Resolvido erro "MODULE_NOT_FOUND" para DateInput
+  - Corrigidos warnings do ESLint em todos os arquivos
+  - Ajustados tipos TypeScript para aceitar novas propriedades (`min`, `max`, `maxLength`, `style`)
+  - Corrigidos problemas de tipagem nos stories do Storybook
+
+- **Stories do Storybook sem Dependências de Contexto**
+  - Removidas dependências de `useAuth`, `useToast`, `useSetores` dos stories
+  - Eliminados erros "must be used within Provider" no Storybook
+  - Criados mocks internos para dados de setores, usuários e agentes
+  - Stories funcionam independentemente sem configuração adicional
+
+### Melhorado
+- **Experiência de Usuário com Datas**
+  - Interface nativa do sistema operacional para seleção de datas
+  - Melhor acessibilidade com suporte nativo a teclado e screen readers
+  - Validação automática de datas inválidas pelo navegador
+  - Formato consistente em português brasileiro
+  - Integração perfeita com formulários existentes
+
+- **Documentação Técnica no Storybook**
+  - **284+ stories** cobrindo todos os componentes do sistema
+  - Documentação interativa com controles funcionais
+  - Exemplos realistas de equipamentos laboratoriais
+  - Diferentes perfis de usuário (Gestão, Agente)
+  - Cenários de chamados (Preventiva, Corretiva, diferentes prioridades)
+  - Estados de equipamentos (ativo/inativo, crítico/normal)
+  - Validação visual de todos os componentes sem dependências externas
+
+### Técnico
+- **Estrutura de Componentes Aprimorada**
+  - Componente `DateInput` seguindo padrões do Design System
+  - Export centralizado em `/src/components/atoms/index.ts`
+  - Tipagem rigorosa com interface `DateInputProps`
+  - Compatibilidade com props existentes do `Input`
+
+- **Stories Organizados por Categoria**
+  - **Atoms**: Badge, Button, DateInput, Input, Logo, Select, Textarea
+  - **Molecules**: Modais complexos com demonstrações funcionais
+  - **Organisms**: Componentes de alto nível
+  - Estrutura consistente de arquivos `.stories.tsx`
+  - Meta configurações padronizadas com layout e documentação
+
 ## [2.0.5] - 2025-07-02
 
 ### Corrigido
