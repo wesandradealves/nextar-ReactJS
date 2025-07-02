@@ -127,6 +127,41 @@ export const useHistorico = () => {
   const toast = useToast();
 
   /**
+   * Carrega estatísticas globais independentemente dos filtros
+   */
+  const fetchGlobalStats = useCallback(async () => {
+    try {
+      // Verificar cache de estatísticas globais primeiro
+      const cacheKey = 'historico_stats_global';
+      const cachedStats = cache.get<HistoricoStats>(cacheKey);
+
+      if (cachedStats) {
+        setStats(cachedStats);
+        return;
+      }
+
+      // Buscar estatísticas globais da API (sem filtros)
+      const response = await fetch('/api/historico?page=1&limit=1'); // Busca mínima só para pegar stats
+      
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.estatisticas) {
+        setStats(result.estatisticas);
+        
+        // Cache por 10 minutos (estatísticas mudam menos)
+        cache.set(cacheKey, result.estatisticas, 10 * 60 * 1000, ['historico', 'stats']);
+      }
+
+    } catch (err) {
+      console.error('Erro ao carregar estatísticas globais:', err);
+    }
+  }, [cache]);
+
+  /**
    * Constrói parâmetros da query para a API
    */
   const buildQueryParams = useCallback((customFilters?: HistoricoFilters, customPagination?: Partial<HistoricoPagination>) => {
@@ -164,13 +199,11 @@ export const useHistorico = () => {
       const cachedData = cache.get<{
         data: ChamadoEnriquecido[];
         pagination: HistoricoPagination;
-        estatisticas: HistoricoStats;
       }>(cacheKey);
 
       if (cachedData) {
         setChamados(cachedData.data);
         setPagination(cachedData.pagination);
-        setStats(cachedData.estatisticas);
         return;
       }
 
@@ -185,13 +218,14 @@ export const useHistorico = () => {
       
       setChamados(result.data || []);
       setPagination(result.pagination || pagination);
-      setStats(result.estatisticas || stats);
+      
+      // NÃO sobrescrever as estatísticas globais aqui
+      // As estatísticas são carregadas separadamente em fetchGlobalStats
 
-      // Cache por 5 minutos
+      // Cache por 5 minutos (apenas dados e paginação)
       cache.set(cacheKey, {
         data: result.data || [],
-        pagination: result.pagination || pagination,
-        estatisticas: result.estatisticas || stats
+        pagination: result.pagination || pagination
       }, 5 * 60 * 1000, ['historico', 'chamados']);
 
     } catch (err) {
@@ -252,8 +286,11 @@ export const useHistorico = () => {
   const refresh = useCallback(() => {
     // Limpar cache relacionado
     cache.invalidateByTag('historico');
+    
+    // Recarregar estatísticas globais e dados filtrados
+    fetchGlobalStats();
     fetchHistorico();
-  }, [cache, fetchHistorico]);
+  }, [cache, fetchGlobalStats, fetchHistorico]);
 
   /**
    * Exportar histórico (função básica - pode ser expandida)
@@ -302,6 +339,9 @@ export const useHistorico = () => {
 
   // Carregamento inicial
   useEffect(() => {
+    // Carregar estatísticas globais primeiro
+    fetchGlobalStats();
+    // Depois carregar dados filtrados
     fetchHistorico();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -64,6 +64,29 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       chamados.filter(c => c.status === status) :
       chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO);
 
+    // ** ESTATÍSTICAS GLOBAIS (INDEPENDENTES DOS FILTROS) **
+    // Calcular estatísticas com base em TODOS os chamados, não apenas os filtrados
+    const todosChamados = chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO);
+    
+    const estatisticasGlobais = {
+      total: todosChamados.length,
+      porTipo: {
+        [TipoManutencao.CORRETIVA]: todosChamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length,
+        [TipoManutencao.PREVENTIVA]: todosChamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length
+      },
+      porStatus: {
+        [ChamadoStatus.ABERTO]: chamados.filter(c => c.status === ChamadoStatus.ABERTO).length,
+        [ChamadoStatus.EM_PROGRESSO]: chamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length,
+        [ChamadoStatus.CONCLUIDO]: chamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length
+      },
+      tempoMedioExecucao: todosChamados
+        .filter(c => c.dataExecucao && c.dataAbertura)
+        .reduce((acc, c) => {
+          const tempo = Math.ceil((new Date(c.dataExecucao!).getTime() - new Date(c.dataAbertura!).getTime()) / (1000 * 60 * 60 * 24));
+          return acc + tempo;
+        }, 0) / Math.max(1, todosChamados.filter(c => c.dataExecucao && c.dataAbertura).length)
+    };
+
     // Aplicar filtros
     if (tipo) {
       filteredChamados = filteredChamados.filter(c => c.tipo === tipo);
@@ -157,26 +180,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       };
     });
 
-    // Estatísticas do período filtrado
-    const estatisticas = {
-      total: filteredChamados.length,
-      porTipo: {
-        [TipoManutencao.CORRETIVA]: filteredChamados.filter(c => c.tipo === TipoManutencao.CORRETIVA).length,
-        [TipoManutencao.PREVENTIVA]: filteredChamados.filter(c => c.tipo === TipoManutencao.PREVENTIVA).length
-      },
-      porStatus: {
-        [ChamadoStatus.ABERTO]: filteredChamados.filter(c => c.status === ChamadoStatus.ABERTO).length,
-        [ChamadoStatus.EM_PROGRESSO]: filteredChamados.filter(c => c.status === ChamadoStatus.EM_PROGRESSO).length,
-        [ChamadoStatus.CONCLUIDO]: filteredChamados.filter(c => c.status === ChamadoStatus.CONCLUIDO).length
-      },
-      tempoMedioExecucao: filteredChamados
-        .filter(c => c.dataExecucao && c.dataAbertura)
-        .reduce((acc, c) => {
-          const tempo = Math.ceil((new Date(c.dataExecucao!).getTime() - new Date(c.dataAbertura!).getTime()) / (1000 * 60 * 60 * 24));
-          return acc + tempo;
-        }, 0) / Math.max(1, filteredChamados.filter(c => c.dataExecucao && c.dataAbertura).length)
-    };
-
     const response = {
       data: enrichedChamados,
       pagination: {
@@ -185,7 +188,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         total: filteredChamados.length,
         totalPages: Math.ceil(filteredChamados.length / limitNum)
       },
-      estatisticas,
+      estatisticas: estatisticasGlobais, // Usar estatísticas globais em vez das filtradas
       filtros: {
         tipo,
         status,
