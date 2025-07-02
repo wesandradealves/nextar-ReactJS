@@ -17,11 +17,12 @@ const ChamadoModalDemo = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   chamado?: any;
   isSaving?: boolean;
   mode?: 'view' | 'edit' | 'create';
 }) => {
-  const isEditing = mode === 'edit' || (mode === 'create' && !chamado);
+  console.log('Modal mode:', mode);
   const isViewing = mode === 'view';
   
   const tipoOptions = [

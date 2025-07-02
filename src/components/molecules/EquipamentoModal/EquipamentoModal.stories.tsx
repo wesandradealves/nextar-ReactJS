@@ -13,6 +13,7 @@ const EquipamentoModalDemo = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   equipamento?: any;
   isLoading?: boolean;
 }) => {
