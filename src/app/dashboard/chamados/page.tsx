@@ -523,7 +523,7 @@ export default function ChamadosPage() {
   const canExportChamados = user?.perfil === PerfilUsuario.GESTAO;
 
   return (
-    <Container>
+    <Container className="flex flex-col gap-6 px-6 min-h-screen">
       <PageHeader
         title="Gestão de Chamados"
         subtitle="Gerencie chamados de manutenção do sistema."
@@ -534,7 +534,7 @@ export default function ChamadosPage() {
         showAddButton={canCreateChamado}
       />
 
-      <FiltersContainer>
+      <FiltersContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <SearchBox
           placeholder="Buscar por descrição ou tipo..."
           value={filters.search}

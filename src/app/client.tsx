@@ -6,7 +6,7 @@ import { AuthProvider } from '@/context/auth';
 import CacheProvider from '@/context/cache';
 import { EntitiesProvider } from '@/context/entities';
 import { CacheDebug } from '@/components/debug';
-import Spinner from '@/components/spinner/spinner';
+import SpinnerWithContext from '@/components/spinner/SpinnerWithContext';
 import StyledJsxRegistry from './registry';
 import { App, GlobalStyle } from '@/app/style';
 import { AnimatePresence, motion } from 'motion/react';
@@ -46,7 +46,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
                       >
                         {children}
                       </motion.div>
-                      <Spinner />
+                      <SpinnerWithContext />
                       <ToastContainer />
                       <CacheDebug />
                     </App>

@@ -5,6 +5,36 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [4.1.0] - 2025-07-15
+
+### Adicionado
+- **Arquitetura Híbrida Tailwind CSS + styled-components**
+  - Implementação de padrão híbrido utilizando Tailwind CSS para estilos estáticos
+  - Manutenção de styled-components apenas para lógica dinâmica e animações
+  - Configuração otimizada do Tailwind com suporte completo a temas e responsividade
+  - Documentação de uso do Tailwind no projeto (TAILWIND_GUIDE.md)
+
+### Melhorado
+- **Padronização de Componentes**
+  - Refatoração de todos os componentes para seguir estrutura padronizada (index.tsx, styles.tsx, types.ts)
+  - Reorganização de imports/exports seguindo o padrão atômico/molecular/organismo
+  - Separação clara entre lógica, estilos e tipagem em todos os componentes
+  - Limpeza de imports não utilizados e código redundante
+
+### Corrigido
+- **Resolução de Problemas Técnicos**
+  - Correção de erros de tipagem em todos os componentes e páginas
+  - Resolução de problemas de encoding em arquivos de estilo
+  - Padronização de exportação de tipos via arquivos dedicados
+  - Correção de erros de lint em todo o projeto
+
+### Técnico
+- **Modernização da Arquitetura**
+  - Migração para estrutura mais sustentável e moderna
+  - Redução do tamanho do bundle com otimização de estilos via Tailwind
+  - Melhoria no desempenho com menos processamento em runtime de estilos
+  - Preparo da base de código para futuras expansões com menor overhead técnico
+
 ## [4.0.3] - 2025-07-07
 
 ### Segurança

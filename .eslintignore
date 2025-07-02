@@ -1,3 +1,0 @@
-# Ignorar Storybooks temporariamente até refatoração completa
-*.stories.tsx
-*.stories.ts

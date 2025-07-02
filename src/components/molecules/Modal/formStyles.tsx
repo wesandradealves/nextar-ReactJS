@@ -4,74 +4,49 @@ import styled from 'styled-components';
  * Estilos padronizados para modais de formulário
  * Usado por todas as modais de CRUD para consistência visual
  * 
- * @version 2.0.1
+ * @version 3.0.0
  * @description
- * Estes estilos garantem que todas as modais tenham:
- * - Layout consistente e responsivo
- * - Espaçamentos uniformes
- * - Componentes de seleção padronizados
- * - Estados visuais consistentes
+ * Migrado para o padrão híbrido Tailwind + styled-components.
+ * Mantido apenas o essencial como styled-components para
+ * comportamentos dinâmicos, o resto migrado para Tailwind.
  */
 
 /**
  * Container principal do formulário
+ * Convertido para Tailwind
  */
-export const FormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
+export const FormSection = styled.div``;
 
 /**
  * Grupo de campos relacionados
+ * Convertido para Tailwind
  */
-export const FieldGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
+export const FieldGroup = styled.div``;
 
 /**
  * Título de seção dentro do formulário
+ * Convertido para Tailwind
  */
-export const SectionTitle = styled.h4`
-//   margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-`;
+export const SectionTitle = styled.h4``;
 
 /**
  * Container genérico para seleções (perfil, categoria, etc)
+ * Convertido para Tailwind
  */
-export const SelectionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-//   margin-top: 16px;
-`;
+export const SelectionContainer = styled.div``;
 
 /**
  * Opção selecionável genérica
+ * Mantido como styled-component para suporte a props dinâmicas de cor
  */
 export const SelectionOption = styled.div<{ 
   $selected: boolean; 
   $color?: string;
   $size?: 'small' | 'medium' | 'large';
 }>`
-  padding: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '12px 16px';
-      case 'large': return '20px 24px';
-      default: return '16px';
-    }
-  }};
-  border: 2px solid ${({ $selected, $color }) => 
+  border-color: ${({ $selected, $color }) => 
     $selected ? ($color || '#3b82f6') : '#e5e7eb'
   };
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
   background-color: ${({ $selected, $color }) => 
     $selected ? `${$color || '#3b82f6'}08` : '#ffffff'
   };
@@ -80,40 +55,25 @@ export const SelectionOption = styled.div<{
     border-color: ${({ $color }) => $color || '#3b82f6'};
     background-color: ${({ $color }) => `${$color || '#3b82f6'}08`};
   }
-
-  &:focus {
-    outline: 2px solid ${({ $color }) => $color || '#3b82f6'};
-    outline-offset: 2px;
-  }
 `;
 
 /**
  * Container para radio button customizado
+ * Convertido para Tailwind
  */
-export const RadioContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+export const RadioContainer = styled.div``;
 
 /**
  * Radio button customizado
+ * Mantido como styled-component para suporte a props dinâmicas de cor
  */
 export const CustomRadio = styled.div<{ $selected: boolean; $color?: string }>`
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid ${({ $selected, $color }) => 
+  border-color: ${({ $selected, $color }) => 
     $selected ? ($color || '#3b82f6') : '#d1d5db'
   };
   background-color: ${({ $selected, $color }) => 
     $selected ? ($color || '#3b82f6') : 'transparent'
   };
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
 
   ${({ $selected }) => $selected && `
     &::after {
@@ -128,62 +88,45 @@ export const CustomRadio = styled.div<{ $selected: boolean; $color?: string }>`
 
 /**
  * Label principal de uma opção
+ * Convertido para Tailwind
  */
-export const OptionLabel = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  color: #111827;
-  margin-bottom: 4px;
-`;
+export const OptionLabel = styled.div``;
 
 /**
  * Descrição/subtexto de uma opção
+ * Convertido para Tailwind
  */
-export const OptionDescription = styled.div`
-  font-size: 13px;
-  color: #6b7280;
-  line-height: 1.4;
-`;
+export const OptionDescription = styled.div``;
 
 /**
  * Container para toggle switches
+ * Convertido para Tailwind
  */
-export const ToggleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-`;
+export const ToggleContainer = styled.div``;
 
 /**
  * Toggle switch estilizado
+ * Mantido como styled-component para posicionamento
  */
 export const ToggleSwitch = styled.label`
   position: relative;
   display: inline-block;
   width: 44px;
   height: 24px;
-  cursor: pointer;
 `;
 
 /**
  * Input do toggle (oculto)
+ * Convertido para Tailwind, mantendo apenas styled-component vazio para compatibilidade
  */
-export const ToggleInput = styled.input`
-  opacity: 0;
-  width: 0;
-  height: 0;
-`;
+export const ToggleInput = styled.input``;
 
 /**
  * Slider do toggle
+ * Mantido apenas para a transição do indicador baseada no estado
  */
 export const ToggleSlider = styled.span<{ $checked: boolean }>`
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
@@ -208,191 +151,105 @@ export const ToggleSlider = styled.span<{ $checked: boolean }>`
 
 /**
  * Container para informações de toggle
+ * Convertido para Tailwind
  */
-export const ToggleInfo = styled.div`
-  flex: 1;
-`;
+export const ToggleInfo = styled.div``;
 
 /**
  * Título do toggle
+ * Convertido para Tailwind
  */
-export const ToggleTitle = styled.div`
-  font-weight: 600;
-  color: #374151;
-  font-size: 14px;
-  margin-bottom: 2px;
-`;
+export const ToggleTitle = styled.div``;
 
 /**
  * Texto do toggle
+ * Convertido para Tailwind
  */
-export const ToggleText = styled.div`
-  font-size: 13px;
-  color: #6b7280;
-`;
+export const ToggleText = styled.div``;
 
 /**
  * Container para textarea customizada
+ * Convertido para Tailwind
  */
-export const TextareaContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+export const TextareaContainer = styled.div``;
 
 /**
  * Label para textarea
+ * Convertido para Tailwind
  */
-export const TextareaLabel = styled.label`
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-`;
+export const TextareaLabel = styled.label``;
 
 /**
  * Texto de ajuda para textarea
+ * Convertido para Tailwind
  */
-export const TextareaHelpText = styled.div`
-  font-size: 12px;
-  color: #6b7280;
-`;
+export const TextareaHelpText = styled.div``;
 
 /**
- * Container para lista de itens (ex: peças utilizadas)
+ * Container para lista de itens
+ * Convertido para Tailwind
  */
-export const ItemListContainer = styled.div`
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px;
-  background-color: #fafbfc;
-`;
+export const ItemListContainer = styled.div``;
 
 /**
  * Item individual na lista
+ * Convertido para Tailwind
  */
-export const ListItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background-color: white;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  border: 1px solid #e5e7eb;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
+export const ListItem = styled.div``;
 
 /**
  * Conteúdo do item da lista
+ * Convertido para Tailwind
  */
-export const ListItemContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
+export const ListItemContent = styled.div``;
 
 /**
  * Título do item da lista
+ * Convertido para Tailwind
  */
-export const ListItemTitle = styled.div`
-  font-weight: 500;
-  color: #374151;
-  font-size: 14px;
-`;
+export const ListItemTitle = styled.div``;
 
 /**
  * Subtítulo do item da lista
+ * Convertido para Tailwind
  */
-export const ListItemSubtitle = styled.div`
-  font-size: 12px;
-  color: #6b7280;
-`;
+export const ListItemSubtitle = styled.div``;
 
 /**
  * Ações do item da lista
+ * Convertido para Tailwind
  */
-export const ListItemActions = styled.div`
-  display: flex;
-  gap: 8px;
-`;
+export const ListItemActions = styled.div``;
 
 /**
- * Container para formulário inline (ex: adicionar peça)
+ * Container para formulário inline
+ * Convertido para Tailwind
  */
-export const InlineFormContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: stretch;
-  padding: 16px;
-  background-color: #f8fafc;
-  border-radius: 8px;
-  border: 2px dashed #d1d5db;
-  margin-top: 16px;
-`;
+export const InlineFormContainer = styled.div``;
 
 /**
  * Grid de campos para formulários inline
+ * Convertido para Tailwind
  */
-export const InlineFieldGrid = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 12px;
-`;
+export const InlineFieldGrid = styled.div``;
 
 /**
  * Container responsivo para mobile
+ * Convertido para Tailwind, mantendo apenas styled-component vazio para compatibilidade
  */
-export const ResponsiveContainer = styled.div`
-  @media (max-width: 768px) {
-    ${InlineFormContainer} {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    
-    ${InlineFieldGrid} {
-      grid-template-columns: 1fr;
-    }
-    
-    ${ListItem} {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    
-    ${ListItemActions} {
-      width: 100%;
-      justify-content: flex-end;
-    }
-  }
-`;
+export const ResponsiveContainer = styled.div``;
 
 /**
  * Container para tags/badges
+ * Convertido para Tailwind
  */
-export const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-`;
+export const TagContainer = styled.div``;
 
 /**
  * Tag/Badge individual
+ * Mantido apenas para variação dinâmica de cores e variantes
  */
 export const Tag = styled.span<{ $color?: string; $variant?: 'solid' | 'outline' }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  
   ${({ $color = '#3b82f6', $variant = 'solid' }) => 
     $variant === 'solid' 
       ? `
@@ -410,26 +267,15 @@ export const Tag = styled.span<{ $color?: string; $variant?: 'solid' | 'outline'
 
 /**
  * Container para status indicators
+ * Convertido para Tailwind
  */
-export const StatusContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background-color: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-`;
+export const StatusContainer = styled.div``;
 
 /**
  * Indicador de status
+ * Mantido apenas para cores dinâmicas baseadas no status
  */
 export const StatusIndicator = styled.div<{ $status: 'success' | 'warning' | 'error' | 'info' }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  
   ${({ $status }) => {
     switch ($status) {
       case 'success': return 'background-color: #10b981;';
@@ -443,87 +289,44 @@ export const StatusIndicator = styled.div<{ $status: 'success' | 'warning' | 'er
 
 /**
  * Texto do status
+ * Convertido para Tailwind
  */
-export const StatusText = styled.span`
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-`;
+export const StatusText = styled.span``;
 
 /**
  * Container para divider/separador
+ * Mantido apenas para margens dinâmicas
  */
 export const Divider = styled.div<{ $margin?: string }>`
-  height: 1px;
-  background-color: #e5e7eb;
   margin: ${({ $margin }) => $margin || '24px 0'};
 `;
 
 /**
  * Container para footer de modal padronizado
+ * Convertido para Tailwind
  */
-export const ModalFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 24px 0 0 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 32px;
-  
-  @media (max-width: 640px) {
-    flex-direction: column-reverse;
-    gap: 8px;
-    
-    button {
-      width: 100%;
-    }
-  }
-`;
+export const ModalFooter = styled.div``;
 
 /**
  * Container para loading state
+ * Convertido para Tailwind
  */
-export const LoadingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  color: #6b7280;
-  font-size: 14px;
-  gap: 12px;
-`;
+export const LoadingContainer = styled.div``;
 
 /**
  * Container para empty state
+ * Convertido para Tailwind
  */
-export const EmptyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  color: #6b7280;
-  gap: 16px;
-`;
+export const EmptyContainer = styled.div``;
 
 /**
  * Título do empty state
+ * Convertido para Tailwind
  */
-export const EmptyTitle = styled.h3`
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #374151;
-`;
+export const EmptyTitle = styled.h3``;
 
 /**
  * Texto do empty state
+ * Convertido para Tailwind
  */
-export const EmptyText = styled.p`
-  margin: 0;
-  font-size: 14px;
-  color: #6b7280;
-  max-width: 280px;
-  line-height: 1.5;
-`;
+export const EmptyText = styled.p``;

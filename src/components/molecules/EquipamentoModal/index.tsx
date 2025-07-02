@@ -14,98 +14,12 @@ import {
 import { FormSelection } from '../FormSelection';
 import { Input, DateInput, Badge } from '../../atoms';
 import Textarea from '../../atoms/Textarea';
-import type { CreateEquipamentoData, UpdateEquipamentoData, Equipamento } from '@/types';
+import type { CreateEquipamentoData, UpdateEquipamentoData } from '@/types';
 import { useToast } from '../../../hooks/useToast';
 import { useSetores } from '../../../hooks/useSetores';
 import { useHistorico } from '../../../hooks/useHistorico';
 import { TipoManutencao, ChamadoStatus } from '../../../utils/enums';
-import styled from 'styled-components';
-
-// Styled components para o histórico
-const HistoricoContainer = styled.div`
-  margin-top: 1rem;
-`;
-
-const HistoricoItem = styled.div`
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 0.75rem;
-  background: #fafafa;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const HistoricoHeader = styled.div`
-  display: flex;
-  justify-content: between;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-  gap: 1rem;
-`;
-
-const HistoricoTitle = styled.h4`
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  flex: 1;
-`;
-
-const HistoricoMeta = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: flex-end;
-  flex-shrink: 0;
-`;
-
-const HistoricoDate = styled.span`
-  font-size: 0.8rem;
-  color: #666;
-`;
-
-const HistoricoDescription = styled.p`
-  margin: 0.5rem 0 0 0;
-  font-size: 0.85rem;
-  color: #555;
-  line-height: 1.4;
-`;
-
-const HistoricoEmpty = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: #666;
-  font-style: italic;
-`;
-
-const LoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  color: #666;
-`;
-
-/**
- * Props do EquipamentoModal
- */
-export interface EquipamentoModalProps {
-  /** Se o modal está aberto */
-  isOpen: boolean;
-  /** Função para fechar o modal */
-  onClose: () => void;
-  /** Equipamento para edição (undefined para criação) */
-  equipamento?: Equipamento;
-  /** Callback para salvar equipamento */
-  onSubmit: (data: CreateEquipamentoData | UpdateEquipamentoData, id?: string) => Promise<void>;
-  /** Se está salvando */
-  isLoading?: boolean;
-  /** Modo de visualização: view, edit ou create */
-  mode?: 'view' | 'edit' | 'create';
-}
+import { EquipamentoModalProps } from './types';
 
 /**
  * Modal para criação e edição de equipamentos
@@ -277,11 +191,11 @@ export default function EquipamentoModal({
       if (isEditing && equipamento) {
         // Editar equipamento existente
         const updateData: UpdateEquipamentoData = dataToSave;
-        await onSubmit(updateData, equipamento.id);
+        await onSubmit?.(updateData, equipamento.id);
       } else {
         // Criar novo equipamento
         const createData: CreateEquipamentoData = dataToSave;
-        await onSubmit(createData);
+        await onSubmit?.(createData);
       }
       
       onClose();
@@ -468,19 +382,27 @@ export default function EquipamentoModal({
         </div>
       </FieldGroup>
 
-      <FieldGroup>
-        <ToggleContainer style={{ width: '100%' }}>
-          <ToggleSwitch>
+      <FieldGroup className="flex flex-col gap-4 mt-6">
+        <ToggleContainer className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 w-full">
+          <ToggleSwitch className="relative inline-block w-11 h-6 cursor-pointer">
             <ToggleInput
               type="checkbox"
               checked={formData.ativo}
               onChange={(e) => handleFieldChange('ativo', e.target.checked)}
+              className="opacity-0 w-0 h-0"
             />
-            <ToggleSlider $checked={formData.ativo} />
+            <ToggleSlider 
+              $checked={formData.ativo} 
+              className={`
+                absolute cursor-pointer top-0 left-0 right-0 bottom-0 
+                transition-all duration-200 rounded-full
+                ${formData.ativo ? 'bg-green-500' : 'bg-gray-300'}
+              `}
+            />
           </ToggleSwitch>
-          <ToggleInfo>
-            <ToggleTitle>Equipamento ativo</ToggleTitle>
-            <ToggleText>
+          <ToggleInfo className="flex-1 ml-3">
+            <ToggleTitle className="font-medium text-gray-900">Equipamento ativo</ToggleTitle>
+            <ToggleText className="text-sm text-gray-500">
               {formData.ativo ? 'Disponível para manutenções e chamados' : 'Inativo, não aparecerá nas listagens'}
             </ToggleText>
           </ToggleInfo>
@@ -489,26 +411,26 @@ export default function EquipamentoModal({
 
       {/* Seção de Histórico - apenas para visualização e edição */}
       {(isViewing || isEditing) && equipamento && (
-        <FieldGroup>
-          <SectionTitle>Histórico de Manutenções ({equipamento.manutencaosCount || 0})</SectionTitle>
-          <HistoricoContainer>
+        <FieldGroup className="flex flex-col gap-4 mt-6">
+          <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Histórico de Manutenções ({equipamento.manutencaosCount || 0})</SectionTitle>
+          <div className="mt-4">
             {historicoLoading ? (
-              <LoadingSpinner>
+              <div className="flex justify-center items-center p-8 text-gray-500">
                 Carregando histórico de manutenções...
-              </LoadingSpinner>
+              </div>
             ) : historicoManutencoes.length > 0 ? (
               historicoManutencoes.map((chamado) => (
-                <HistoricoItem key={chamado.id}>
-                  <HistoricoHeader>
-                    <HistoricoTitle>{chamado.titulo || 'Manutenção'}</HistoricoTitle>
-                    <HistoricoMeta>
-                      <HistoricoDate>
+                <div key={chamado.id} className="p-4 border border-gray-200 rounded-lg mb-3 bg-gray-50 last:mb-0">
+                  <div className="flex justify-between items-start mb-2 gap-4">
+                    <h4 className="m-0 text-sm font-semibold text-gray-800 flex-1">{chamado.titulo || 'Manutenção'}</h4>
+                    <div className="flex flex-col gap-1 items-end flex-shrink-0">
+                      <span className="text-xs text-gray-500">
                         {chamado.dataExecucao ? 
                           new Date(chamado.dataExecucao).toLocaleDateString('pt-BR') :
                           new Date(chamado.dataAbertura).toLocaleDateString('pt-BR')
                         }
-                      </HistoricoDate>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      </span>
+                      <div className="flex gap-2">
                         <Badge variant={chamado.tipo === TipoManutencao.PREVENTIVA ? 'success' : 'warning'} size="small">
                           {chamado.tipo === TipoManutencao.PREVENTIVA ? 'Preventiva' : 'Corretiva'}
                         </Badge>
@@ -523,31 +445,31 @@ export default function EquipamentoModal({
                            chamado.status === ChamadoStatus.EM_PROGRESSO ? 'Em Progresso' : 'Aberto'}
                         </Badge>
                       </div>
-                    </HistoricoMeta>
-                  </HistoricoHeader>
+                    </div>
+                  </div>
                   {chamado.descricao && (
-                    <HistoricoDescription>
+                    <p className="mt-2 mb-0 text-sm text-gray-600 leading-relaxed">
                       {chamado.descricao}
-                    </HistoricoDescription>
+                    </p>
                   )}
                   {chamado.agenteNome && (
-                    <HistoricoDescription>
+                    <p className="mt-2 mb-0 text-sm text-gray-600 leading-relaxed">
                       <strong>Agente:</strong> {chamado.agenteNome}
-                    </HistoricoDescription>
+                    </p>
                   )}
                   {chamado.observacoesFinalizacao && (
-                    <HistoricoDescription>
+                    <p className="mt-2 mb-0 text-sm text-gray-600 leading-relaxed">
                       <strong>Observações:</strong> {String(chamado.observacoesFinalizacao)}
-                    </HistoricoDescription>
+                    </p>
                   )}
-                </HistoricoItem>
+                </div>
               ))
             ) : (
-              <HistoricoEmpty>
+              <div className="text-center p-8 text-gray-500 italic">
                 Nenhuma manutenção registrada para este equipamento.
-              </HistoricoEmpty>
+              </div>
             )}
-          </HistoricoContainer>
+          </div>
         </FieldGroup>
       )}
     </FormModal>

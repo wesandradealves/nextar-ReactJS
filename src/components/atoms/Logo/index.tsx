@@ -25,9 +25,28 @@ export const Logo = ({
   src = '/logo.png',
   alt = 'NextAR - Sistema de Manutenção da Antártica'
 }: LogoProps) => {
+  // Size classes
+  const sizeClasses = {
+    small: 'w-10 h-10',
+    medium: 'w-20 h-20',
+    large: 'w-32 h-32'
+  };
+  
+  // Variant-specific classes
+  const variantClasses = {
+    default: '',
+    header: 'mr-4',
+    login: 'mx-auto mb-6 filter drop-shadow'
+  };
+  
   return (
     <LogoContainer 
-      className={className}
+      className={`
+        flex items-center justify-center
+        ${sizeClasses[size]}
+        ${variantClasses[variant]}
+        ${className || ''}
+      `}
       $variant={variant}
       $size={size}
     >
@@ -36,6 +55,7 @@ export const Logo = ({
         alt={alt}
         effect="blur"
         threshold={100}
+        className="w-full h-full object-contain rounded-lg"
       />
     </LogoContainer>
   );

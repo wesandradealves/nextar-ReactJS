@@ -13,28 +13,14 @@ import {
 } from '../FormModal';
 import { FormSelection } from '../FormSelection';
 import { Input } from '../../atoms/Input';
-import { User } from '../../../types';
+// import { User } from '../../../types';
 import { PerfilUsuario } from '../../../utils/enums';
 import { useAuth } from '../../../context/auth';
 import { useToast } from '../../../hooks/useToast';
-
-/**
- * Props do UserModal
- */
-export interface UserModalProps {
-  /** Se o modal está aberto */
-  isOpen: boolean;
-  /** Função para fechar o modal */
-  onClose: () => void;
-  /** Usuário para edição (undefined para criação) */
-  user?: User;
-  /** Callback para salvar usuário */
-  onSave: (userData: Partial<User>) => Promise<void>;
-  /** Callback para alterar senha (apenas para gestores) */
-  onChangePassword?: (userId: string, newPassword: string) => Promise<void>;
-  /** Se está salvando */
-  isSaving?: boolean;
-}
+import { UserModalProps, UserFormState, PasswordState } from './types';
+import {
+  PasswordToggleContainer
+} from './styles';
 
 /**
  * Modal para criação e edição de usuários
@@ -50,25 +36,25 @@ export interface UserModalProps {
  * - Campos de senha obrigatórios na criação
  * - Alteração de senha opcional para gestores (apenas em edição)
  */
-export default function UserModal({
+export const UserModal = ({
   isOpen,
   onClose,
   user,
   onSave,
   onChangePassword,
   isSaving = false
-}: UserModalProps) {
+}: UserModalProps) => {
   const { user: currentUser } = useAuth();
   const { error: showError } = useToast();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserFormState>({
     nome: '',
     email: '',
     perfil: PerfilUsuario.PESQUISADOR,
     setor: ''
   });
 
-  const [passwordData, setPasswordData] = useState({
+  const [passwordData, setPasswordData] = useState<PasswordState>({
     newPassword: '',
     confirmPassword: ''
   });
@@ -241,7 +227,7 @@ export default function UserModal({
       isConfirmDisabled={!isFormValid}
       size="medium"
     >
-      <FieldGroup>
+      <FieldGroup className="flex flex-col gap-4">
         <div>
           <Input
             placeholder="Nome completo"
@@ -260,8 +246,8 @@ export default function UserModal({
         </div>
       </FieldGroup>
 
-      <FieldGroup>
-        <SectionTitle>Perfil do Usuário</SectionTitle>
+      <FieldGroup className="flex flex-col gap-4 mt-6">
+        <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Perfil do Usuário</SectionTitle>
         <FormSelection
           options={profileOptions}
           value={formData.perfil}
@@ -269,8 +255,8 @@ export default function UserModal({
         />
       </FieldGroup>
 
-      <FieldGroup>
-        <SectionTitle>Setor do Usuário</SectionTitle>
+      <FieldGroup className="flex flex-col gap-4 mt-6">
+        <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Setor do Usuário</SectionTitle>
         <div>
           <Input
             placeholder="Digite o setor do usuário (ex: TI, Administração, etc.)"
@@ -282,11 +268,11 @@ export default function UserModal({
 
       {/* Seção de Senha */}
       {(requirePassword || canChangePassword) && (
-        <FieldGroup>
+        <FieldGroup className="flex flex-col gap-4 mt-6">
           {requirePassword ? (
             <>
               {/* Campos obrigatórios para criação */}
-              <SectionTitle>Definir Senha</SectionTitle>
+              <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Definir Senha</SectionTitle>
               <div>
                 <Input
                   type="password"
@@ -308,44 +294,50 @@ export default function UserModal({
           ) : (
             <>
               {/* Toggle para edição de senha (apenas para gestores) */}
-              <ToggleContainer style={{ width: '100%' }}>
-                <ToggleSwitch>
+              <ToggleContainer className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 w-full">
+                <ToggleSwitch className="relative inline-block w-11 h-6 cursor-pointer">
                   <ToggleInput
                     type="checkbox"
                     checked={showPasswordFields}
                     onChange={(e) => setShowPasswordFields(e.target.checked)}
+                    className="opacity-0 w-0 h-0"
                   />
-                  <ToggleSlider $checked={showPasswordFields} />
+                  <ToggleSlider 
+                    $checked={showPasswordFields} 
+                    className={`
+                      absolute cursor-pointer top-0 left-0 right-0 bottom-0 
+                      transition-all duration-200 rounded-full
+                      ${showPasswordFields ? 'bg-green-500' : 'bg-gray-300'}
+                    `}
+                  />
                 </ToggleSwitch>
-                <ToggleInfo>
-                  <ToggleTitle>Redefinir senha</ToggleTitle>
-                  <ToggleText>
+                <ToggleInfo className="flex-1 ml-3">
+                  <ToggleTitle className="font-medium text-gray-900">Redefinir senha</ToggleTitle>
+                  <ToggleText className="text-sm text-gray-500">
                     {showPasswordFields ? 'Campos habilitados' : 'Clique para habilitar'}
                   </ToggleText>
                 </ToggleInfo>
               </ToggleContainer>
 
-              {showPasswordFields && (
-                <>
-                  <div>
-                    <Input
-                      type="password"
-                      placeholder="Nova senha (mínimo 6 caracteres)"
-                      value={passwordData.newPassword}
-                      onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                    />
-                  </div>
+              <PasswordToggleContainer $visible={showPasswordFields} className="flex flex-col gap-4 pl-4 border-l-2 border-gray-200">
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Nova senha (mínimo 6 caracteres)"
+                    value={passwordData.newPassword}
+                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                  />
+                </div>
 
-                  <div>
-                    <Input
-                      type="password"
-                      placeholder="Confirme a nova senha"
-                      value={passwordData.confirmPassword}
-                      onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                    />
-                  </div>
-                </>
-              )}
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Confirme a nova senha"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                  />
+                </div>
+              </PasswordToggleContainer>
             </>
           )}
         </FieldGroup>
@@ -353,3 +345,6 @@ export default function UserModal({
     </FormModal>
   );
 }
+
+// Exportação padrão para compatibilidade com código existente
+export default UserModal;

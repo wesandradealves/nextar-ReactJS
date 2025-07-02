@@ -1,10 +1,11 @@
 /**
- * Styled Components para o componente Spinner
+ * Estilos para o componente Spinner
  */
 
 import styled, { keyframes } from 'styled-components';
+// import { SpinnerProps } from './types';
 
-const spin = keyframes`
+export const spin = keyframes`
   0% { 
     transform: rotate(0deg); 
   }
@@ -13,71 +14,58 @@ const spin = keyframes`
   }
 `;
 
-interface SpinnerContainerProps {
-  $overlay: boolean;
-}
-
-interface SpinnerWheelProps {
-  $size: 'small' | 'medium' | 'large';
-  $color: string;
-}
-
-export const SpinnerContainer = styled.div<SpinnerContainerProps>`
-  ${props => props.$overlay ? `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-  ` : `
-    display: inline-flex;
-  `}
-  
+export const SpinnerContainer = styled.div<{
+  $overlay?: boolean;
+}>`
   display: flex;
   justify-content: center;
   align-items: center;
+  ${props => props.$overlay && `
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+  `}
 `;
 
-export const SpinnerWheel = styled.div<SpinnerWheelProps>`
-  border-radius: 50%;
+export const SpinnerElement = styled.div<{
+  $size: 'small' | 'medium' | 'large';
+  $color: string;
+}>`
+  border-radius: 9999px;
   border-style: solid;
   animation: ${spin} 1s linear infinite;
   
-  /* Tamanhos */
   ${props => {
-    switch (props.$size) {
-      case 'small':
-        return `
-          width: 20px;
-          height: 20px;
-          border-width: 2px;
-        `;
-      case 'medium':
-        return `
-          width: 32px;
-          height: 32px;
-          border-width: 3px;
-        `;
-      case 'large':
-        return `
-          width: 48px;
-          height: 48px;
-          border-width: 4px;
-        `;
-      default:
-        return `
-          width: 32px;
-          height: 32px;
-          border-width: 3px;
-        `;
-    }
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result
+        ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+        : '102, 126, 234'; 
+    };
+    
+    const rgb = hexToRgb(props.$color);
+    
+    return `
+      border-color: rgba(${rgb}, 0.2) rgba(${rgb}, 0.2) rgba(${rgb}, 1) rgba(${rgb}, 0.2);
+      
+      ${props.$size === 'small' && `
+        width: 1.25rem;
+        height: 1.25rem;
+        border-width: 2px;
+      `}
+      
+      ${props.$size === 'medium' && `
+        width: 2rem;
+        height: 2rem;
+        border-width: 3px;
+      `}
+      
+      ${props.$size === 'large' && `
+        width: 3rem;
+        height: 3rem;
+        border-width: 4px;
+      `}
+    `;
   }}
-  
-  /* Cores - efeito de loading com transparência */
-  border-color: ${props => props.$color}33 ${props => props.$color}33 ${props => props.$color} ${props => props.$color}33;
 `;
-
-// Componentes legados para compatibilidade
-export const SpinnerOverlay = SpinnerContainer;

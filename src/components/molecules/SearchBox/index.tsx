@@ -87,8 +87,8 @@ export const SearchBox = ({
   }, [handleSearch]);
   
   return (
-    <SearchContainer className={className}>
-      <SearchInput>
+    <SearchContainer className={`${className || ''} relative flex w-full max-w-md`}>
+      <SearchInput className="flex-1 relative">
         <Input
           id={id}
           type="text"
@@ -97,16 +97,19 @@ export const SearchBox = ({
           disabled={disabled || loading}
           onChange={handleInputChange}
           onKeyPress={handleKeyDown}
+          className="pr-20" // Espaço para os botões
         />
         
-        <SearchActions>
+        <SearchActions className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {value && !loading && (
             <IconButton
               type="button"
-              $variant="clear"
               onClick={handleClear}
               disabled={disabled}
               title="Limpar busca"
+              className="flex items-center justify-center w-8 h-8 border-none rounded-md bg-transparent text-gray-500 
+                hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-colors duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ClearIcon />
             </IconButton>
@@ -114,20 +117,15 @@ export const SearchBox = ({
           
           <IconButton
             type="button"
-            $variant="search"
             onClick={handleSearch}
             disabled={disabled || loading}
             title="Buscar"
+            className="flex items-center justify-center w-8 h-8 border-none rounded-md bg-transparent text-gray-500 
+              hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 transition-colors duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                border: '2px solid currentColor',
-                borderTop: '2px solid transparent',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite'
-              }} />
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
             ) : (
               <SearchIcon />
             )}

@@ -36,13 +36,6 @@ const spin = keyframes`
 // =================================
 
 export const DataTableContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   animation: ${fadeIn} 0.3s ease-out;
 `;
 
@@ -113,6 +106,8 @@ export const FilterButton = styled.button<{ $active?: boolean }>`
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  
+  /* Tailwind classes will be added via className */
   
   &:hover {
     border-color: #667eea;
@@ -247,6 +242,8 @@ export const SortIndicator = styled.span<{ $direction?: 'asc' | 'desc' | null }>
   font-size: 0.75rem;
   color: #9ca3af;
   
+  /* Tailwind classes will be added via className */
+  
   ${({ $direction }) => {
     if ($direction === 'asc') {
       return css`
@@ -281,6 +278,8 @@ export const RowActions = styled.div`
   align-items: center;
   gap: 8px;
   justify-content: center;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'danger' }>`
@@ -294,6 +293,8 @@ export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' |
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.875rem;
+  
+  /* Tailwind classes will be added via className */
   
   ${({ $variant = 'secondary' }) => {
     switch ($variant) {
@@ -335,6 +336,8 @@ export const CheckboxCell = styled.td`
   padding: 12px 16px;
   width: 48px;
   text-align: center;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const Checkbox = styled.input.attrs({ type: 'checkbox' })<{ $indeterminate?: boolean }>`
@@ -342,6 +345,8 @@ export const Checkbox = styled.input.attrs({ type: 'checkbox' })<{ $indeterminat
   height: 16px;
   cursor: pointer;
   accent-color: #667eea;
+  
+  /* Tailwind classes will be added via className */
   
   ${({ $indeterminate }) => $indeterminate && css`
     &:checked {
@@ -362,12 +367,16 @@ export const EmptyState = styled.div`
   padding: 60px 20px;
   text-align: center;
   color: #64748b;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const EmptyIcon = styled.div`
   font-size: 3rem;
   margin-bottom: 16px;
   opacity: 0.5;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const EmptyMessage = styled.p`
@@ -375,12 +384,16 @@ export const EmptyMessage = styled.p`
   font-size: 1rem;
   font-weight: 500;
   color: #475569;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const EmptyDescription = styled.p`
   margin: 8px 0 0 0;
   font-size: 0.875rem;
   color: #64748b;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 // =================================
@@ -398,6 +411,8 @@ export const LoadingOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 10;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const LoadingSkeleton = styled.div`
@@ -406,6 +421,8 @@ export const LoadingSkeleton = styled.div`
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite linear;
   border-radius: 4px;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const LoadingSpinner = styled.div`
@@ -415,6 +432,8 @@ export const LoadingSpinner = styled.div`
   border-top: 2px solid #667eea;
   border-radius: 50%;
   animation: ${spin} 1s linear infinite;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 // =================================
@@ -494,6 +513,8 @@ export const PaginationEllipsis = styled.span`
 export const MobileCard = styled.div<{ $selected?: boolean }>`
   display: none;
   
+  /* Tailwind classes will be added via className */
+  
   ${mediaDown.md(`
     display: block;
     padding: 16px;
@@ -517,6 +538,8 @@ export const MobileCardHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardTitle = styled.h4`
@@ -524,22 +547,30 @@ export const MobileCardTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
   color: #1e293b;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardActions = styled.div`
   display: flex;
   gap: 8px;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardBody = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardField = styled.div`
   display: flex;
   flex-direction: column;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardLabel = styled.span`
@@ -548,10 +579,14 @@ export const MobileCardLabel = styled.span`
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.025em;
+  
+  /* Tailwind classes will be added via className */
 `;
 
 export const MobileCardValue = styled.span`
   font-size: 0.875rem;
   color: #1e293b;
   margin-top: 2px;
+  
+  /* Tailwind classes will be added via className */
 `;

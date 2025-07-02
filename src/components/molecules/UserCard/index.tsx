@@ -94,12 +94,21 @@ export const UserCard = ({
   
   return (
     <UserCardContainer
-      className={className}
+      className={`${className || ''} flex items-center 
+        ${size === 'small' ? 'gap-2 p-2' : size === 'medium' ? 'gap-3 p-3' : 'gap-4 p-4'} 
+        rounded-lg transition-all duration-200 bg-white dark:bg-gray-800 
+        border border-gray-200 dark:border-gray-700
+        ${clickable ? 'cursor-pointer hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 dark:hover:border-blue-400' : ''}
+      `}
       $size={size}
       $clickable={clickable}
       onClick={handleClick}
     >
-      <Avatar $size={size}>
+      <Avatar $size={size} className={`
+        relative overflow-hidden rounded-full flex items-center justify-center
+        bg-blue-500 dark:bg-blue-600 text-white font-semibold
+        ${size === 'small' ? 'w-8 h-8 text-xs' : size === 'medium' ? 'w-10 h-10 text-sm' : 'w-12 h-12 text-base'}
+      `}>
         {avatar ? (
           <LazyLoadImage
             src={avatar}
@@ -118,10 +127,20 @@ export const UserCard = ({
         {/* {isOnline && <OnlineIndicator $size={size} />} */}
       </Avatar>
       
-      <UserInfo>
-        <UserName $size={size}>{name}</UserName>
+      <UserInfo className="flex flex-col gap-0.5 flex-1 min-w-0">
+        <UserName $size={size} className={`
+          font-semibold text-gray-700 dark:text-gray-200 truncate
+          ${size === 'small' ? 'text-sm' : size === 'medium' ? 'text-base' : 'text-lg'}
+        `}>
+          {name}
+        </UserName>
         {email && (
-          <UserEmail $size={size}>{email}</UserEmail>
+          <UserEmail $size={size} className={`
+            text-gray-500 dark:text-gray-400 truncate
+            ${size === 'small' ? 'text-xs' : 'text-sm'}
+          `}>
+            {email}
+          </UserEmail>
         )}
       </UserInfo>
       
@@ -129,6 +148,9 @@ export const UserCard = ({
         variant={getProfileVariant(profile)}
         size={size === 'large' ? 'medium' : 'small'}
         $size={size}
+        className={`
+          ${size === 'small' ? 'text-xs px-1.5 py-0.5' : size === 'large' ? 'text-sm px-2 py-1' : ''}
+        `}
       >
         {getProfileLabel(profile)}
       </ProfileBadge>

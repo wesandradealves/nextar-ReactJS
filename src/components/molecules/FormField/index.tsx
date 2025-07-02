@@ -48,8 +48,12 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({
   ...inputProps
 }, ref) => {
   return (
-    <FormFieldContainer className={className}>
-      <Label htmlFor={id} $required={required}>
+    <FormFieldContainer className={`flex flex-col ${className || ''}`}>
+      <Label 
+        htmlFor={id} 
+        $required={required}
+        className="block mb-2 font-semibold text-gray-700 dark:text-gray-300 text-sm"
+      >
         {label}
       </Label>
       
@@ -63,11 +67,15 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({
       />
       
       {error && (
-        <ErrorMessage>{error}</ErrorMessage>
+        <ErrorMessage className="text-red-500 text-sm mt-1.5 flex items-center gap-1">
+          {error}
+        </ErrorMessage>
       )}
       
       {!error && helpText && (
-        <HelpText>{helpText}</HelpText>
+        <HelpText className="text-gray-500 dark:text-gray-400 text-sm mt-1.5 leading-relaxed">
+          {helpText}
+        </HelpText>
       )}
     </FormFieldContainer>
   );

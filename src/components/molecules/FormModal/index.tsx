@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import Modal from '../Modal';
-import { FormSection, ModalFooter } from '../Modal/formStyles';
+import { FormSection, ModalFooter } from './styles';
 import { Button } from '../../atoms/Button';
+import { FormModalProps } from './types';
 
 // Re-exportar componentes de estilo para uso em modais que estendem FormModal
 export {
@@ -15,44 +16,6 @@ export {
   ToggleTitle,
   ToggleText
 } from '../Modal/formStyles';
-
-/**
- * Props para o FormModal genérico
- */
-export interface FormModalProps {
-  /** Se o modal está aberto */
-  isOpen: boolean;
-  /** Função para fechar o modal */
-  onClose: () => void;
-  /** Título do modal */
-  title: string;
-  /** Subtítulo opcional */
-  subtitle?: string;
-  /** Conteúdo do formulário */
-  children: ReactNode;
-  /** Texto do botão de confirmação */
-  confirmText?: string;
-  /** Texto do botão de cancelar */
-  cancelText?: string;
-  /** Função chamada ao confirmar */
-  onConfirm?: () => void;
-  /** Se está carregando/salvando */
-  isLoading?: boolean;
-  /** Se o botão de confirmar está desabilitado */
-  isConfirmDisabled?: boolean;
-  /** Variante do botão de confirmação */
-  confirmVariant?: 'primary' | 'secondary' | 'danger' | 'outline';
-  /** Tamanho do modal */
-  size?: 'small' | 'medium' | 'large';
-  /** Se deve mostrar o footer com botões */
-  showFooter?: boolean;
-  /** Footer customizado (substitui os botões padrão) */
-  customFooter?: ReactNode;
-  /** Se deve fechar ao clicar fora */
-  closeOnOverlayClick?: boolean;
-  /** Classes CSS adicionais */
-  className?: string;
-}
 
 /**
  * Modal genérico para formulários de CRUD
@@ -87,7 +50,7 @@ export interface FormModalProps {
  * </FormModal>
  * ```
  */
-export const FormModal: React.FC<FormModalProps> = ({
+export const FormModal = ({
   isOpen,
   onClose,
   title,
@@ -104,7 +67,7 @@ export const FormModal: React.FC<FormModalProps> = ({
   customFooter,
   closeOnOverlayClick = true,
   className
-}) => {
+}: FormModalProps) => {
   const handleConfirm = () => {
     if (onConfirm && !isLoading && !isConfirmDisabled) {
       onConfirm();
@@ -127,29 +90,26 @@ export const FormModal: React.FC<FormModalProps> = ({
       closeOnOverlayClick={closeOnOverlayClick}
       className={className}
     >
-      <div onKeyDown={handleKeyDown}>
+      <div onKeyDown={handleKeyDown} className="w-full">
         {subtitle && (
-          <div style={{ 
-            marginBottom: '24px', 
-            fontSize: '14px', 
-            color: '#6b7280' 
-          }}>
+          <div className="mb-6 text-sm text-gray-500">
             {subtitle}
           </div>
         )}
         
-        <FormSection>
+        <FormSection className="flex flex-col gap-6">
           {children}
         </FormSection>
 
         {showFooter && (
-          <ModalFooter>
+          <ModalFooter className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-200 sm:flex-row xs:flex-col xs:gap-2 xs:[&>button]:w-full">
             {customFooter || (
               <>
                 <Button
                   variant="outline"
                   onClick={onClose}
                   disabled={isLoading}
+                  className="sm:flex-shrink-0"
                 >
                   {cancelText}
                 </Button>
@@ -160,6 +120,7 @@ export const FormModal: React.FC<FormModalProps> = ({
                     onClick={handleConfirm}
                     disabled={isLoading || isConfirmDisabled}
                     loading={isLoading}
+                    className="sm:flex-shrink-0"
                   >
                     {confirmText}
                   </Button>

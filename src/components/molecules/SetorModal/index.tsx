@@ -14,25 +14,10 @@ import {
 import { FormSelection } from '../FormSelection';
 import { Input } from '../../atoms/Input';
 import Textarea from '../../atoms/Textarea';
-import type { CreateSetorData, UpdateSetorData, Setor } from '@/types';
+import type { CreateSetorData, UpdateSetorData } from '@/types';
 import { CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
 import { useToast } from '../../../hooks/useToast';
-
-/**
- * Props do SetorModal
- */
-export interface SetorModalProps {
-  /** Se o modal está aberto */
-  isOpen: boolean;
-  /** Função para fechar o modal */
-  onClose: () => void;
-  /** Setor para edição (undefined para criação) */
-  setor?: Setor;
-  /** Callback para salvar setor */
-  onSubmit: (data: CreateSetorData | UpdateSetorData, id?: string) => Promise<void>;
-  /** Se está salvando */
-  isLoading?: boolean;
-}
+import { SetorModalProps } from './types';
 
 /**
  * Modal para criação e edição de setores
@@ -115,7 +100,7 @@ export default function SetorModal({
           descricao: formData.descricao,
           ativo: formData.ativo
         };
-        await onSubmit(updateData, setor.id);
+        await onSubmit?.(updateData, setor.id);
       } else {
         // Criar novo setor
         const createData: CreateSetorData = {
@@ -124,7 +109,7 @@ export default function SetorModal({
           descricao: formData.descricao,
           ativo: formData.ativo
         };
-        await onSubmit(createData);
+        await onSubmit?.(createData);
       }
       onClose();
     } catch (error) {
@@ -173,7 +158,7 @@ export default function SetorModal({
       isConfirmDisabled={!isFormValid}
       size="medium"
     >
-      <FieldGroup>
+      <FieldGroup className="flex flex-col gap-4">
         <div>
           <Input
             placeholder="Nome do setor"
@@ -193,8 +178,8 @@ export default function SetorModal({
         </div>
       </FieldGroup>
 
-      <FieldGroup>
-        <SectionTitle>Categoria Científica</SectionTitle>
+      <FieldGroup className="flex flex-col gap-4 mt-6">
+        <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Categoria Científica</SectionTitle>
         <FormSelection
           options={categoryOptions}
           value={formData.categoria}
@@ -202,19 +187,27 @@ export default function SetorModal({
         />
       </FieldGroup>
 
-      <FieldGroup>
-        <ToggleContainer style={{ width: '100%' }}>
-          <ToggleSwitch>
+      <FieldGroup className="flex flex-col gap-4 mt-6">
+        <ToggleContainer className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 w-full">
+          <ToggleSwitch className="relative inline-block w-11 h-6 cursor-pointer">
             <ToggleInput
               type="checkbox"
               checked={formData.ativo}
               onChange={(e) => handleFieldChange('ativo', e.target.checked)}
+              className="opacity-0 w-0 h-0"
             />
-            <ToggleSlider $checked={formData.ativo} />
+            <ToggleSlider 
+              $checked={formData.ativo} 
+              className={`
+                absolute cursor-pointer top-0 left-0 right-0 bottom-0 
+                transition-all duration-200 rounded-full
+                ${formData.ativo ? 'bg-green-500' : 'bg-gray-300'}
+              `}
+            />
           </ToggleSwitch>
-          <ToggleInfo>
-            <ToggleTitle>Setor ativo</ToggleTitle>
-            <ToggleText>
+          <ToggleInfo className="flex-1 ml-3">
+            <ToggleTitle className="font-medium text-gray-900">Setor ativo</ToggleTitle>
+            <ToggleText className="text-sm text-gray-500">
               {formData.ativo ? 'Disponível para receber equipamentos e chamados' : 'Inativo, não aparecerá nas listagens'}
             </ToggleText>
           </ToggleInfo>

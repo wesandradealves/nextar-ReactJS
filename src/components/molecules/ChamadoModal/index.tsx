@@ -9,31 +9,13 @@ import { FormList } from '../FormList';
 import { Input, DateInput } from '../../atoms';
 import { Select } from '../../atoms/Select';
 import Textarea from '../../atoms/Textarea';
-import { Chamado } from '../../../types';
 import { TipoManutencao, Prioridade, ChamadoStatus, PerfilUsuario } from '../../../utils/enums';
 import { useAuth } from '../../../context/auth';
 import { useSetores } from '../../../hooks/useSetores';
 import { useUsers } from '../../../hooks/useUsers';
 import { useEquipamentos } from '../../../hooks/useEquipamentos';
 import { useToast } from '../../../hooks/useToast';
-
-/**
- * Props do ChamadoModal
- */
-export interface ChamadoModalProps {
-  /** Se o modal está aberto */
-  isOpen: boolean;
-  /** Função para fechar o modal */
-  onClose: () => void;
-  /** Chamado para edição (undefined para criação) */
-  chamado?: Chamado;
-  /** Callback para salvar chamado */
-  onSave: (chamadoData: Partial<Chamado>) => Promise<void>;
-  /** Se está salvando */
-  isSaving?: boolean;
-  /** Modo inicial do modal */
-  mode?: 'view' | 'edit' | 'create';
-}
+import { ChamadoModalProps } from './types';
 
 /**
  * Modal para criação, edição e visualização de chamados
