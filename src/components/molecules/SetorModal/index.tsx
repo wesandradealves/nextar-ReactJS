@@ -19,17 +19,6 @@ import { CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
 import { useToast } from '../../../hooks/useToast';
 import { SetorModalProps } from './types';
 
-/**
- * Modal para criação e edição de setores
- * 
- * @version 2.0.3
- * @description
- * Modal padronizado usando os novos componentes:
- * - FormModal para estrutura base
- * - FormSelection para seleção de categoria
- * - Validações integradas via toast
- * - Layout responsivo
- */
 export default function SetorModal({
   isOpen,
   onClose,
@@ -124,7 +113,7 @@ export default function SetorModal({
   const categoryOptions = CATEGORIAS_CIENTIFICAS.map(categoria => {
     const colors: Record<string, string> = {
       'Biologia': '#10b981',
-      'Meteorologia': '#3b82f6',
+      'Meteorologia': '#3b82f6', 
       'Glaciologia': '#06b6d4',
       'Astronomia': '#8b5cf6',
       'Geologia': '#f59e0b',
@@ -135,12 +124,25 @@ export default function SetorModal({
       'Logística': '#f97316'
     };
 
+    const icons: Record<string, string> = {
+      'Biologia': '🧬',
+      'Meteorologia': '🌦️',
+      'Glaciologia': '❄️', 
+      'Astronomia': '🔭',
+      'Geologia': '🪨',
+      'Oceanografia': '🌊',
+      'Física Atmosférica': '🌪️',
+      'Medicina': '⚕️',
+      'Comunicações': '📡',
+      'Logística': '📦'
+    };
+
     return {
       id: categoria,
       label: categoria,
       description: `Setor especializado em ${categoria.toLowerCase()}`,
       color: colors[categoria] || '#6b7280',
-      icon: '🔬'
+      icon: icons[categoria] || '🔬'
     };
   });
 
@@ -158,61 +160,124 @@ export default function SetorModal({
       isConfirmDisabled={!isFormValid}
       size="medium"
     >
-      <FieldGroup className="flex flex-col gap-4">
-        <div>
-          <Input
-            placeholder="Nome do setor"
-            value={formData.nome}
-            onChange={(e) => handleFieldChange('nome', e.target.value)}
-          />
-        </div>
+      <div className="space-y-8">
+        <FieldGroup className="space-y-6">
+          <SectionTitle className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            📝 Informações Básicas
+          </SectionTitle>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nome do Setor *
+              </label>
+              <Input
+                placeholder="Ex: Laboratório de Biologia Marinha"
+                value={formData.nome}
+                onChange={(e) => handleFieldChange('nome', e.target.value)}
+                className="w-full"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Nome identificador único do setor
+              </p>
+            </div>
 
-        <div>
-          <Textarea
-            placeholder="Descrição do setor (opcional)"
-            value={formData.descricao}
-            onChange={(value: string) => handleFieldChange('descricao', value)}
-            rows={3}
-            maxLength={500}
-          />
-        </div>
-      </FieldGroup>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Descrição
+              </label>
+              <Textarea
+                placeholder="Descreva as atividades e responsabilidades do setor..."
+                value={formData.descricao}
+                onChange={(value: string) => handleFieldChange('descricao', value)}
+                rows={4}
+                maxLength={500}
+                className="w-full resize-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.descricao.length}/500 caracteres
+              </p>
+            </div>
+          </div>
+        </FieldGroup>
 
-      <FieldGroup className="flex flex-col gap-4 mt-6">
-        <SectionTitle className="text-sm font-semibold text-gray-700 mb-1">Categoria Científica</SectionTitle>
-        <FormSelection
-          options={categoryOptions}
-          value={formData.categoria}
-          onChange={(value) => handleFieldChange('categoria', value)}
-        />
-      </FieldGroup>
+        <FieldGroup className="space-y-6">
+          <SectionTitle className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            🔬 Categoria Científica
+          </SectionTitle>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Área de Especialização *
+              </label>
+              <FormSelection
+                options={categoryOptions}
+                value={formData.categoria}
+                onChange={(value) => handleFieldChange('categoria', value)}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Selecione a categoria científica que melhor define este setor
+              </p>
+            </div>
+          </div>
+        </FieldGroup>
 
-      <FieldGroup className="flex flex-col gap-4 mt-6">
-        <ToggleContainer className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 w-full">
-          <ToggleSwitch className="relative inline-block w-11 h-6 cursor-pointer">
-            <ToggleInput
-              type="checkbox"
-              checked={formData.ativo}
-              onChange={(e) => handleFieldChange('ativo', e.target.checked)}
-              className="opacity-0 w-0 h-0"
-            />
-            <ToggleSlider 
-              $checked={formData.ativo} 
-              className={`
-                absolute cursor-pointer top-0 left-0 right-0 bottom-0 
-                transition-all duration-200 rounded-full
-                ${formData.ativo ? 'bg-green-500' : 'bg-gray-300'}
-              `}
-            />
-          </ToggleSwitch>
-          <ToggleInfo className="flex-1 ml-3">
-            <ToggleTitle className="font-medium text-gray-900">Setor ativo</ToggleTitle>
-            <ToggleText className="text-sm text-gray-500">
-              {formData.ativo ? 'Disponível para receber equipamentos e chamados' : 'Inativo, não aparecerá nas listagens'}
-            </ToggleText>
-          </ToggleInfo>
-        </ToggleContainer>
-      </FieldGroup>
+        <FieldGroup className="space-y-6">
+          <SectionTitle className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            ⚙️ Configurações
+          </SectionTitle>
+          
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+            <ToggleContainer className="flex items-center justify-between">
+              <ToggleInfo className="flex-1">
+                <ToggleTitle className="font-semibold text-gray-900 text-base flex items-center gap-2">
+                  {formData.ativo ? '✅' : '❌'} Status do Setor
+                </ToggleTitle>
+                <ToggleText className="text-sm text-gray-600 mt-1">
+                  {formData.ativo 
+                    ? '🟢 Ativo - Disponível para receber equipamentos e chamados' 
+                    : '🔴 Inativo - Não aparecerá nas listagens'}
+                </ToggleText>
+              </ToggleInfo>
+              
+              <ToggleSwitch className="relative inline-block w-14 h-7 ml-4">
+                <ToggleInput
+                  type="checkbox"
+                  checked={formData.ativo}
+                  onChange={(e) => handleFieldChange('ativo', e.target.checked)}
+                  className="opacity-0 w-0 h-0"
+                />
+                <ToggleSlider 
+                  $checked={formData.ativo} 
+                  className={`
+                    absolute cursor-pointer top-0 left-0 right-0 bottom-0 
+                    transition-all duration-300 rounded-full shadow-lg
+                    ${formData.ativo 
+                      ? 'bg-gradient-to-r from-green-400 to-green-500' 
+                      : 'bg-gradient-to-r from-gray-300 to-gray-400'}
+                  `}
+                />
+              </ToggleSwitch>
+            </ToggleContainer>
+          </div>
+        </FieldGroup>
+
+        <FieldGroup className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="text-blue-500 text-lg">💡</div>
+              <div>
+                <h4 className="font-medium text-blue-900 mb-1">Dica sobre Setores</h4>
+                <p className="text-sm text-blue-700 leading-relaxed">
+                  Setores ativos podem receber equipamentos e ter chamados de manutenção criados. 
+                  A categoria científica ajuda na organização e filtros do sistema.
+                </p>
+              </div>
+            </div>
+          </div>
+        </FieldGroup>
+      </div>
     </FormModal>
   );
 }

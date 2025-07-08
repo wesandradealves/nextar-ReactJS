@@ -1,54 +1,5 @@
 import styled from 'styled-components';
 
-/**
- * Estilos para o UserModal
- * 
- * @version 1.0.0
- * @description
- * Migrado para o padrão híbrido Tailwind + styled-components.
- * Mantido apenas o essencial como styled-components para
- * comportamentos dinâmicos, o resto migrado para Tailwind.
- */
-
-/**
- * Container para campos de formulário
- * Convertido para Tailwind
- * @deprecated - Use Tailwind classes instead
- */
-// export const FormFieldsContainer = styled.div``;
-
-/**
- * Container para informações do usuário
- * Convertido para Tailwind
- * @deprecated - Use Tailwind classes instead
- */
-// export const UserInfoContainer = styled.div``;
-
-/**
- * Container para seleção de perfil
- * Convertido para Tailwind
- * @deprecated - Use Tailwind classes instead
- */
-// export const ProfileSelectionContainer = styled.div``;
-
-/**
- * Container para campos de senha
- * Convertido para Tailwind
- * @deprecated - Use Tailwind classes instead
- */
-// export const PasswordFieldsContainer = styled.div``;
-
-/**
- * Container para campo de setor
- * Convertido para Tailwind
- * @deprecated - Use Tailwind classes instead
- */
-// export const SectorFieldContainer = styled.div``;
-
-/**
- * Container para alteração de senha
- * Mantido para transição e animação
- */
 export const PasswordToggleContainer = styled.div<{ $visible: boolean }>`
   max-height: ${({ $visible }) => $visible ? '200px' : '0'};
   overflow: hidden;
@@ -57,10 +8,6 @@ export const PasswordToggleContainer = styled.div<{ $visible: boolean }>`
   margin-top: ${({ $visible }) => $visible ? '16px' : '0'};
 `;
 
-/**
- * Mensagem de validação
- * Mantido para cor dinâmica baseada em status
- */
 export const ValidationMessage = styled.div<{ $type: 'error' | 'success' | 'warning' | 'info' }>`
   color: ${({ $type }) => {
     switch ($type) {
@@ -71,4 +18,40 @@ export const ValidationMessage = styled.div<{ $type: 'error' | 'success' | 'warn
       default: return '#6b7280';
     }
   }};
+`;
+
+export const ToggleSwitch = styled.label`
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+`;
+
+export const ToggleInput = styled.input`
+  opacity: 0;
+  width: 0;
+  height: 0;
+`;
+
+export const ToggleSlider = styled.span<{ $checked: boolean }>`
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 9999px;
+  transition: all 0.2s ease-in-out;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease-in-out;
+    transform: ${({ $checked }) => $checked ? 'translateX(20px)' : 'translateX(0)'};
+  }
 `;
