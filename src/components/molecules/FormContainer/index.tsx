@@ -310,7 +310,7 @@ export default function FormContainer({
     <StyledFormContainer
       $isSubmitting={formState.isSubmitting}
       onSubmit={handleSubmit}
-      className={`flex flex-col gap-4 w-full ${className || ''}`}
+      className={`space-y-4 w-full ${className || ''}`}
       id={formId}
     >
       <StyledValidationProgress 
@@ -318,7 +318,7 @@ export default function FormContainer({
         className="absolute top-[-2px] left-0 right-0 h-[2px] rounded-[1px] opacity-80"
       />
       
-      <StyledFormFields className="flex flex-col gap-5">
+      <StyledFormFields className="space-y-4">
         {fields.map(fieldConfig => (
           <StyledValidationWrapper
             key={fieldConfig.id}
@@ -341,14 +341,14 @@ export default function FormContainer({
       </StyledFormFields>
 
       {children && (
-        <StyledFormContent className="flex flex-col gap-4">
+        <StyledFormContent className="space-y-4">
           {children}
         </StyledFormContent>
       )}
 
       <StyledFormActions 
         $centered={showReset}
-        className={`flex gap-4 items-center border-t border-gray-200 pt-4 sm:flex-row sm:gap-4 ${showReset ? 'justify-center' : 'justify-end'} sm:flex-row sm:items-center sm:flex-wrap sm:[&>button]:flex-shrink-0 xs:flex-col xs:gap-3 xs:[&>button]:w-full`}
+        className={`flex gap-3 items-center border-t border-gray-200 dark:border-gray-700 pt-4 sm:flex-row flex-col sm:gap-3 gap-2 justify-center sm:justify-center [&>button]:w-full sm:[&>button]:w-auto sm:[&>button]:flex-shrink-0`}
       >
         {showReset && (
           <Button
@@ -365,7 +365,7 @@ export default function FormContainer({
           <Button
             type="submit"
             variant="primary"
-            className="sm:flex-shrink-0"
+            className="w-full"
             disabled={submitDisabled || formState.isSubmitting || !formState.isValid}
             loading={formState.isSubmitting}
           >

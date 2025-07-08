@@ -1,10 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 import { mediaDown } from '@/assets/scss/breakpoints';
 
-// =================================
-// ANIMAÇÕES
-// =================================
-
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -31,83 +27,24 @@ const spin = keyframes`
   }
 `;
 
-// =================================
-// CONTAINER PRINCIPAL
-// =================================
-
 export const DataTableContainer = styled.div`
   animation: ${fadeIn} 0.3s ease-out;
 `;
 
-// =================================
-// HEADER DA TABELA
-// =================================
+export const TableHeader = styled.div``;
 
-export const TableHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  
-  ${mediaDown.md(`
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-    padding: 12px 16px;
-  `)}
-`;
+export const TableTitle = styled.h3``;
 
-export const TableTitle = styled.h3`
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1e293b;
-`;
+export const TableActions = styled.div``;
 
-export const TableActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  
-  ${mediaDown.md(`
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  `)}
-`;
-
-// =================================
-// BARRA DE BUSCA E FILTROS
-// =================================
-
-export const SearchAndFilters = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  
-  ${mediaDown.md(`
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  `)}
-`;
+export const SearchAndFilters = styled.div``;
 
 export const FilterButton = styled.button<{ $active?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: 1px solid ${({ $active }) => $active ? '#667eea' : '#e2e8f0'};
-  border-radius: 6px;
-  background: ${({ $active }) => $active ? '#667eea' : 'white'};
-  color: ${({ $active }) => $active ? 'white' : '#64748b'};
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  /* Tailwind classes will be added via className */
+  ${({ $active }) => $active && `
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+  `}
   
   &:hover {
     border-color: #667eea;
@@ -120,15 +57,7 @@ export const FilterButton = styled.button<{ $active?: boolean }>`
   }
 `;
 
-// =================================
-// TABELA PRINCIPAL
-// =================================
-
 export const TableWrapper = styled.div`
-  flex: 1;
-  overflow-x: auto;
-  
-  /* Scrollbar customizada */
   &::-webkit-scrollbar {
     height: 6px;
   }
@@ -147,23 +76,13 @@ export const TableWrapper = styled.div`
   }
 `;
 
-export const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-`;
+export const Table = styled.table``;
 
-export const TableHead = styled.thead`
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
-`;
+export const TableHead = styled.thead``;
 
 export const TableBody = styled.tbody``;
 
 export const TableRow = styled.tr<{ $selectable?: boolean; $selected?: boolean; $loading?: boolean }>`
-  border-bottom: 1px solid #f1f5f9;
-  transition: all 0.2s ease;
-  
   ${({ $selectable }) => $selectable && css`
     cursor: pointer;
   `}
@@ -181,10 +100,6 @@ export const TableRow = styled.tr<{ $selectable?: boolean; $selected?: boolean; 
   &:hover {
     background-color: ${({ $selected }) => $selected ? '#e0f2fe' : '#f8fafc'};
   }
-  
-  &:last-child {
-    border-bottom: none;
-  }
 `;
 
 export const TableHeaderCell = styled.th<{ 
@@ -193,12 +108,7 @@ export const TableHeaderCell = styled.th<{
   $width?: string;
   $hideOnMobile?: boolean;
 }>`
-  padding: 12px 16px;
-  text-align: ${({ $align = 'left' }) => $align};
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: #374151;
-  white-space: nowrap;
+  ${({ $align = 'left' }) => `text-align: ${$align};`}
   ${({ $width }) => $width && `width: ${$width};`}
   
   ${({ $sortable }) => $sortable && css`
@@ -220,30 +130,14 @@ export const TableCell = styled.td<{
   $align?: 'left' | 'center' | 'right';
   $hideOnMobile?: boolean;
 }>`
-  padding: 12px 16px;
-  text-align: ${({ $align = 'left' }) => $align};
-  font-size: 0.875rem;
-  color: #1e293b;
-  vertical-align: middle;
+  ${({ $align = 'left' }) => `text-align: ${$align};`}
   
   ${({ $hideOnMobile }) => $hideOnMobile && mediaDown.md(`
     display: none;
   `)}
 `;
 
-// =================================
-// COMPONENTES DE ORDENAÇÃO
-// =================================
-
 export const SortIndicator = styled.span<{ $direction?: 'asc' | 'desc' | null }>`
-  display: inline-flex;
-  align-items: center;
-  margin-left: 6px;
-  font-size: 0.75rem;
-  color: #9ca3af;
-  
-  /* Tailwind classes will be added via className */
-  
   ${({ $direction }) => {
     if ($direction === 'asc') {
       return css`
@@ -269,33 +163,9 @@ export const SortIndicator = styled.span<{ $direction?: 'asc' | 'desc' | null }>
   }}
 `;
 
-// =================================
-// AÇÕES DA LINHA
-// =================================
-
-export const RowActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const RowActions = styled.div``;
 
 export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'danger' }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-  
-  /* Tailwind classes will be added via className */
-  
   ${({ $variant = 'secondary' }) => {
     switch ($variant) {
       case 'primary':
@@ -328,26 +198,9 @@ export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' |
   }
 `;
 
-// =================================
-// SELEÇÃO E CHECKBOX
-// =================================
-
-export const CheckboxCell = styled.td`
-  padding: 12px 16px;
-  width: 48px;
-  text-align: center;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const CheckboxCell = styled.td``;
 
 export const Checkbox = styled.input.attrs({ type: 'checkbox' })<{ $indeterminate?: boolean }>`
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: #667eea;
-  
-  /* Tailwind classes will be added via className */
-  
   ${({ $indeterminate }) => $indeterminate && css`
     &:checked {
       opacity: 0.7;
@@ -355,99 +208,27 @@ export const Checkbox = styled.input.attrs({ type: 'checkbox' })<{ $indeterminat
   `}
 `;
 
-// =================================
-// ESTADOS VAZIOS E DE LOADING
-// =================================
+export const EmptyState = styled.div``;
 
-export const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-  color: #64748b;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const EmptyIcon = styled.div``;
 
-export const EmptyIcon = styled.div`
-  font-size: 3rem;
-  margin-bottom: 16px;
-  opacity: 0.5;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const EmptyMessage = styled.p``;
 
-export const EmptyMessage = styled.p`
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #475569;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const EmptyDescription = styled.p``;
 
-export const EmptyDescription = styled.p`
-  margin: 8px 0 0 0;
-  font-size: 0.875rem;
-  color: #64748b;
-  
-  /* Tailwind classes will be added via className */
-`;
-
-// =================================
-// LOADING STATES
-// =================================
-
-export const LoadingOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const LoadingOverlay = styled.div``;
 
 export const LoadingSkeleton = styled.div`
-  height: 16px;
   background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite linear;
-  border-radius: 4px;
-  
-  /* Tailwind classes will be added via className */
 `;
 
 export const LoadingSpinner = styled.div`
-  width: 24px;
-  height: 24px;
-  border: 2px solid #e2e8f0;
-  border-top: 2px solid #667eea;
-  border-radius: 50%;
   animation: ${spin} 1s linear infinite;
-  
-  /* Tailwind classes will be added via className */
 `;
 
-// =================================
-// PAGINAÇÃO
-// =================================
-
 export const PaginationContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  
   ${mediaDown.md(`
     flex-direction: column;
     gap: 12px;
@@ -457,37 +238,23 @@ export const PaginationContainer = styled.div`
 `;
 
 export const PaginationInfo = styled.div`
-  font-size: 0.875rem;
-  color: #64748b;
-  
   ${mediaDown.md(`
     text-align: center;
   `)}
 `;
 
 export const PaginationControls = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
   ${mediaDown.md(`
     justify-content: center;
   `)}
 `;
 
 export const PaginationButton = styled.button<{ $active?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid ${({ $active }) => $active ? '#667eea' : '#e2e8f0'};
-  border-radius: 6px;
-  background: ${({ $active }) => $active ? '#667eea' : 'white'};
-  color: ${({ $active }) => $active ? 'white' : '#64748b'};
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  ${({ $active }) => $active && `
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+  `}
   
   &:hover:not(:disabled) {
     border-color: #667eea;
@@ -500,21 +267,9 @@ export const PaginationButton = styled.button<{ $active?: boolean }>`
   }
 `;
 
-export const PaginationEllipsis = styled.span`
-  padding: 0 8px;
-  color: #9ca3af;
-  font-size: 0.875rem;
-`;
-
-// =================================
-// RESPONSIVIDADE MOBILE
-// =================================
+export const PaginationEllipsis = styled.span``;
 
 export const MobileCard = styled.div<{ $selected?: boolean }>`
-  display: none;
-  
-  /* Tailwind classes will be added via className */
-  
   ${mediaDown.md(`
     display: block;
     padding: 16px;
@@ -533,60 +288,16 @@ export const MobileCard = styled.div<{ $selected?: boolean }>`
   `}
 `;
 
-export const MobileCardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardHeader = styled.div``;
 
-export const MobileCardTitle = styled.h4`
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e293b;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardTitle = styled.h4``;
 
-export const MobileCardActions = styled.div`
-  display: flex;
-  gap: 8px;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardActions = styled.div``;
 
-export const MobileCardBody = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardBody = styled.div``;
 
-export const MobileCardField = styled.div`
-  display: flex;
-  flex-direction: column;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardField = styled.div``;
 
-export const MobileCardLabel = styled.span`
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardLabel = styled.span``;
 
-export const MobileCardValue = styled.span`
-  font-size: 0.875rem;
-  color: #1e293b;
-  margin-top: 2px;
-  
-  /* Tailwind classes will be added via className */
-`;
+export const MobileCardValue = styled.span``;

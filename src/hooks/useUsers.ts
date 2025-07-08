@@ -13,17 +13,11 @@ import type {
 import { PerfilUsuario } from '@/utils/enums';
 import { exportToCSV } from '@/utils/export';
 
-/**
- * Configuração padrão para paginação
- */
 const DEFAULT_PAGINATION = {
   page: 1,
   limit: 10
 };
 
-/**
- * Configuração padrão para ordenação
- */
 const DEFAULT_SORTING = {
   sortBy: 'nome',
   sortOrder: 'asc' as const
@@ -56,7 +50,6 @@ const DEFAULT_SORTING = {
  * ```
  */
 export const useUsers = () => {
-  // Estados locais
   const [query, setQuery] = useState<PaginatedQuery>({
     ...DEFAULT_PAGINATION,
     ...DEFAULT_SORTING
@@ -64,7 +57,7 @@ export const useUsers = () => {
   const [filters, setFilters] = useState<UserFilters>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState<User[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]); // Todos os usuários para estatísticas
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiPagination, setApiPagination] = useState<{
@@ -72,15 +65,10 @@ export const useUsers = () => {
     totalPages: number;
   } | null>(null);
 
-  // Cache context
   const cache = useCache();
   
-  // Toast helpers
   const toast = useToast();
 
-  /**
-   * Constrói parâmetros da query para a API
-   */
   const buildQueryParams = useCallback((customQuery?: Partial<PaginatedQuery>, customFilters?: UserFilters) => {
     const currentQuery = { ...query, ...customQuery };
     const currentFilters = { ...filters, ...customFilters };
@@ -111,17 +99,11 @@ export const useUsers = () => {
     return params;
   }, [query, filters, searchTerm]);
 
-  /**
-   * Chave de cache baseada nos parâmetros atuais
-   */
   const cacheKey = useMemo(() => {
     const params = buildQueryParams();
     return `users_${new URLSearchParams(params).toString()}`;
   }, [buildQueryParams]);
 
-  /**
-   * Busca TODOS os usuários para estatísticas (sempre)
-   */
   const fetchAllUsers = useCallback(async () => {
     const allUsersKey = 'users_all';
     let allUsersData = cache.get<User[]>(allUsersKey);
@@ -132,7 +114,6 @@ export const useUsers = () => {
         if (allUsersResponse.ok) {
           const allUsersResult = await allUsersResponse.json();
           allUsersData = Array.isArray(allUsersResult) ? allUsersResult : allUsersResult.data || [];
-          // Cache por 10 minutos para estatísticas
           cache.set(allUsersKey, allUsersData, 10 * 60 * 1000, ['users']);
         } else {
           allUsersData = [];
@@ -143,19 +124,14 @@ export const useUsers = () => {
       }
     }
     
-    // Sempre atualizar dados completos para estatísticas
     setAllUsers(allUsersData || []);
   }, [cache]);
 
-  /**
-   * Busca dados da API
-   */
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Verificar cache primeiro
       const cachedData = cache.get<User[]>(cacheKey);
       if (cachedData) {
         setData(cachedData);
@@ -163,7 +139,6 @@ export const useUsers = () => {
         return;
       }
 
-      // Buscar dados filtrados/paginados
       const params = buildQueryParams();
       const queryString = new URLSearchParams(params).toString();
       const response = await fetch(`/api/users?${queryString}`);
@@ -174,14 +149,10 @@ export const useUsers = () => {
 
       const result = await response.json();
       
-      // Se a API retornar paginação, usar os dados paginados
-      // Senão, aplicar filtros e paginação localmente
       let userData: User[];
       if (Array.isArray(result)) {
-        // Resposta sem paginação - aplicar filtros e paginação localmente
         userData = result;
         
-        // Aplicar filtros localmente se necessário
         if (searchTerm && searchTerm.trim()) {
           userData = userData.filter(user => 
             user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -193,7 +164,6 @@ export const useUsers = () => {
           userData = userData.filter(user => user.perfil === filters.perfil);
         }
         
-        // Aplicar ordenação
         userData.sort((a, b) => {
           const sortBy = query.sortBy || 'nome';
           const aValue = String(a[sortBy as keyof User] || '');
@@ -203,17 +173,13 @@ export const useUsers = () => {
           return query.sortOrder === 'desc' ? -comparison : comparison;
         });
         
-        // Aplicar paginação local
         const startIndex = ((query.page || 1) - 1) * (query.limit || 10);
         userData = userData.slice(startIndex, startIndex + (query.limit || 10));
         
-        // Limpar paginação da API
         setApiPagination(null);
       } else {
-        // Resposta com paginação - usar dados da API
         userData = result.data || result;
         
-        // Capturar informações de paginação da API
         if (result.pagination) {
           setApiPagination({
             total: result.pagination.total,
@@ -226,8 +192,7 @@ export const useUsers = () => {
 
       setData(userData);
       
-      // Salvar no cache
-      cache.set(cacheKey, userData, 10 * 60 * 1000, ['users']); // 10 minutos
+      cache.set(cacheKey, userData, 10 * 60 * 1000, ['users']);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
@@ -236,9 +201,6 @@ export const useUsers = () => {
     }
   }, [cache, cacheKey, buildQueryParams, query, filters, searchTerm]);
 
-  /**
-   * Configuração de paginação calculada
-   */
   const pagination = useMemo(() => {
     const currentPage = query.page || 1;
     const currentLimit = query.limit || 10;
@@ -251,68 +213,44 @@ export const useUsers = () => {
     };
   }, [query.page, query.limit, data.length, apiPagination]);
 
-  /**
-   * Configuração de ordenação atual
-   */
   const sorting = useMemo(() => ({
     sortBy: query.sortBy || 'nome',
     sortOrder: query.sortOrder || 'asc'
   }), [query.sortBy, query.sortOrder]);
 
-  /**
-   * Manipula mudança de página
-   */
   const handlePageChange = useCallback((page: number) => {
     setQuery(prev => ({ ...prev, page }));
   }, []);
 
-  /**
-   * Manipula busca
-   */
   const handleSearch = useCallback((search: string) => {
     setSearchTerm(search);
     setQuery(prev => ({ 
       ...prev, 
-      page: 1, // Reset para primeira página
+      page: 1,
       search: search || undefined 
     }));
     
-    // Se a busca foi limpa, invalidar cache para garantir que todos os dados sejam carregados
     if (!search || !search.trim()) {
       cache.invalidateByTag('users');
     }
   }, [cache]);
 
-  /**
-   * Manipula mudança de filtros
-   */
   const handleFilterChange = useCallback((newFilters: Partial<UserFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
-    setQuery(prev => ({ ...prev, page: 1 })); // Reset para primeira página
+    setQuery(prev => ({ ...prev, page: 1 }));
   }, []);
 
-  /**
-   * Manipula mudança de ordenação
-   */
   const handleSortChange = useCallback((sortBy: string, sortOrder: 'asc' | 'desc') => {
     setQuery(prev => ({ ...prev, sortBy, sortOrder }));
   }, []);
 
-  /**
-   * Atualiza os dados (refetch)
-   */
   const refresh = useCallback(() => {
-    // Limpar cache relacionado
     cache.remove(cacheKey);
     cache.invalidateByTag('users');
-    // Refazer as requisições (dados filtrados e todos os usuários)
     fetchAllUsers();
     fetchUsers();
   }, [cache, cacheKey, fetchUsers, fetchAllUsers]);
 
-  /**
-   * Cria um novo usuário
-   */
   const createUser = useCallback(async (userData: CreateUserData): Promise<User | null> => {
     try {
       const response = await fetch('/api/users', {
@@ -330,10 +268,8 @@ export const useUsers = () => {
 
       const newUser = await response.json() as User;
       
-      // Invalidar cache e refrescar dados
       refresh();
       
-      // Toast de sucesso
       toast.success(
         'Usuário criado com sucesso!',
         `${newUser.nome} foi adicionado ao sistema`
@@ -345,7 +281,6 @@ export const useUsers = () => {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao criar usuário';
       setError(errorMessage);
       
-      // Toast de erro
       toast.error(
         'Erro ao criar usuário',
         errorMessage
@@ -355,9 +290,6 @@ export const useUsers = () => {
     }
   }, [refresh, toast]);
 
-  /**
-   * Atualiza um usuário existente
-   */
   const updateUser = useCallback(async (userId: string, userData: UpdateUserData): Promise<boolean> => {
     try {
       const response = await fetch(`/api/users/${userId}`, {
@@ -375,17 +307,14 @@ export const useUsers = () => {
 
       const updatedUser = await response.json() as User;
       
-      // Atualizar cache otimisticamente
       const updatedData = data.map((user: User) => 
         user.id === userId ? updatedUser : user
       );
       setData(updatedData);
       cache.set(cacheKey, updatedData, 10 * 60 * 1000, ['users']);
       
-      // Também limpar outros caches relacionados
       cache.invalidateByTag('users');
       
-      // Toast de sucesso
       toast.success(
         'Usuário atualizado com sucesso!',
         `As informações de ${updatedUser.nome} foram salvas`
@@ -397,7 +326,6 @@ export const useUsers = () => {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar usuário';
       setError(errorMessage);
       
-      // Toast de erro
       toast.error(
         'Erro ao atualizar usuário',
         errorMessage
@@ -407,9 +335,6 @@ export const useUsers = () => {
     }
   }, [data, cache, cacheKey, toast]);
 
-  /**
-   * Remove um usuário
-   */
   const deleteUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
       const response = await fetch(`/api/users/${userId}`, {
@@ -421,18 +346,14 @@ export const useUsers = () => {
         throw new Error(errorData.message || 'Erro ao excluir usuário');
       }
       
-      // Buscar nome do usuário para o toast
       const deletedUser = data.find((user: User) => user.id === userId);
       
-      // Atualizar cache otimisticamente
       const updatedData = data.filter((user: User) => user.id !== userId);
       setData(updatedData);
       cache.set(cacheKey, updatedData, 10 * 60 * 1000, ['users']);
       
-      // Também limpar outros caches relacionados
       cache.invalidateByTag('users');
       
-      // Toast de sucesso
       toast.success(
         'Usuário excluído com sucesso!',
         deletedUser ? `${deletedUser.nome} foi removido do sistema` : 'Usuário removido do sistema'
@@ -444,7 +365,6 @@ export const useUsers = () => {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir usuário';
       setError(errorMessage);
       
-      // Toast de erro
       toast.error(
         'Erro ao excluir usuário',
         errorMessage
@@ -454,9 +374,6 @@ export const useUsers = () => {
     }
   }, [data, cache, cacheKey, toast]);
 
-  /**
-   * Alterar própria senha do usuário
-   */
   const changePassword = useCallback(async (
     userId: string, 
     currentPassword: string, 
@@ -480,7 +397,6 @@ export const useUsers = () => {
         throw new Error(errorData.message || 'Erro ao alterar senha');
       }
 
-      // Toast de sucesso
       toast.success(
         'Senha alterada com sucesso!',
         'Sua senha foi atualizada'
@@ -492,7 +408,6 @@ export const useUsers = () => {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao alterar senha';
       setError(errorMessage);
       
-      // Toast de erro
       toast.error(
         'Erro ao alterar senha',
         errorMessage
@@ -502,9 +417,6 @@ export const useUsers = () => {
     }
   }, [toast]);
 
-  /**
-   * Alterar senha de outro usuário (apenas para administradores)
-   */
   const changeUserPasswordAsAdmin = useCallback(async (
     targetUserId: string,
     adminUserId: string,
@@ -531,7 +443,6 @@ export const useUsers = () => {
 
       const responseData = await response.json();
       
-      // Toast de sucesso
       toast.success(
         'Senha alterada com sucesso!',
         responseData.targetUser ? 
@@ -545,7 +456,6 @@ export const useUsers = () => {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao alterar senha do usuário';
       setError(errorMessage);
       
-      // Toast de erro
       toast.error(
         'Erro ao alterar senha do usuário',
         errorMessage
@@ -555,9 +465,6 @@ export const useUsers = () => {
     }
   }, [toast]);
 
-  /**
-   * Utilitários para filtros rápidos
-   */
   const filterByProfile = useCallback((perfil: PerfilUsuario) => {
     handleFilterChange({ perfil });
   }, [handleFilterChange]);
@@ -570,13 +477,9 @@ export const useUsers = () => {
       page: 1, 
       search: undefined 
     }));
-    // Invalidar cache para forçar nova busca
     cache.invalidateByTag('users');
   }, [cache]);
 
-  /**
-   * Estatísticas calculadas baseadas em TODOS os usuários (não filtrados)
-   */
   const userStats = useMemo(() => {
     if (!allUsers.length) return { 
       total: 0, 
@@ -597,12 +500,10 @@ export const useUsers = () => {
     };
   }, [allUsers]);
 
-  // Effect para carregar TODOS os usuários (estatísticas) na inicialização
   useEffect(() => {
     fetchAllUsers();
   }, [fetchAllUsers]);
 
-  // Effect para carregar dados quando query/filtros mudam
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
@@ -615,7 +516,6 @@ export const useUsers = () => {
     try {
       setLoading(true);
       
-      // Se não tiver dados carregados, busca todos
       let usersToExport = allUsers;
       if (!usersToExport || usersToExport.length === 0) {
         const response = await fetch('/api/users?limit=1000');
@@ -626,14 +526,12 @@ export const useUsers = () => {
         usersToExport = result.data;
       }
       
-      // Remover campos sensíveis
       const sanitizedUsers = usersToExport.map((user: User) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { senha, ...userWithoutPassword } = user;
         return userWithoutPassword;
       });
       
-      // Exportar para CSV
       exportToCSV(sanitizedUsers, {
         filename: 'usuarios-sistema',
         headers: {
@@ -685,7 +583,6 @@ export const useUsers = () => {
   }, [allUsers, toast]);
 
   return {
-    // Dados
     users: data,
     allUsers,
     userStats,
@@ -694,36 +591,29 @@ export const useUsers = () => {
     loading,
     error,
     
-    // Estados
     searchTerm,
     filters,
     query,
     
-    // Ações de navegação/filtro
     handlePageChange,
     handleSearch,
     handleFilterChange,
     handleSortChange,
     
-    // CRUD operations
     createUser,
     updateUser,
     deleteUser,
     
-    // Alteração de senhas
     changePassword,
     changeUserPasswordAsAdmin,
     
-    // Utilitários
     refresh,
     filterByProfile,
     clearFilters,
     
-    // Cache info
     cacheKey,
     hasCache: !!cache.get(cacheKey),
     
-    // Exportação
     exportUsersCSV
   };
 };

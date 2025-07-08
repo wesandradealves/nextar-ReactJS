@@ -5,5 +5,4 @@
  * @version 1.0.0
  */
 
-// Re-export utilitários de perfil
 export * from './perfil';

@@ -40,7 +40,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const allUsers = getUsersData();
         let filteredUsers = [...allUsers];
 
-        // Aplicar busca por nome ou email
         if (search && typeof search === 'string') {
           const searchTerm = search.toLowerCase();
           filteredUsers = filteredUsers.filter(user =>
@@ -49,12 +48,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           );
         }
 
-        // Aplicar filtro por perfil
         if (perfil && typeof perfil === 'string') {
           filteredUsers = filteredUsers.filter(user => user.perfil === perfil);
         }
 
-        // Aplicar ordenação
         if (typeof sortBy === 'string') {
           filteredUsers.sort((a, b) => {
             const aValue = String(a[sortBy as keyof User] || '');
@@ -65,13 +62,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           });
         }
 
-        // Aplicar paginação
         const pageNum = parseInt(page as string, 10);
         const limitNum = parseInt(limit as string, 10);
         const offset = (pageNum - 1) * limitNum;
         const paginatedUsers = filteredUsers.slice(offset, offset + limitNum);
 
-        // Remover senhas dos dados retornados
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const safeUsers = paginatedUsers.map(({ senha: _senha, ...user }) => user);
 
@@ -100,17 +95,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const newUser: CreateUserData = req.body;
         
-        // Validar campos obrigatórios
         if (!newUser.senha) {
           return res.status(400).json({ message: 'Senha é obrigatória' });
         }
         
         const users = getUsersData();
         
-        // Criptografar senha antes de salvar
         const hashedPassword = hashPassword(newUser.senha);
         
-        // Gerar novo ID
         const newId = generateNewId(users.map(u => u.id));
         const userWithId: User = { 
           ...newUser, 
@@ -122,10 +114,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         
         users.push(userWithId);
         
-        // Salvar de volta no arquivo (em produção seria no banco)
         saveUsersData(users);
         
-        // Remover senha da resposta por segurança
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { senha, ...userResponse } = userWithId;
         
@@ -150,18 +140,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(404).json({ message: 'Usuário não encontrado' });
         }
         
-        // Se senha foi fornecida, criptografar
         if (updateData.senha) {
           updateData.senha = hashPassword(updateData.senha);
         }
         
-        // Atualizar usuário
         users[userIndex] = { ...users[userIndex], ...updateData };
         
-        // Salvar de volta
         saveUsersData(users);
         
-        // Remover senha da resposta por segurança
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { senha, ...userResponse } = users[userIndex];
         

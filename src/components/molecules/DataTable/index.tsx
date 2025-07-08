@@ -41,26 +41,6 @@ import {
 } from './styles';
 import type { DataTableProps, TableColumn } from '@/types';
 
-/**
- * Componente molecular DataTable
- * Tabela reutilizável com paginação, ordenação, filtros e ações
- * Totalmente responsiva com layout mobile adaptativo
- * Segue padrão Atomic Design - Molecule
- * 
- * @example
- * ```tsx
- * <DataTable
- *   data={users}
- *   columns={userColumns}
- *   actions={userActions}
- *   pagination={pagination}
- *   onPageChange={handlePageChange}
- *   onSortChange={handleSortChange}
- *   selectable
- *   onSelectionChange={handleSelectionChange}
- * />
- * ```
- */
 export const DataTable = <T extends { id?: string; email?: string; nome?: string; name?: string; title?: string; [key: string]: unknown }>({
   data,
   columns,
@@ -80,22 +60,14 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
   const [searchTerm, setSearchTerm] = useState('');
   const [localSelectedRows, setLocalSelectedRows] = useState<string[]>(selectedRows);
 
-  // Usar seleção controlada ou local
   const currentSelectedRows = onSelectionChange ? selectedRows : localSelectedRows;
 
-  /**
-   * Manipula mudança de ordenação
-   */
   const handleSortChange = useCallback((column: string) => {
     if (!onSortChange) return;
     
     const newOrder = sorting?.sortBy === column && sorting?.sortOrder === 'asc' ? 'desc' : 'asc';
     onSortChange(column, newOrder);
   }, [sorting, onSortChange]);
-
-  /**
-   * Manipula busca
-   */
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
     onSearch?.(term);

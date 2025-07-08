@@ -44,3 +44,7 @@ next-env.d.ts
 
 NEXTAR_DEVELOPMENT_GUIDE.md
 QUICK_CONTEXT_PROMPT.md
+
+.claude
+.vscode 
+sonnet-4.md

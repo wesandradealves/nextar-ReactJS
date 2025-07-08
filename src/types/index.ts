@@ -5,7 +5,6 @@
  * @version 1.0.0
  */
 
-// Tipos centralizados para o sistema de manutenção da Antártica
 import { ChamadoStatus, TipoManutencao, Prioridade, PerfilUsuario } from '@/utils/enums';
 
 /**
@@ -142,7 +141,6 @@ export interface PecaUtilizada {
 }
 
 // ========================================
-// TIPOS PARA FILTROS E CONSULTAS
 // ========================================
 
 /**
@@ -167,7 +165,6 @@ export interface ChamadoFilters {
 }
 
 // ========================================
-// TIPOS PARA DASHBOARD E MÉTRICAS
 // ========================================
 
 /**
@@ -210,7 +207,6 @@ export interface ChamadosPorAgente {
 }
 
 // ========================================
-// TIPOS PARA PERMISSÕES E SEGURANÇA
 // ========================================
 
 /**
@@ -243,7 +239,6 @@ export interface PermissionMap {
 }
 
 // ========================================
-// TIPOS PARA FORMULÁRIOS
 // ========================================
 
 /**

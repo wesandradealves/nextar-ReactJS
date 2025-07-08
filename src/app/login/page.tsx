@@ -35,7 +35,6 @@ export default function Login() {
     ogTitle: `Nextar - Login`
   });
 
-  // Configuração dos campos do formulário
   const loginFields: FormFieldConfig[] = [
     {
       id: 'email',
@@ -60,17 +59,13 @@ export default function Login() {
     }
   ];
 
-  /**
-   * Função para processar o envio do formulário
-   */
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       setLoginError('');
       setLoading(true);
       
       await login(data.email, data.password, rememberMe);
-    } catch (error) {
-      console.error('❌ Erro no login do formulário:', error);
+    } catch {
       setLoginError('Credenciais inválidas. Verifique seu email e senha.');
     } finally {
       setLoading(false);
@@ -91,6 +86,7 @@ export default function Login() {
             submitText="Entrar"
             validateOnBlur
             validateOnChange={false}
+            className="[&_button[type='submit']]:w-full"
           >
             <CheckboxGroup className="flex items-center mb-4">
               <Checkbox

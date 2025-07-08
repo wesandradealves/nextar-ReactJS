@@ -116,7 +116,7 @@
     "dataAtualizacao": "2025-07-01T04:23:10.735Z"
   },
   {
-    "tipo": "preventiva",
+    "tipo": "corretiva",
     "prioridade": "baixa",
     "titulo": "Teste de chamado",
     "descricao": "Chamado teste",
@@ -131,10 +131,10 @@
     "dataExecucao": "2025-07-03",
     "pecasUtilizadas": [
       {
-        "nome": "teste",
-        "quantidade": 3
+        "nome": "Teste",
+        "quantidade": 2
       }
     ],
-    "dataAtualizacao": "2025-07-02T06:45:09.816Z"
+    "dataAtualizacao": "2025-07-07T21:09:00.234Z"
   }
 ]

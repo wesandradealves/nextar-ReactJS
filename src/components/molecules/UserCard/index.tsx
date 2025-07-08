@@ -116,10 +116,7 @@ export const UserCard = ({
             effect="blur"
             width="100%"
             height="100%"
-            style={{ 
-              borderRadius: '50%',
-              objectFit: 'cover'
-            }}
+            className="rounded-full object-cover"
           />
         ) : (
           getInitials(name)

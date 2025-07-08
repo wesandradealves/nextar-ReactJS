@@ -22,34 +22,26 @@ export interface ExportCSVOptions {
  */
 export function exportToCSV<T extends Record<string, unknown>>(data: T[], options: ExportCSVOptions): void {
   if (!data || !data.length) {
-    console.warn('Nenhum dado para exportar');
     return;
   }
 
-  // Extrair cabeçalhos e formatadores
   const { filename, headers, formatters = {} } = options;
 
-  // Criar linha de cabeçalho
   const headerRow = Object.values(headers).join(',');
 
-  // Criar linhas de dados
   const rows = data.map(item => {
     return Object.keys(headers)
       .map(key => {
-        // Obter valor, aplicando formatador se existir
         let value = item[key];
 
-        // Aplicar formatador específico se disponível
         if (formatters[key]) {
           value = formatters[key](value);
         } else if (value === null || value === undefined) {
           value = '';
         } else if (typeof value === 'object') {
-          // Para objetos aninhados, converter para JSON string
           value = JSON.stringify(value);
         }
 
-        // Escapar vírgulas e aspas
         const stringValue = String(value);
         if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
           return `"${stringValue.replace(/"/g, '""')}"`;
@@ -59,15 +51,12 @@ export function exportToCSV<T extends Record<string, unknown>>(data: T[], option
       .join(',');
   });
 
-  // Combinar todas as linhas
   const csvContent = [headerRow, ...rows].join('\n');
 
-  // Criar Blob e link de download
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   
-  // Configurar e simular clique no link
   link.setAttribute('href', url);
   link.setAttribute('download', `${filename}.csv`);
   link.style.visibility = 'hidden';

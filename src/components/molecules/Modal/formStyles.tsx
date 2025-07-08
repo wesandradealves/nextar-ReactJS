@@ -1,44 +1,13 @@
 import styled from 'styled-components';
 
-/**
- * Estilos padronizados para modais de formulário
- * Usado por todas as modais de CRUD para consistência visual
- * 
- * @version 3.0.0
- * @description
- * Migrado para o padrão híbrido Tailwind + styled-components.
- * Mantido apenas o essencial como styled-components para
- * comportamentos dinâmicos, o resto migrado para Tailwind.
- */
-
-/**
- * Container principal do formulário
- * Convertido para Tailwind
- */
 export const FormSection = styled.div``;
 
-/**
- * Grupo de campos relacionados
- * Convertido para Tailwind
- */
 export const FieldGroup = styled.div``;
 
-/**
- * Título de seção dentro do formulário
- * Convertido para Tailwind
- */
 export const SectionTitle = styled.h4``;
 
-/**
- * Container genérico para seleções (perfil, categoria, etc)
- * Convertido para Tailwind
- */
 export const SelectionContainer = styled.div``;
 
-/**
- * Opção selecionável genérica
- * Mantido como styled-component para suporte a props dinâmicas de cor
- */
 export const SelectionOption = styled.div<{ 
   $selected: boolean; 
   $color?: string;
@@ -57,16 +26,8 @@ export const SelectionOption = styled.div<{
   }
 `;
 
-/**
- * Container para radio button customizado
- * Convertido para Tailwind
- */
 export const RadioContainer = styled.div``;
 
-/**
- * Radio button customizado
- * Mantido como styled-component para suporte a props dinâmicas de cor
- */
 export const CustomRadio = styled.div<{ $selected: boolean; $color?: string }>`
   border-color: ${({ $selected, $color }) => 
     $selected ? ($color || '#3b82f6') : '#d1d5db'
@@ -86,28 +47,12 @@ export const CustomRadio = styled.div<{ $selected: boolean; $color?: string }>`
   `}
 `;
 
-/**
- * Label principal de uma opção
- * Convertido para Tailwind
- */
 export const OptionLabel = styled.div``;
 
-/**
- * Descrição/subtexto de uma opção
- * Convertido para Tailwind
- */
 export const OptionDescription = styled.div``;
 
-/**
- * Container para toggle switches
- * Convertido para Tailwind
- */
 export const ToggleContainer = styled.div``;
 
-/**
- * Toggle switch estilizado
- * Mantido como styled-component para posicionamento
- */
 export const ToggleSwitch = styled.label`
   position: relative;
   display: inline-block;
@@ -115,16 +60,8 @@ export const ToggleSwitch = styled.label`
   height: 24px;
 `;
 
-/**
- * Input do toggle (oculto)
- * Convertido para Tailwind, mantendo apenas styled-component vazio para compatibilidade
- */
 export const ToggleInput = styled.input``;
 
-/**
- * Slider do toggle
- * Mantido apenas para a transição do indicador baseada no estado
- */
 export const ToggleSlider = styled.span<{ $checked: boolean }>`
   position: absolute;
   top: 0;
@@ -149,106 +86,38 @@ export const ToggleSlider = styled.span<{ $checked: boolean }>`
   }
 `;
 
-/**
- * Container para informações de toggle
- * Convertido para Tailwind
- */
 export const ToggleInfo = styled.div``;
 
-/**
- * Título do toggle
- * Convertido para Tailwind
- */
 export const ToggleTitle = styled.div``;
 
-/**
- * Texto do toggle
- * Convertido para Tailwind
- */
 export const ToggleText = styled.div``;
 
-/**
- * Container para textarea customizada
- * Convertido para Tailwind
- */
 export const TextareaContainer = styled.div``;
 
-/**
- * Label para textarea
- * Convertido para Tailwind
- */
 export const TextareaLabel = styled.label``;
 
-/**
- * Texto de ajuda para textarea
- * Convertido para Tailwind
- */
 export const TextareaHelpText = styled.div``;
 
-/**
- * Container para lista de itens
- * Convertido para Tailwind
- */
 export const ItemListContainer = styled.div``;
 
-/**
- * Item individual na lista
- * Convertido para Tailwind
- */
 export const ListItem = styled.div``;
 
-/**
- * Conteúdo do item da lista
- * Convertido para Tailwind
- */
 export const ListItemContent = styled.div``;
 
-/**
- * Título do item da lista
- * Convertido para Tailwind
- */
 export const ListItemTitle = styled.div``;
 
-/**
- * Subtítulo do item da lista
- * Convertido para Tailwind
- */
 export const ListItemSubtitle = styled.div``;
 
-/**
- * Ações do item da lista
- * Convertido para Tailwind
- */
 export const ListItemActions = styled.div``;
 
-/**
- * Container para formulário inline
- * Convertido para Tailwind
- */
 export const InlineFormContainer = styled.div``;
 
-/**
- * Grid de campos para formulários inline
- * Convertido para Tailwind
- */
 export const InlineFieldGrid = styled.div``;
 
-/**
- * Container responsivo para mobile
- * Convertido para Tailwind, mantendo apenas styled-component vazio para compatibilidade
- */
 export const ResponsiveContainer = styled.div``;
 
-/**
- * Container para tags/badges
- * Convertido para Tailwind
- */
 export const TagContainer = styled.div``;
 
-/**
- * Tag/Badge individual
- * Mantido apenas para variação dinâmica de cores e variantes
- */
 export const Tag = styled.span<{ $color?: string; $variant?: 'solid' | 'outline' }>`
   ${({ $color = '#3b82f6', $variant = 'solid' }) => 
     $variant === 'solid' 
@@ -265,16 +134,8 @@ export const Tag = styled.span<{ $color?: string; $variant?: 'solid' | 'outline'
   }
 `;
 
-/**
- * Container para status indicators
- * Convertido para Tailwind
- */
 export const StatusContainer = styled.div``;
 
-/**
- * Indicador de status
- * Mantido apenas para cores dinâmicas baseadas no status
- */
 export const StatusIndicator = styled.div<{ $status: 'success' | 'warning' | 'error' | 'info' }>`
   ${({ $status }) => {
     switch ($status) {
@@ -287,46 +148,18 @@ export const StatusIndicator = styled.div<{ $status: 'success' | 'warning' | 'er
   }}
 `;
 
-/**
- * Texto do status
- * Convertido para Tailwind
- */
 export const StatusText = styled.span``;
 
-/**
- * Container para divider/separador
- * Mantido apenas para margens dinâmicas
- */
 export const Divider = styled.div<{ $margin?: string }>`
   margin: ${({ $margin }) => $margin || '24px 0'};
 `;
 
-/**
- * Container para footer de modal padronizado
- * Convertido para Tailwind
- */
 export const ModalFooter = styled.div``;
 
-/**
- * Container para loading state
- * Convertido para Tailwind
- */
 export const LoadingContainer = styled.div``;
 
-/**
- * Container para empty state
- * Convertido para Tailwind
- */
 export const EmptyContainer = styled.div``;
 
-/**
- * Título do empty state
- * Convertido para Tailwind
- */
 export const EmptyTitle = styled.h3``;
 
-/**
- * Texto do empty state
- * Convertido para Tailwind
- */
 export const EmptyText = styled.p``;

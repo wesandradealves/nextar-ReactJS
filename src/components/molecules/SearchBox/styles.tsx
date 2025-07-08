@@ -1,27 +1,11 @@
 import styled from 'styled-components';
 
-/**
- * Container principal do SearchBox
- * Convertido para Tailwind
- */
 export const SearchContainer = styled.div``;
 
-/**
- * Container do input de busca
- * Convertido para Tailwind
- */
 export const SearchInput = styled.div``;
 
-/**
- * Container dos botões de ação
- * Convertido para Tailwind
- */
 export const SearchActions = styled.div``;
 
-/**
- * Botão de ícone (busca/limpar)
- * Completamente convertido para Tailwind
- */
 export const IconButton = styled.button``;
 
 export const SearchIcon = () => (
