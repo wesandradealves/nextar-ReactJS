@@ -37,4 +37,6 @@ export const LoadingSpinner = styled.div`
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: ${spin} 1s linear infinite;
+  box-sizing: border-box;
+  display: inline-block;
 `;

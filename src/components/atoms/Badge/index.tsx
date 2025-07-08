@@ -3,23 +3,6 @@
 import { BadgeElement } from './styles';
 import type { BadgeProps } from './types';
 
-/**
- * Componente atômico Badge
- * Tag/etiqueta para status, categorias e indicadores
- * Segue padrão Atomic Design
- * 
- * @example
- * ```tsx
- * // Badge básico
- * <Badge>Novo</Badge>
- * 
- * // Badge de status
- * <Badge variant="success">Concluído</Badge>
- * 
- * // Badge ponto
- * <Badge variant="danger" dot />
- * ```
- */
 export const Badge = ({
   children,
   variant = 'default',
@@ -28,7 +11,6 @@ export const Badge = ({
   className,
   onClick
 }: BadgeProps) => {
-  // Color variants
   const variantClasses = {
     primary: 'bg-blue-500 text-white',
     secondary: 'bg-gray-500 text-white',
@@ -38,7 +20,6 @@ export const Badge = ({
     default: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
   };
 
-  // Size variants
   const sizeClasses = dot 
     ? {
         small: 'w-2 h-2',

@@ -2,22 +2,6 @@ import React from 'react';
 import { TextareaContainer, StyledTextarea, HelperText, CharacterCount } from './styles';
 import type { TextareaProps } from './types';
 
-/**
- * Componente atômico Textarea
- * Campo de texto multilinha reutilizável
- * Segue padrão Atomic Design - Atom
- * 
- * @example
- * ```tsx
- * <Textarea
- *   value={description}
- *   onChange={setDescription}
- *   placeholder="Digite a descrição"
- *   rows={4}
- *   maxLength={500}
- * />
- * ```
- */
 export default function Textarea({
   value,
   onChange,
