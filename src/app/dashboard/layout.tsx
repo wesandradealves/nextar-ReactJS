@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-screen flex flex-col">
       <HeaderComponent
         userName={headerUserName}
         userEmail={headerUserEmail}
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         onLogout={handleLogout}
         onProfileClick={handleProfileClick}
       />
-      <main style={{ flex: 1 }}>
+      <main className="flex-1 pt-[70px]">
         {children}
       </main>
     </div>

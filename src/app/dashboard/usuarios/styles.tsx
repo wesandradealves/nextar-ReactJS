@@ -24,12 +24,12 @@ export const ErrorContainer = styled.div``;
 export const MobileOnlyActions = styled.div``;
 export const DesktopOnlyActions = styled.div``;
 export const ClickableStatus = styled.span<{ 
-  isActive: boolean; 
-  isClickable: boolean; 
+  $isActive: boolean; 
+  $isClickable: boolean; 
 }>`
-  color: ${props => props.isActive ? '#10b981' : '#ef4444'};
-  cursor: ${props => props.isClickable ? 'pointer' : 'default'};
+  color: ${props => props.$isActive ? '#10b981' : '#ef4444'};
+  cursor: ${props => props.$isClickable ? 'pointer' : 'default'};
 `;
-export const StatusDot = styled.span<{ isActive: boolean }>`
-  background-color: ${props => props.isActive ? '#10b981' : '#ef4444'};
+export const StatusDot = styled.span<{ $isActive: boolean }>`
+  background-color: ${props => props.$isActive ? '#10b981' : '#ef4444'};
 `;

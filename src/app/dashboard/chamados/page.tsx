@@ -14,38 +14,15 @@ import { Container, FiltersContainer } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
 
 /**
- * Página de Listagem de Chamados de Manutenção
- * Módulo completo para visualização e gestão de chamados do sistema
- * Inclui filtros, permissões por perfil e operações CRUD
- * 
- * @description
- * Esta página permite:
- * - Listar chamados com filtros avançados (tipo, status, agente, busca)
- * - Visualizar chamados baseado no perfil do usuário
- * - Criar novos chamados (Pesquisadores e Gestores)
- * - Navegar para detalhes e edição de chamados
- * - Cache otimizado para performance
- * 
  * @permissions
  * - AGENTE: Visualiza apenas chamados atribuídos a ele
  * - PESQUISADOR: Visualiza todos os chamados + pode criar novos
  * - GESTAO: Visualiza todos + filtro por agente + pode criar novos
- * 
- * @example
- * ```tsx
- * // Navegação automática baseada no perfil
- * // Agente vê apenas seus chamados
- * // Pesquisador/Gestão veem todos
- * <ChamadosPage />
- * ```
- * 
- * @author Sistema NextAR
- * @version 1.0.0
  */
 export default function ChamadosPage() {
   const { user } = useAuth();
   const { usuarios, equipamentos } = useEntities();
-  const { setores } = useSetores(); // Usar hook específico para setores
+  const { setores } = useSetores();
 
   useMetadata({
     title: `Nextar - Chamados`,
@@ -63,12 +40,9 @@ export default function ChamadosPage() {
     exportChamadosCSV
   } = useChamados(user);
 
-  // Estados do modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingChamado, setEditingChamado] = useState<Chamado | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
-
-  // Estado de ordenação
   const [sorting, setSorting] = useState<{
     sortBy: string;
     sortOrder: 'asc' | 'desc';
@@ -77,7 +51,9 @@ export default function ChamadosPage() {
     sortOrder: 'desc'
   });
 
-  // Filtrar agentes com verificação de segurança e otimização
+  /**
+   * @decorator @memo - Filtrar agentes com verificação de segurança
+   */
   const usuariosArray = useMemo(() => {
     if (Array.isArray(usuarios)) {
       return usuarios;
@@ -91,7 +67,6 @@ export default function ChamadosPage() {
   }, [usuariosArray]);
 
   /**
-   * Handlers do modal seguindo padrão do UserModal
    * @decorator @modal - Funções de controle de modal
    */
   const handleCreateChamado = useCallback(() => {
@@ -140,9 +115,7 @@ export default function ChamadosPage() {
   }, [createChamado, updateChamado, editingChamado, user]);
 
   /**
-   * Handler para deletar chamado
    * @decorator @confirm - Deve incluir confirmação antes de deletar
-   * @param {Chamado} chamado - Chamado a ser deletado
    */
   const handleDeleteChamado = useCallback(async (chamado: Chamado) => {
     if (window.confirm(`Tem certeza que deseja excluir o chamado #${chamado.id}?`)) {
@@ -150,11 +123,6 @@ export default function ChamadosPage() {
     }
   }, [deleteChamado]);
 
-  /**
-   * Handler para mudança de ordenação
-   * @param {string} column - Nome da coluna para ordenação
-   * @param {'asc' | 'desc'} order - Direção da ordenação
-   */
   const handleSortChange = useCallback((column: string, order: 'asc' | 'desc') => {
     setSorting({ sortBy: column, sortOrder: order });
   }, []);
@@ -172,17 +140,14 @@ export default function ChamadosPage() {
       let valueA: unknown = a[sortBy as keyof Chamado];
       let valueB: unknown = b[sortBy as keyof Chamado];
       
-      // Tratamento especial para datas
       if (sortBy === 'dataAbertura') {
         valueA = valueA ? new Date(valueA as string).getTime() : 0;
         valueB = valueB ? new Date(valueB as string).getTime() : 0;
       }
       
-      // Tratamento para strings
       if (typeof valueA === 'string') valueA = valueA.toLowerCase();
       if (typeof valueB === 'string') valueB = valueB.toLowerCase();
       
-      // Comparação
       let comparison = 0;
       if ((valueA as string | number) > (valueB as string | number)) comparison = 1;
       if ((valueA as string | number) < (valueB as string | number)) comparison = -1;
@@ -194,16 +159,7 @@ export default function ChamadosPage() {
   }, [chamados, sorting]);
 
   /**
-   * Renderiza badge de status do chamado
    * @decorator @memo - Componente memoizado para performance
-   * @param {string} status - Status do chamado (aberto, em_progresso, concluido)
-   * @returns {JSX.Element} Badge colorido com status
-   * @example
-   * ```tsx
-   * getStatusBadge('aberto') // Badge laranja "Aberto"
-   * getStatusBadge('em_progresso') // Badge azul "Em Progresso"
-   * getStatusBadge('concluido') // Badge verde "Concluído"
-   * ```
    */
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -226,15 +182,7 @@ export default function ChamadosPage() {
   };
 
   /**
-   * Renderiza badge do tipo de manutenção
    * @decorator @readonly - Função pura, sem efeitos colaterais
-   * @param {string} tipo - Tipo da manutenção (corretiva, preventiva)
-   * @returns {JSX.Element} Badge colorido com tipo
-   * @example
-   * ```tsx
-   * getTipoBadge('corretiva') // Badge vermelho "Corretiva"
-   * getTipoBadge('preventiva') // Badge azul "Preventiva"
-   * ```
    */
   const getTipoBadge = (tipo: string) => {
     const variants = {
@@ -255,22 +203,7 @@ export default function ChamadosPage() {
   };
 
   /**
-   * Renderiza badge de prioridade do chamado
    * @decorator @performance - Otimizado para re-renderizações frequentes
-   * @param {string} prioridade - Prioridade do chamado (alta, media, baixa)
-   * @returns {JSX.Element} Badge colorido com prioridade
-   * @example
-   * ```tsx
-   * getPrioridadeBadge('alta') // Badge vermelho "Alta"
-   * getPrioridadeBadge('media') // Badge laranja "Média"
-   * getPrioridadeBadge('baixa') // Badge verde "Baixa"
-   * ```
-   */
-
-  /**
-   * Renderiza badge de prioridade do chamado
-   * @param {string} prioridade - Prioridade do chamado (alta, media, baixa)
-   * @returns {JSX.Element} Badge colorido com prioridade
    */
   const getPrioridadeBadge = (prioridade: string) => {
     const variants = {
@@ -293,11 +226,7 @@ export default function ChamadosPage() {
   };
 
   /**
-   * Busca e retorna o nome do usuário pelo ID
    * @decorator @memoize - Cache interno para evitar lookups repetidos
-   * @param {string} userId - ID do usuário
-   * @returns {string} Nome do usuário ou 'N/A' se não encontrado
-   * @throws {never} Falhas silenciosas com fallback para 'N/A'
    */
   const getUserName = (userId: string) => {
     const usuario = usuariosArray.find((u: User) => u.id === userId);
@@ -305,11 +234,7 @@ export default function ChamadosPage() {
   };
 
   /**
-   * Busca e retorna o nome do setor pelo ID
    * @decorator @safeLookup - Lookup protegido contra arrays undefined/null
-   * @param {string} setorId - ID do setor
-   * @returns {string} Nome do setor ou 'N/A' se não encontrado
-   * @throws {never} Falhas silenciosas com fallback para 'N/A'
    */
   const getSetorName = (setorId: string) => {
     if (!Array.isArray(setores)) return 'N/A';
@@ -366,7 +291,6 @@ export default function ChamadosPage() {
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         
-        // Mostrar formato relativo para datas recentes
         if (diffDays === 0) {
           if (diffHours === 0) {
             const diffMinutes = Math.floor(diffMs / (1000 * 60));
@@ -379,7 +303,6 @@ export default function ChamadosPage() {
           return `${diffDays} dias atrás`;
         }
         
-        // Formato padrão para datas mais antigas
         return dateObj.toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: '2-digit',
@@ -421,7 +344,6 @@ export default function ChamadosPage() {
       key: 'descricao',
       title: 'Descrição',
       render: (value: unknown, item: Chamado) => {
-        // Se tem título, mostra descrição separada; senão mostra o mesmo conteúdo
         const desc = (item.titulo ? item.descricao : (item.descricao || 'N/A')) as string;
         return (
           <span title={desc}>
@@ -458,9 +380,6 @@ export default function ChamadosPage() {
     }
   ];
 
-  /**
-   * Ações disponíveis para cada chamado
-   */
   const actions: TableAction<Chamado>[] = useMemo(() => {
     const chamadoActions: TableAction<Chamado>[] = [
       {
@@ -472,7 +391,6 @@ export default function ChamadosPage() {
       }
     ];
 
-    // Adicionar ação de editar se o usuário tem permissão
     chamadoActions.push({
       key: 'edit',
       title: 'Editar',
@@ -486,7 +404,6 @@ export default function ChamadosPage() {
       )
     });
 
-    // Adicionar ação de excluir se o usuário tem permissão
     chamadoActions.push({
       key: 'delete',
       title: 'Excluir',
@@ -503,27 +420,17 @@ export default function ChamadosPage() {
   }, [user, handleViewChamado, handleEditChamado, handleDeleteChamado]);
 
   /**
-   * Verifica se o usuário atual pode criar chamados
    * @decorator @authorization - Verifica permissões baseadas no perfil
-   * @constant {boolean} canCreateChamado - True se PESQUISADOR ou GESTAO
-   * @example
-   * ```tsx
-   * if (canCreateChamado) {
-   *   return <Button>Novo Chamado</Button>
-   * }
-   * ```
    */
   const canCreateChamado = user?.perfil === PerfilUsuario.PESQUISADOR || user?.perfil === PerfilUsuario.GESTAO;
   
   /**
-   * Verifica se o usuário atual pode exportar chamados
-   * @decorator @authorization - Verifica permissões baseadas no perfil
-   * @constant {boolean} canExportChamados - True apenas se GESTAO
+   * @decorator @authorization
    */
   const canExportChamados = user?.perfil === PerfilUsuario.GESTAO;
 
   return (
-    <Container className="flex flex-col gap-6 px-6 min-h-screen">
+    <Container className="flex flex-col max-w-[95vw] mx-auto gap-6 px-6 min-h-screen">
       <PageHeader
         title="Gestão de Chamados"
         subtitle="Gerencie chamados de manutenção do sistema."
@@ -605,7 +512,6 @@ export default function ChamadosPage() {
         emptyMessage="Nenhum chamado encontrado"
       />
 
-      {/* Modal de criação/edição/visualização de chamados */}
       <ChamadoModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

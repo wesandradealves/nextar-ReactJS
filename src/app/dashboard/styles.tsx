@@ -8,10 +8,6 @@ export const UserGreeting = styled.span``;
 export const UserProfile = styled.span``;
 export const LogoutButton = styled.button``;
 export const Content = styled.main``;
-// These components are now using Tailwind directly in JSX
-// export const WelcomeSection = styled.section``;
-// export const WelcomeTitle = styled.h2``;
-// export const WelcomeText = styled.p``;
 export const StatsGrid = styled.div``;
 export const StatCard = styled.div``;
 export const StatTitle = styled.h3``;
