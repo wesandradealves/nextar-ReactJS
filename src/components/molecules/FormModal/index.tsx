@@ -97,12 +97,12 @@ export const FormModal = ({
           </div>
         )}
         
-        <FormSection className="flex flex-col gap-6">
+        <FormSection className="space-y-6">
           {children}
         </FormSection>
 
         {showFooter && (
-          <ModalFooter className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-200 sm:flex-row xs:flex-col xs:gap-2 xs:[&>button]:w-full">
+          <ModalFooter className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 sm:flex-row flex-col sm:gap-3 gap-2 [&>button]:w-full sm:[&>button]:w-auto">
             {customFooter || (
               <>
                 <Button

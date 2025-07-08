@@ -82,8 +82,7 @@ export const FormSelection = ({
 
   return (
     <SelectionContainer 
-      className={`flex flex-col gap-2 ${className || ''}`}
-      style={{ opacity: disabled ? 0.7 : 1 }}
+      className={`flex flex-col gap-2 ${disabled ? 'opacity-70' : ''} ${className || ''}`}
     >
       {options.map((option) => {
         const selected = isSelected(option.id);
@@ -113,7 +112,6 @@ export const FormSelection = ({
               borderColor: selected ? optionColor : '#e5e7eb',
               backgroundColor: selected ? `${optionColor}08` : 'white',
               ...(selected && { boxShadow: `0 0 0 1px ${optionColor}10` }),
-              ...(isDisabled && { opacity: 0.5, cursor: 'not-allowed' })
             }}
           >
             <RadioContainer className="flex items-center gap-3">
@@ -121,10 +119,7 @@ export const FormSelection = ({
                 <CustomRadio
                   $selected={selected}
                   $color={optionColor}
-                  className="w-4 h-4 flex-shrink-0 flex items-center justify-center transition-all"
-                  style={{
-                    borderRadius: multiple ? '4px' : '50%'
-                  }}
+                  className={`w-4 h-4 flex-shrink-0 flex items-center justify-center transition-all ${multiple ? 'rounded' : 'rounded-full'}`}
                 />
               )}
               
