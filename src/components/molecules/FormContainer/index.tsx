@@ -310,16 +310,19 @@ export default function FormContainer({
     <StyledFormContainer
       $isSubmitting={formState.isSubmitting}
       onSubmit={handleSubmit}
-      className={className}
+      className={`space-y-4 w-full ${className || ''}`}
       id={formId}
     >
-      <StyledValidationProgress style={{ '--progress': `${validationProgress}%` } as React.CSSProperties} />
+      <StyledValidationProgress 
+        style={{ '--progress': `${validationProgress}%` } as React.CSSProperties} 
+        className="absolute top-[-2px] left-0 right-0 h-[2px] rounded-[1px] opacity-80"
+      />
       
-      <StyledFormFields>
+      <StyledFormFields className="space-y-4">
         {fields.map(fieldConfig => (
           <StyledValidationWrapper
             key={fieldConfig.id}
-            className={formState.fields[fieldConfig.id]?.error ? 'field-error' : ''}
+            className={`relative ${formState.fields[fieldConfig.id]?.error ? 'field-error' : ''}`}
           >
             <FormField
               id={fieldConfig.id}
@@ -338,17 +341,21 @@ export default function FormContainer({
       </StyledFormFields>
 
       {children && (
-        <StyledFormContent>
+        <StyledFormContent className="space-y-4">
           {children}
         </StyledFormContent>
       )}
 
-      <StyledFormActions $centered={showReset}>
+      <StyledFormActions 
+        $centered={showReset}
+        className={`flex gap-3 items-center border-t border-gray-200 dark:border-gray-700 pt-4 sm:flex-row flex-col sm:gap-3 gap-2 justify-center sm:justify-center [&>button]:w-full sm:[&>button]:w-auto sm:[&>button]:flex-shrink-0`}
+      >
         {showReset && (
           <Button
             variant="outline"
             onClick={handleReset}
             disabled={formState.isSubmitting || !formState.isDirty}
+            className="sm:flex-shrink-0"
           >
             {resetText}
           </Button>
@@ -358,7 +365,7 @@ export default function FormContainer({
           <Button
             type="submit"
             variant="primary"
-            className='w-full'
+            className="w-full"
             disabled={submitDisabled || formState.isSubmitting || !formState.isValid}
             loading={formState.isSubmitting}
           >

@@ -110,7 +110,6 @@ export default function CacheDebug({
     return () => clearInterval(interval);
   }, [cache, enabled]);
 
-  // Log da configuração do cache no console (apenas uma vez)
   useEffect(() => {
     if (enabled && process.env.NODE_ENV === 'development') {
       console.log('🔧 Cache Debug ativado', {

@@ -43,7 +43,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const updateData: UpdateChamadoData = req.body;
 
-        // Validar campos obrigatórios se estão sendo atualizados
         if (updateData.descricao !== undefined && !updateData.descricao.trim()) {
           return res.status(400).json({ message: 'Descrição não pode estar vazia' });
         }
@@ -51,7 +50,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(400).json({ message: 'Setor é obrigatório' });
         }
 
-        // Atualizar chamado
         const updatedChamado: Chamado = {
           ...chamados[chamadoIndex],
           ...updateData,

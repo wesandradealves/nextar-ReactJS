@@ -44,12 +44,25 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({
   return (
     <SelectElement
       ref={ref}
-      className={className}
+      className={`
+        w-full py-3 px-4 pr-10
+        text-sm font-normal
+        border-2 rounded-lg
+        ${hasError ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'}
+        ${props.disabled ? 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 cursor-pointer'}
+        hover:border-${hasError ? 'red-600' : 'gray-300 dark:border-gray-600'}
+        focus:outline-none focus:ring-2 focus:ring-opacity-50 
+        ${hasError ? 'focus:ring-red-300 focus:border-red-500' : 'focus:ring-blue-300 focus:border-blue-500'}
+        transition-all duration-200 shadow-sm
+        appearance-none
+        ${props.value === '' ? 'text-gray-500 dark:text-gray-400' : ''}
+        ${className || ''}
+      `}
       $hasError={hasError}
       {...props}
     >
       {placeholder && (
-        <option value="" disabled={!props.value && !props.defaultValue}>
+        <option value="" disabled={!props.value && !props.defaultValue} className="text-gray-500 dark:text-gray-400">
           {placeholder}
         </option>
       )}
@@ -60,6 +73,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({
           key={option.value} 
           value={option.value}
           disabled={option.disabled}
+          className={`
+            py-2 px-3
+            ${option.disabled ? 'text-gray-400' : 'text-gray-800 dark:text-gray-200'}
+            disabled:text-gray-400
+            checked:bg-blue-500 checked:text-white
+          `}
         >
           {option.label}
         </option>

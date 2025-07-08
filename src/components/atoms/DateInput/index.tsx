@@ -1,22 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '../Input';
-
-export interface DateInputProps {
-  /** Valor da data em formato ISO (yyyy-mm-dd) ou Date */
-  value?: string | Date;
-  /** Função chamada quando a data muda */
-  onChange?: (value: string) => void;
-  /** Placeholder do input */
-  placeholder?: string;
-  /** Se o input está desabilitado */
-  disabled?: boolean;
-  /** Se o input é obrigatório */
-  required?: boolean;
-  /** Data mínima permitida */
-  min?: string;
-  /** Data máxima permitida */
-  max?: string;
-}
+import { DateInputProps } from './types';
 
 /**
  * Componente de input de data brasileiro
@@ -31,15 +15,17 @@ export interface DateInputProps {
  * />
  * ```
  */
-export const DateInput: React.FC<DateInputProps> = ({
+export const DateInput = ({
   value,
   onChange,
   placeholder = 'Selecione a data',
   disabled = false,
   required = false,
   min,
-  max
-}) => {
+  max,
+  hasError = false,
+  className
+}: DateInputProps) => {
   const [inputValue, setInputValue] = useState('');
 
   // Converter valor para formato ISO quando necessário
@@ -86,10 +72,13 @@ export const DateInput: React.FC<DateInputProps> = ({
       required={required}
       min={min}
       max={max}
-      style={{
-        fontFamily: 'inherit',
-        colorScheme: 'light', // Força tema claro do datepicker
-      }}
+      hasError={hasError}
+      className={`
+        font-sans
+        [&::-webkit-calendar-picker-indicator]:dark:filter 
+        [&::-webkit-calendar-picker-indicator]:dark:invert
+        ${className || ''}
+      `}
     />
   );
 };

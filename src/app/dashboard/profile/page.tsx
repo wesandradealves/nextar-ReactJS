@@ -115,53 +115,82 @@ export default function ProfilePage() {
   }
 
   return (
-    <ProfileContainer>
-      <ProfileHeader>
-        <ProfileTitle>Meu Perfil</ProfileTitle>
-        <ProfileDescription>
+    <ProfileContainer className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <ProfileHeader className="mb-6">
+        <ProfileTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Meu Perfil</ProfileTitle>
+        <ProfileDescription className="text-gray-600 dark:text-gray-400">
           Gerencie suas informações pessoais e configurações de segurança
         </ProfileDescription>
       </ProfileHeader>
 
       {showSuccess && (
-        <SuccessMessage>
-          ✅ Perfil atualizado com sucesso!
+        <SuccessMessage className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">✓</span>
+              </div>
+            </div>
+            <div className="text-green-700 dark:text-green-400 font-medium">
+              Perfil atualizado com sucesso!
+            </div>
+          </div>
         </SuccessMessage>
       )}
 
       {showPasswordSuccess && (
-        <SuccessMessage>
-          ✅ Senha alterada com sucesso!
+        <SuccessMessage className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">✓</span>
+              </div>
+            </div>
+            <div className="text-green-700 dark:text-green-400 font-medium">
+              Senha alterada com sucesso!
+            </div>
+          </div>
         </SuccessMessage>
       )}
 
-      <ProfileContent>
+      <ProfileContent className="space-y-8">
         {/* Informações básicas do usuário (apenas leitura) */}
-        <ProfileSection>
-          <SectionTitle>Informações da Conta</SectionTitle>
-          <SectionDescription>
+        <ProfileSection className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <SectionTitle className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Informações da Conta</SectionTitle>
+          <SectionDescription className="text-gray-600 dark:text-gray-400 mb-4">
             Informações básicas da sua conta no sistema
           </SectionDescription>
           
-          <ProfileInfo>
-            <ProfileInfoItem>
-              <ProfileInfoLabel>ID:</ProfileInfoLabel>
-              <ProfileInfoValue>{user.id}</ProfileInfoValue>
+          <ProfileInfo className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ProfileInfoItem className="flex flex-col space-y-1">
+              <ProfileInfoLabel className="text-sm font-medium text-gray-500 dark:text-gray-400">ID:</ProfileInfoLabel>
+              <ProfileInfoValue className="text-sm text-gray-900 dark:text-white font-mono bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded">{user.id}</ProfileInfoValue>
             </ProfileInfoItem>
-            <ProfileInfoItem>
-              <ProfileInfoLabel>Perfil:</ProfileInfoLabel>
-              <ProfileInfoValue>{user.perfil}</ProfileInfoValue>
+            <ProfileInfoItem className="flex flex-col space-y-1">
+              <ProfileInfoLabel className="text-sm font-medium text-gray-500 dark:text-gray-400">Perfil:</ProfileInfoLabel>
+              <ProfileInfoValue className="text-sm text-gray-900 dark:text-white">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  {user.perfil}
+                </span>
+              </ProfileInfoValue>
             </ProfileInfoItem>
           </ProfileInfo>
         </ProfileSection>
 
         {/* Formulário de edição de dados pessoais */}
-        <ProfileSection>
-          <SectionTitle>Dados Pessoais</SectionTitle>
-          <SectionDescription>
-            Atualize suas informações pessoais como nome e email
-          </SectionDescription>
+        <ProfileSection className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">✏️</span>
+              <SectionTitle className="text-lg font-semibold text-gray-900 dark:text-white">Dados Pessoais</SectionTitle>
+            </div>
+            <SectionDescription className="text-gray-600 dark:text-gray-400 mt-1">
+              Atualize suas informações pessoais como nome e email
+            </SectionDescription>
+          </div>
           
+          <div className="p-6">
           {isFormReady && (
             <FormContainer
               initialValues={{
@@ -205,16 +234,23 @@ export default function ProfilePage() {
               showReset={true}
             />
           )}
+          </div>
         </ProfileSection>
 
         {/* Formulário de alteração de senha */}
-        <ProfileSection>
-          <SectionTitle>Segurança</SectionTitle>
-          <SectionDescription>
-            Altere sua senha para manter sua conta segura
-          </SectionDescription>
+        <ProfileSection className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">🔒</span>
+              <SectionTitle className="text-lg font-semibold text-gray-900 dark:text-white">Segurança</SectionTitle>
+            </div>
+            <SectionDescription className="text-gray-600 dark:text-gray-400 mt-1">
+              Altere sua senha para manter sua conta segura
+            </SectionDescription>
+          </div>
           
-          <FormContainer
+          <div className="p-6">
+            <FormContainer
             onSubmit={handlePasswordSubmit}
             fields={[
               {
@@ -266,8 +302,18 @@ export default function ProfilePage() {
             resetText="Limpar"
             showReset={true}
           />
+          </div>
         </ProfileSection>
       </ProfileContent>
+      
+      {/* Footer informativo */}
+      <div className="mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <span>🛡️</span>
+          <span>Suas informações estão protegidas com criptografia de ponta a ponta</span>
+        </div>
+      </div>
+      </div>
     </ProfileContainer>
   );
 }

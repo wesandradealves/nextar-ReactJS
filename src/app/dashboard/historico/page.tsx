@@ -11,9 +11,9 @@ import { DataTable } from '@/components/molecules/DataTable';
 import { Badge } from '@/components/atoms/Badge';
 import { ChamadoEnriquecido } from '@/hooks/useHistorico';
 import { TipoManutencao, ChamadoStatus, PerfilUsuario } from '@/utils/enums';
-import { Container, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer } from './styles';
+import { Container, FiltersContainer, FiltersRow, FilterGroup, StatsContainer, StatCard, ExportContainer, StatValue, StatLabel, ExportInfo, PaginationContainer, PageInfo, ErrorMessage } from './styles';
 
-const HistoricoPage: React.FC = () => {
+const HistoricoPage = () => {
   const { user } = useAuth();
   const { 
     chamados, 
@@ -122,7 +122,7 @@ const HistoricoPage: React.FC = () => {
   const canExportHistorico = user?.perfil === PerfilUsuario.GESTAO;
 
   return (
-    <Container>
+    <Container className="p-6 max-w-[95vw] mx-auto space-y-6">
       <PageHeader
         title="Histórico de Manutenções"
         subtitle="Acompanhamento completo de todas as manutenções realizadas"
@@ -134,149 +134,151 @@ const HistoricoPage: React.FC = () => {
 
       {/* Stats */}
       {stats && (
-        <StatsContainer>
-          <StatCard>
-            <div className="stat-value">{stats.total}</div>
-            <div className="stat-label">Total de Manutenções</div>
+        <StatsContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total de Manutenções</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.CONCLUIDO]}</div>
-            <div className="stat-label">Concluídas</div>
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.porStatus[ChamadoStatus.CONCLUIDO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Concluídas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.EM_PROGRESSO]}</div>
-            <div className="stat-label">Em Andamento</div>
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.porStatus[ChamadoStatus.EM_PROGRESSO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Em Andamento</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porStatus[ChamadoStatus.ABERTO]}</div>
-            <div className="stat-label">Abertas</div>
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.porStatus[ChamadoStatus.ABERTO]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Abertas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porTipo[TipoManutencao.PREVENTIVA]}</div>
-            <div className="stat-label">Preventivas</div>
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">{stats.porTipo[TipoManutencao.PREVENTIVA]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Preventivas</StatLabel>
           </StatCard>
-          <StatCard>
-            <div className="stat-value">{stats.porTipo[TipoManutencao.CORRETIVA]}</div>
-            <div className="stat-label">Corretivas</div>
+          <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">{stats.porTipo[TipoManutencao.CORRETIVA]}</StatValue>
+            <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Corretivas</StatLabel>
           </StatCard>
         </StatsContainer>
       )}
 
       {/* Filtros */}
-      <FiltersContainer>
-        <h3>Filtros de Pesquisa</h3>
+      <FiltersContainer className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filtros de Pesquisa</h3>
         
-        <FiltersRow>
-          <FilterGroup>
-            <label>Tipo de Manutenção</label>
-            <Select
-              value={filters.tipo || ''}
-              onChange={(e) => handleFilterChange('tipo', e.target.value)}
-              options={[
-                { value: '', label: 'Todos os tipos' },
-                { value: TipoManutencao.PREVENTIVA, label: 'Preventiva' },
-                { value: TipoManutencao.CORRETIVA, label: 'Corretiva' }
-              ]}
-            />
-          </FilterGroup>
+        <div className="space-y-4">
+          <FiltersRow className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Manutenção</label>
+              <Select
+                value={filters.tipo || ''}
+                onChange={(e) => handleFilterChange('tipo', e.target.value)}
+                options={[
+                  { value: '', label: 'Todos os tipos' },
+                  { value: TipoManutencao.PREVENTIVA, label: 'Preventiva' },
+                  { value: TipoManutencao.CORRETIVA, label: 'Corretiva' }
+                ]}
+              />
+            </FilterGroup>
 
-          <FilterGroup>
-            <label>Status</label>
-            <Select
-              value={filters.status || ''}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
-              options={[
-                { value: '', label: 'Todos os status' },
-                { value: ChamadoStatus.ABERTO, label: 'Aberto' },
-                { value: ChamadoStatus.EM_PROGRESSO, label: 'Em Andamento' },
-                { value: ChamadoStatus.CONCLUIDO, label: 'Concluído' }
-              ]}
-            />
-          </FilterGroup>
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+              <Select
+                value={filters.status || ''}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
+                options={[
+                  { value: '', label: 'Todos os status' },
+                  { value: ChamadoStatus.ABERTO, label: 'Aberto' },
+                  { value: ChamadoStatus.EM_PROGRESSO, label: 'Em Andamento' },
+                  { value: ChamadoStatus.CONCLUIDO, label: 'Concluído' }
+                ]}
+              />
+            </FilterGroup>
 
-          <FilterGroup>
-            <label>Agente Responsável</label>
-            <Select
-              value={filters.agenteId || ''}
-              onChange={(e) => handleFilterChange('agenteId', e.target.value)}
-              options={[
-                { value: '', label: 'Todos os agentes' },
-                ...allUsers.map(user => ({
-                  value: user.id.toString(),
-                  label: user.nome
-                }))
-              ]}
-            />
-          </FilterGroup>
-        </FiltersRow>
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Agente Responsável</label>
+              <Select
+                value={filters.agenteId || ''}
+                onChange={(e) => handleFilterChange('agenteId', e.target.value)}
+                options={[
+                  { value: '', label: 'Todos os agentes' },
+                  ...allUsers.map(user => ({
+                    value: user.id.toString(),
+                    label: user.nome
+                  }))
+                ]}
+              />
+            </FilterGroup>
+          </FiltersRow>
 
-        <FiltersRow>
-          <FilterGroup>
-            <label>Equipamento</label>
-            <Select
-              value={filters.equipamentoId || ''}
-              onChange={(e) => handleFilterChange('equipamentoId', e.target.value)}
-              options={[
-                { value: '', label: 'Todos os equipamentos' },
-                ...allEquipamentos.map(eq => ({
-                  value: eq.id.toString(),
-                  label: eq.nome
-                }))
-              ]}
-            />
-          </FilterGroup>
+          <FiltersRow className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Equipamento</label>
+              <Select
+                value={filters.equipamentoId || ''}
+                onChange={(e) => handleFilterChange('equipamentoId', e.target.value)}
+                options={[
+                  { value: '', label: 'Todos os equipamentos' },
+                  ...allEquipamentos.map(eq => ({
+                    value: eq.id.toString(),
+                    label: eq.nome
+                  }))
+                ]}
+              />
+            </FilterGroup>
 
-          <FilterGroup>
-            <label>Setor</label>
-            <Select
-              value={filters.setorId || ''}
-              onChange={(e) => handleFilterChange('setorId', e.target.value)}
-              options={[
-                { value: '', label: 'Todos os setores' },
-                ...allSetores.map(setor => ({
-                  value: setor.id.toString(),
-                  label: setor.nome
-                }))
-              ]}
-            />
-          </FilterGroup>
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Setor</label>
+              <Select
+                value={filters.setorId || ''}
+                onChange={(e) => handleFilterChange('setorId', e.target.value)}
+                options={[
+                  { value: '', label: 'Todos os setores' },
+                  ...allSetores.map(setor => ({
+                    value: setor.id.toString(),
+                    label: setor.nome
+                  }))
+                ]}
+              />
+            </FilterGroup>
 
-          <FilterGroup className="actions">
-            <Button variant="secondary" onClick={clearFilters}>
-              Limpar Filtros
-            </Button>
-            <Button onClick={refresh}>
-              Atualizar
-            </Button>
-          </FilterGroup>
-        </FiltersRow>
+            <FilterGroup className="flex flex-row items-end gap-3">
+              <Button variant="secondary" onClick={clearFilters}>
+                Limpar Filtros
+              </Button>
+              <Button onClick={refresh}>
+                Atualizar
+              </Button>
+            </FilterGroup>
+          </FiltersRow>
 
-        <FiltersRow>
-          <FilterGroup>
-            <label>Data Início</label>
-            <DateInput
-              value={filters.dataInicio || ''}
-              onChange={(value) => handleFilterChange('dataInicio', value)}
-              max={filters.dataFim || undefined}
-            />
-          </FilterGroup>
+          <FiltersRow className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Data Início</label>
+              <DateInput
+                value={filters.dataInicio || ''}
+                onChange={(value) => handleFilterChange('dataInicio', value)}
+                max={filters.dataFim || undefined}
+              />
+            </FilterGroup>
 
-          <FilterGroup>
-            <label>Data Fim</label>
-            <DateInput
-              value={filters.dataFim || ''}
-              onChange={(value) => handleFilterChange('dataFim', value)}
-              min={filters.dataInicio || undefined}
-            />
-          </FilterGroup>
-        </FiltersRow>
+            <FilterGroup className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Data Fim</label>
+              <DateInput
+                value={filters.dataFim || ''}
+                onChange={(value) => handleFilterChange('dataFim', value)}
+                min={filters.dataInicio || undefined}
+              />
+            </FilterGroup>
+          </FiltersRow>
+        </div>
       </FiltersContainer>
 
       {/* Exportação */}
-      <ExportContainer>
-        <span className="export-info">
+      <ExportContainer className="flex items-center justify-between mb-4 py-4">
+        <ExportInfo className="text-sm text-gray-500">
           {chamados.length} registros encontrados
-        </span>
+        </ExportInfo>
       </ExportContainer>
 
       {/* Tabela de dados */}
@@ -289,7 +291,7 @@ const HistoricoPage: React.FC = () => {
 
       {/* Paginação */}
       {pagination.totalPages > 1 && (
-        <div className="pagination">
+        <PaginationContainer className="flex items-center justify-center gap-4 mt-6 py-5">
           <Button
             variant="outline"
             disabled={pagination.page === 1}
@@ -298,9 +300,9 @@ const HistoricoPage: React.FC = () => {
             Anterior
           </Button>
           
-          <span className="page-info">
+          <PageInfo className="text-sm text-gray-600 min-w-[120px] text-center">
             Página {pagination.page} de {pagination.totalPages}
-          </span>
+          </PageInfo>
           
           <Button
             variant="outline"
@@ -309,13 +311,13 @@ const HistoricoPage: React.FC = () => {
           >
             Próxima
           </Button>
-        </div>
+        </PaginationContainer>
       )}
 
       {error && (
-        <div className="error-message">
+        <ErrorMessage className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 mt-4">
           Erro ao carregar histórico: {error}
-        </div>
+        </ErrorMessage>
       )}
     </Container>
   );

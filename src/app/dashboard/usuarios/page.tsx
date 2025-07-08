@@ -5,7 +5,7 @@ import CountUp from 'react-countup';
 import { useAuth } from '@/context/auth';
 import { useUsers } from '@/hooks/useUsers';
 import { DataTable, UserModal } from '@/components/molecules';
-import { Button, PageHeader } from '@/components/atoms';
+import { Button, PageHeader, ToggleSwitch } from '@/components/atoms';
 import type { User, TableColumn, TableAction, CreateUserData, UpdateUserData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import { 
@@ -15,25 +15,11 @@ import {
   StatsContainer,
   StatCard,
   StatValue,
-  StatLabel,
-  ClickableStatus,
-  StatusDot
+  StatLabel
 } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
 
 /**
- * Página de Gestão de Usuários
- * Módulo completo para administração de usuários do sistema
- * Inclui CRUD, permissões, filtros e cache otimizado
- * 
- * @description
- * Esta página permite:
- * - Listar usuários com paginação e busca
- * - Filtrar por perfil e status
- * - Criar, editar e excluir usuários (com permissões)
- * - Seleção em lote para ações múltiplas
- * - Cache otimizado para performance
- * 
  * @permissions
  * - Apenas usuários com perfil GESTAO podem acessar
  * - Operações de criação/edição/exclusão requerem GESTAO
@@ -47,11 +33,9 @@ export default function UsersPage() {
     ogTitle: `Nextar - Usuários`
   });
   
-  // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
 
-  // Hook de usuários com cache
   const {
     users,
     userStats,
@@ -73,16 +57,10 @@ export default function UsersPage() {
     exportUsersCSV
   } = useUsers();
 
-  /**
-   * Verifica se usuário atual tem permissão de gestão
-   */
   const hasManagePermission = useMemo(() => {
     return currentUser?.perfil === PerfilUsuario.GESTAO;
   }, [currentUser]);
 
-  /**
-   * Manipula exclusão de usuário
-   */
   const handleDeleteUser = useCallback(async (user: User) => {
     if (!window.confirm(`Tem certeza que deseja excluir o usuário ${user.nome}?`)) {
       return;
@@ -90,14 +68,10 @@ export default function UsersPage() {
 
     const success = await deleteUser(user.id);
     if (success) {
-      // Remover da seleção se estava selecionado
       setSelectedUsers(prev => prev.filter(id => id !== user.id));
     }
   }, [deleteUser]);
 
-  /**
-   * Manipula ativação/desativação de usuário
-   */
   const handleToggleUserStatus = useCallback(async (user: User) => {
     const newStatus = !user.ativo;
     
@@ -107,9 +81,6 @@ export default function UsersPage() {
     }
   }, [updateUser]);
 
-  /**
-   * Configuração das colunas da tabela
-   */
   const columns: TableColumn<User>[] = useMemo(() => [
     {
       key: 'nome',
@@ -140,17 +111,13 @@ export default function UsersPage() {
         const profile = profiles[perfil] || { label: perfil, color: '#6b7280', bg: '#f3f4f6' };
         
         return (
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '4px 8px',
-            borderRadius: '12px',
-            fontSize: '0.75rem',
-            fontWeight: '500',
-            backgroundColor: profile.bg,
-            color: profile.color,
-            border: `1px solid ${profile.color}40`
-          }}>
+          <span 
+            className="inline-flex items-center px-2 py-1 rounded-xl text-xs font-medium border"
+            style={{
+              backgroundColor: profile.bg,
+              color: profile.color,
+              borderColor: `${profile.color}40`
+            }}>
             {profile.label}
           </span>
         );
@@ -163,43 +130,24 @@ export default function UsersPage() {
       width: '15%',
       align: 'center',
       render: (_, user: User) => (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          justifyContent: 'center'
-        }}>
-          <input
-            type="checkbox"
+        <div className="flex items-center gap-3 justify-center">
+          <ToggleSwitch
             checked={user.ativo}
             onChange={() => handleToggleUserStatus(user)}
             disabled={!hasManagePermission}
-            style={{
-              width: '16px',
-              height: '16px',
-              cursor: hasManagePermission ? 'pointer' : 'not-allowed'
-            }}
+            size="small"
+            data-testid={`user-toggle-${user.id}`}
           />
-          <ClickableStatus
-            onClick={hasManagePermission ? () => handleToggleUserStatus(user) : undefined}
-            isActive={user.ativo}
-            isClickable={hasManagePermission}
-            title={hasManagePermission ? 
-              `Clique para ${user.ativo ? 'desativar' : 'ativar'} o usuário` : 
-              'Status do usuário'
-            }
-          >
-            <StatusDot isActive={user.ativo} />
+          <span className={`text-sm font-medium ${
+            user.ativo ? 'text-green-600' : 'text-red-600'
+          }`}>
             {user.ativo ? 'Ativo' : 'Inativo'}
-          </ClickableStatus>
+          </span>
         </div>
       )
     }
   ], [hasManagePermission, handleToggleUserStatus]);
 
-  /**
-   * Handlers do modal
-   */
   const handleCreateUser = useCallback(() => {
     setEditingUser(undefined);
     setIsModalOpen(true);
@@ -210,9 +158,6 @@ export default function UsersPage() {
     setIsModalOpen(true);
   }, []);
 
-  /**
-   * Ações disponíveis para cada usuário
-   */
   const actions: TableAction<User>[] = useMemo(() => {
     if (!hasManagePermission) return [];
 
@@ -235,16 +180,10 @@ export default function UsersPage() {
     ];
   }, [hasManagePermission, currentUser, handleDeleteUser, handleEditUser]);
 
-  /**
-   * Manipula seleção de usuários
-   */
   const handleSelectionChange = useCallback((newSelection: string[]) => {
     setSelectedUsers(newSelection);
   }, []);
 
-  /**
-   * Ações em lote
-   */
   const handleBulkAction = useCallback(async (action: 'delete' | 'activate' | 'deactivate') => {
     if (selectedUsers.length === 0) return;
 
@@ -261,13 +200,11 @@ export default function UsersPage() {
     }
 
     if (action === 'delete') {
-      // Excluir usuários selecionados
       const promises = selectedUsers.map(userId => deleteUser(userId));
       await Promise.all(promises);
       setSelectedUsers([]);
     }
     
-    // Outras ações seriam implementadas aqui
   }, [selectedUsers, deleteUser]);
 
   const handleCloseModal = useCallback(() => {
@@ -277,10 +214,8 @@ export default function UsersPage() {
 
   const handleSubmitUser = useCallback(async (userData: Partial<User>) => {
     if (editingUser) {
-      // Editar usuário existente
       await updateUser(editingUser.id, userData as UpdateUserData);
     } else {
-      // Criar novo usuário
       await createUser(userData as CreateUserData);
     }
   }, [editingUser, updateUser, createUser]);
@@ -290,15 +225,10 @@ export default function UsersPage() {
     await changeUserPasswordAsAdmin(userId, currentUser.id, newPassword);
   }, [changeUserPasswordAsAdmin, currentUser]);
 
-  // Verificar permissões de acesso
   if (!hasManagePermission) {
     return (
-      <UsersPageContainer>
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '60px 20px',
-          color: '#64748b'
-        }}>
+      <UsersPageContainer className="p-6 max-w-[95vw] mx-auto space-y-6">
+        <div className="text-center py-16 px-5 text-gray-500 dark:text-gray-400">
           <h2>Acesso Negado</h2>
           <p>Você não tem permissão para acessar esta página.</p>
           <p>Apenas usuários com perfil de Gestão podem gerenciar usuários.</p>
@@ -308,8 +238,7 @@ export default function UsersPage() {
   }
 
   return (
-    <UsersPageContainer>
-      {/* Header da página */}
+    <UsersPageContainer className="p-6 max-w-[95vw] mx-auto space-y-6">
       <PageHeader
         title="Gestão de Usuários"
         subtitle="Gerencie usuários, perfis e permissões do sistema"
@@ -321,101 +250,103 @@ export default function UsersPage() {
         addLabel="+ Novo "
       />
 
-      {/* Estatísticas */}
-      <StatsContainer>
-        <StatCard>
-          <StatValue>
+      <StatsContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={userStats.total}
               duration={1.2}
               separator="."
             />
           </StatValue>
-          <StatLabel>Total de Usuários</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total de Usuários</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#10b981' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-green-600 dark:text-green-400">
             <CountUp
               end={userStats.ativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Ativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#ef4444' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-red-600 dark:text-red-400">
             <CountUp
               end={userStats.inativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Inativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Inativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={userStats.pesquisadores}
               duration={1.4}
               separator="."
             />
           </StatValue>
-          <StatLabel>Pesquisadores</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Pesquisadores</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={userStats.agentes}
               duration={1.6}
               separator="."
             />
           </StatValue>
-          <StatLabel>Agentes</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Agentes</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={userStats.gestores}
               duration={1.8}
               separator="."
             />
           </StatValue>
-          <StatLabel>Gestores</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Gestores</StatLabel>
         </StatCard>
       </StatsContainer>
 
-      {/* Filtros */}
-      <FilterSection>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <FilterSection className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex gap-2 flex-wrap">
           <FilterButton
             $active={!filters.perfil}
             onClick={clearFilters}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Todos
           </FilterButton>
           <FilterButton
             $active={filters.perfil === PerfilUsuario.PESQUISADOR}
             onClick={() => filterByProfile(PerfilUsuario.PESQUISADOR)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Pesquisadores
           </FilterButton>
           <FilterButton
             $active={filters.perfil === PerfilUsuario.AGENTE}
             onClick={() => filterByProfile(PerfilUsuario.AGENTE)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Agentes
           </FilterButton>
           <FilterButton
             $active={filters.perfil === PerfilUsuario.GESTAO}
             onClick={() => filterByProfile(PerfilUsuario.GESTAO)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Gestão
           </FilterButton>
         </div>
 
         {selectedUsers.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="flex gap-2">
             <Button
               variant="danger"
               size="small"
@@ -427,7 +358,6 @@ export default function UsersPage() {
         )}
       </FilterSection>
 
-      {/* Tabela de usuários */}
       <DataTable
         data={users}
         columns={columns}
@@ -450,7 +380,6 @@ export default function UsersPage() {
         }
       />
 
-      {/* Modal de criação/edição de usuários */}
       <UserModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

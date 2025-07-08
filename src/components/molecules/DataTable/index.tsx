@@ -41,26 +41,6 @@ import {
 } from './styles';
 import type { DataTableProps, TableColumn } from '@/types';
 
-/**
- * Componente molecular DataTable
- * Tabela reutilizável com paginação, ordenação, filtros e ações
- * Totalmente responsiva com layout mobile adaptativo
- * Segue padrão Atomic Design - Molecule
- * 
- * @example
- * ```tsx
- * <DataTable
- *   data={users}
- *   columns={userColumns}
- *   actions={userActions}
- *   pagination={pagination}
- *   onPageChange={handlePageChange}
- *   onSortChange={handleSortChange}
- *   selectable
- *   onSelectionChange={handleSelectionChange}
- * />
- * ```
- */
 export const DataTable = <T extends { id?: string; email?: string; nome?: string; name?: string; title?: string; [key: string]: unknown }>({
   data,
   columns,
@@ -80,22 +60,14 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
   const [searchTerm, setSearchTerm] = useState('');
   const [localSelectedRows, setLocalSelectedRows] = useState<string[]>(selectedRows);
 
-  // Usar seleção controlada ou local
   const currentSelectedRows = onSelectionChange ? selectedRows : localSelectedRows;
 
-  /**
-   * Manipula mudança de ordenação
-   */
   const handleSortChange = useCallback((column: string) => {
     if (!onSortChange) return;
     
     const newOrder = sorting?.sortBy === column && sorting?.sortOrder === 'asc' ? 'desc' : 'asc';
     onSortChange(column, newOrder);
   }, [sorting, onSortChange]);
-
-  /**
-   * Manipula busca
-   */
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
     onSearch?.(term);
@@ -207,7 +179,7 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
     if (actions.length === 0) return null;
     
     return (
-      <RowActions>
+      <RowActions className="flex items-center gap-2 justify-center">
         {actions.map(action => {
           const isDisabled = typeof action.disabled === 'function' 
             ? action.disabled(item)
@@ -220,6 +192,15 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
               onClick={() => action.onClick(item, index)}
               disabled={isDisabled}
               title={action.title}
+              className={`
+                w-8 h-8 flex items-center justify-center rounded-md text-sm transition-colors duration-150
+                ${action.variant === 'primary' 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : action.variant === 'danger'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300'}
+                ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+              `}
             >
               {action.icon || action.title.charAt(0)}
             </ActionButton>
@@ -237,27 +218,37 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
     const isSelected = currentSelectedRows.includes(itemId);
     
     return (
-      <MobileCard key={itemId} $selected={isSelected}>
-        <MobileCardHeader>
-          <MobileCardTitle>
+      <MobileCard 
+        key={itemId} 
+        $selected={isSelected}
+        className={`
+          p-4 border-b border-gray-100 dark:border-gray-700 last:border-0
+          ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}
+        `}
+      >
+        <MobileCardHeader className="flex items-center justify-between mb-3">
+          <MobileCardTitle className="text-base font-semibold text-gray-800 dark:text-gray-200 m-0">
             {item.nome || item.name || item.title || `Item ${index + 1}`}
           </MobileCardTitle>
-          <MobileCardActions>
+          <MobileCardActions className="flex items-center gap-2">
             {selectable && (
               <Checkbox
                 checked={isSelected}
                 onChange={(e) => handleRowSelection(itemId, e.target.checked)}
+                className="w-4 h-4 accent-blue-600"
               />
             )}
             {renderRowActions(item, index)}
           </MobileCardActions>
         </MobileCardHeader>
         
-        <MobileCardBody>
+        <MobileCardBody className="grid grid-cols-2 gap-2">
           {columns.filter(col => !col.hideOnMobile && col.key !== 'nome' && col.key !== 'name').map(column => (
-            <MobileCardField key={column.key}>
-              <MobileCardLabel>{column.title}</MobileCardLabel>
-              <MobileCardValue>
+            <MobileCardField key={column.key} className="flex flex-col">
+              <MobileCardLabel className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">
+                {column.title}
+              </MobileCardLabel>
+              <MobileCardValue className="text-sm text-gray-800 dark:text-gray-200 mt-1">
                 {renderCellValue(column, item, index)}
               </MobileCardValue>
             </MobileCardField>
@@ -268,15 +259,15 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
   }, [columns, currentSelectedRows, selectable, handleRowSelection, renderRowActions, renderCellValue]);
 
   return (
-    <DataTableContainer className={className}>
+    <DataTableContainer className={`${className || ''} flex flex-col bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm animate-fadeIn`}>
       {/* Header da tabela */}
-      <TableHeader>
-        <TableTitle>
+      <TableHeader className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <TableTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
           {pagination ? `${pagination.total} ${pagination.total === 1 ? 'item' : 'itens'}` : `${data.length} ${data.length === 1 ? 'item' : 'itens'}`}
         </TableTitle>
         
-        <TableActions>
-          <SearchAndFilters>
+        <TableActions className="flex items-center gap-3">
+          <SearchAndFilters className="flex items-center gap-2">
             {onSearch && (
               <SearchBox
                 placeholder="Buscar..."
@@ -291,17 +282,18 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
       </TableHeader>
 
       {/* Tabela principal */}
-      <TableWrapper>
+      <TableWrapper className="w-full overflow-x-auto">
         {/* Versão Desktop */}
-        <Table style={{ display: 'table' }}>
-          <TableHead>
-            <TableRow>
+        <Table className="w-full border-collapse min-w-full table-auto hidden md:table">
+          <TableHead className="bg-gray-50 dark:bg-gray-900">
+            <TableRow className="border-b border-gray-200 dark:border-gray-700">
               {selectable && (
-                <CheckboxCell as="th">
+                <CheckboxCell as="th" className="p-3 w-10">
                   <Checkbox
                     checked={isAllSelected}
                     $indeterminate={isPartiallySelected}
                     onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 accent-blue-600"
                   />
                 </CheckboxCell>
               )}
@@ -314,6 +306,12 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                   $width={column.width}
                   $hideOnMobile={column.hideOnMobile}
                   onClick={column.sortable ? () => handleSortChange(column.key) : undefined}
+                  className={`p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 
+                    ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}
+                    ${column.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800' : ''}
+                    ${column.hideOnMobile ? 'hidden md:table-cell' : ''}
+                  `}
+                  style={{width: column.width || 'auto'}}
                 >
                   {column.title}
                   {column.sortable && (
@@ -321,27 +319,32 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                       $direction={
                         sorting?.sortBy === column.key ? sorting.sortOrder : null
                       }
+                      className="inline-block ml-1 transition-transform duration-200"
                     />
                   )}
                 </TableHeaderCell>
               ))}
               
               {actions.length > 0 && (
-                <TableHeaderCell $align="center" style={{ width: '120px' }}>
+                <TableHeaderCell 
+                  $align="center" 
+                  className="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 text-center"
+                  style={{ width: '120px' }}
+                >
                   Ações
                 </TableHeaderCell>
               )}
             </TableRow>
           </TableHead>
           
-          <TableBody>
+          <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               // Skeleton loading durante carregamento
               Array.from({ length: 5 }).map((_, index) => (
-                <TableRow key={`skeleton-${index}`}>
+                <TableRow key={`skeleton-${index}`} className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750">
                   {selectable && (
-                    <CheckboxCell>
-                      <LoadingSkeleton style={{ width: '16px', height: '16px' }} />
+                    <CheckboxCell className="p-3">
+                      <LoadingSkeleton className="w-4 h-4 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
                     </CheckboxCell>
                   )}
                   
@@ -350,14 +353,16 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                       key={column.key}
                       $align={column.align}
                       $hideOnMobile={column.hideOnMobile}
+                      className={`p-3 text-sm ${column.hideOnMobile ? 'hidden md:table-cell' : ''}
+                        ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`}
                     >
-                      <LoadingSkeleton style={{ width: '100%' }} />
+                      <LoadingSkeleton className="w-full h-5 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
                     </TableCell>
                   ))}
                   
                   {actions.length > 0 && (
-                    <TableCell $align="center">
-                      <LoadingSkeleton style={{ width: '80px' }} />
+                    <TableCell $align="center" className="p-3 text-center">
+                      <LoadingSkeleton className="w-20 h-8 mx-auto bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
                     </TableCell>
                   )}
                 </TableRow>
@@ -372,12 +377,17 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                     key={itemId}
                     $selectable={selectable}
                     $selected={isSelected}
+                    className={`
+                      bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150
+                      ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+                    `}
                   >
                     {selectable && (
-                      <CheckboxCell>
+                      <CheckboxCell className="p-3">
                         <Checkbox
                           checked={isSelected}
                           onChange={(e) => handleRowSelection(itemId, e.target.checked)}
+                          className="w-4 h-4 accent-blue-600"
                         />
                       </CheckboxCell>
                     )}
@@ -387,13 +397,16 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                         key={column.key}
                         $align={column.align}
                         $hideOnMobile={column.hideOnMobile}
+                        className={`p-3 text-sm text-gray-700 dark:text-gray-300
+                          ${column.hideOnMobile ? 'hidden md:table-cell' : ''}
+                          ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`}
                       >
                         {renderCellValue(column, item, index)}
                       </TableCell>
                     ))}
                     
                     {actions.length > 0 && (
-                      <TableCell $align="center">
+                      <TableCell $align="center" className="p-3 text-center">
                         {renderRowActions(item, index)}
                       </TableCell>
                     )}
@@ -401,12 +414,15 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
                 );
               })
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length + (selectable ? 1 : 0) + (actions.length > 0 ? 1 : 0)}>
-                  <EmptyState>
-                    <EmptyIcon>📋</EmptyIcon>
-                    <EmptyMessage>{emptyMessage}</EmptyMessage>
-                    <EmptyDescription>
+              <TableRow className="bg-white dark:bg-gray-800">
+                <TableCell 
+                  colSpan={columns.length + (selectable ? 1 : 0) + (actions.length > 0 ? 1 : 0)}
+                  className="p-8 text-center"
+                >
+                  <EmptyState className="flex flex-col items-center justify-center py-12">
+                    <EmptyIcon className="text-4xl mb-4 text-gray-400 dark:text-gray-500">📋</EmptyIcon>
+                    <EmptyMessage className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">{emptyMessage}</EmptyMessage>
+                    <EmptyDescription className="text-sm text-gray-500 dark:text-gray-400">
                       {onSearch ? 'Tente ajustar os filtros de busca' : 'Nenhum dado disponível no momento'}
                     </EmptyDescription>
                   </EmptyState>
@@ -417,37 +433,45 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
         </Table>
         
         {/* Versão Mobile */}
-        <div style={{ display: 'none' }}>
-          {data.map((item, index) => renderMobileCard(item, index))}
-        </div>
+        <div className="block md:hidden">{data.map((item, index) => renderMobileCard(item, index))}</div>
       </TableWrapper>
 
       {/* Paginação */}
       {pagination && pagination.totalPages > 1 && (
-        <PaginationContainer>
-          <PaginationInfo>
+        <PaginationContainer className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700">
+          <PaginationInfo className="text-sm text-gray-500 dark:text-gray-400 mb-3 sm:mb-0">
             Mostrando {((pagination.page - 1) * pagination.limit) + 1} a {Math.min(pagination.page * pagination.limit, pagination.total)} de {pagination.total} itens
           </PaginationInfo>
           
-          <PaginationControls>
+          <PaginationControls className="flex items-center gap-1">
             <PaginationButton
               onClick={() => onPageChange?.(pagination.page - 1)}
               disabled={pagination.page === 1}
               title="Página anterior"
+              className={`w-8 h-8 flex items-center justify-center rounded-md text-sm
+                ${pagination.page === 1 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}
+              `}
             >
               ‹
             </PaginationButton>
             
             {paginationPages.map((page, index) => 
               page === 'ellipsis' ? (
-                <PaginationEllipsis key={`ellipsis-${index}`}>
-                  ...
+                <PaginationEllipsis key={`ellipsis-${index}`} className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                  …
                 </PaginationEllipsis>
               ) : (
                 <PaginationButton
                   key={page}
                   $active={page === pagination.page}
                   onClick={() => onPageChange?.(page as number)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md text-sm
+                    ${page === pagination.page 
+                      ? 'bg-blue-600 text-white font-medium'
+                      : 'text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}
+                  `}
                 >
                   {page}
                 </PaginationButton>
@@ -458,6 +482,11 @@ export const DataTable = <T extends { id?: string; email?: string; nome?: string
               onClick={() => onPageChange?.(pagination.page + 1)}
               disabled={pagination.page === pagination.totalPages}
               title="Próxima página"
+              className={`w-8 h-8 flex items-center justify-center rounded-md text-sm
+                ${pagination.page === pagination.totalPages 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}
+              `}
             >
               ›
             </PaginationButton>

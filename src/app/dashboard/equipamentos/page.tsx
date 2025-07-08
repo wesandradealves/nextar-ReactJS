@@ -7,7 +7,7 @@ import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable } from '@/components/molecules';
 import { EquipamentoModal } from '@/components/molecules';
-import { Button, PageHeader } from '@/components/atoms';
+import { Button, PageHeader, ToggleSwitch } from '@/components/atoms';
 import type { Equipamento, TableColumn, TableAction, CreateEquipamentoData, UpdateEquipamentoData } from '@/types';
 import { PerfilUsuario } from '@/utils/enums';
 import { useMetadata } from '@/hooks/useMetadata';
@@ -20,9 +20,7 @@ import {
   StatsContainer,
   StatCard,
   StatValue,
-  StatLabel,
-  ClickableStatus,
-  StatusDot
+  StatLabel
 } from '../setores/styles';
 
 /**
@@ -159,19 +157,19 @@ export default function EquipamentosPage() {
     
     if (diffDays < 0) {
       return (
-        <span style={{ color: '#ef4444', fontWeight: '500' }}>
+        <span className="text-red-500 font-medium">
           Vencida ({Math.abs(diffDays)} dias)
         </span>
       );
     } else if (diffDays <= 30) {
       return (
-        <span style={{ color: '#f59e0b', fontWeight: '500' }}>
+        <span className="text-amber-500 font-medium">
           {diffDays} dias
         </span>
       );
     } else {
       return (
-        <span style={{ color: '#10b981', fontWeight: '500' }}>
+        <span className="text-emerald-500 font-medium">
           {date.toLocaleDateString('pt-BR')}
         </span>
       );
@@ -202,14 +200,7 @@ export default function EquipamentosPage() {
       sortable: true,
       width: '12%',
       render: (value: unknown) => (
-        <span style={{
-          fontFamily: 'monospace',
-          fontSize: '0.9rem',
-          backgroundColor: '#f1f5f9',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          color: '#475569'
-        }}>
+        <span className="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
           {value as string}
         </span>
       )
@@ -252,35 +243,19 @@ export default function EquipamentosPage() {
       width: '13%',
       align: 'center',
       render: (_, equipamento: Equipamento) => (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          justifyContent: 'center'
-        }}>
-          <input
-            type="checkbox"
+        <div className="flex items-center gap-3 justify-center">
+          <ToggleSwitch
             checked={equipamento.ativo}
             onChange={() => handleToggleEquipamentoStatus(equipamento)}
             disabled={!hasManagePermission}
-            style={{
-              width: '16px',
-              height: '16px',
-              cursor: hasManagePermission ? 'pointer' : 'not-allowed'
-            }}
+            size="small"
+            data-testid={`equipamento-toggle-${equipamento.id}`}
           />
-          <ClickableStatus
-            onClick={hasManagePermission ? () => handleToggleEquipamentoStatus(equipamento) : undefined}
-            $isActive={equipamento.ativo}
-            $isClickable={hasManagePermission}
-            title={hasManagePermission ? 
-              `Clique para ${equipamento.ativo ? 'desativar' : 'ativar'} o equipamento` : 
-              'Status do equipamento'
-            }
-          >
-            <StatusDot $isActive={equipamento.ativo} />
+          <span className={`text-sm font-medium ${
+            equipamento.ativo ? 'text-green-600' : 'text-red-600'
+          }`}>
             {equipamento.ativo ? 'Ativo' : 'Inativo'}
-          </ClickableStatus>
+          </span>
         </div>
       )
     }
@@ -408,7 +383,7 @@ export default function EquipamentosPage() {
   }, [editingEquipamento, updateEquipamento, createEquipamento]);
 
   return (
-    <EquipamentosPageContainer>
+    <EquipamentosPageContainer className="p-6 max-w-[95vw] mx-auto space-y-6">
       {/* Header da página */}
       <PageHeader
         title={hasManagePermission ? 'Gestão de Equipamentos' : 'Equipamentos'}
@@ -425,65 +400,66 @@ export default function EquipamentosPage() {
       />
 
       {/* Estatísticas */}
-      <StatsContainer>
-        <StatCard>
-          <StatValue>
+      <StatsContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={equipamentoStats.total}
               duration={1.2}
               separator="."
             />
           </StatValue>
-          <StatLabel>Total de Equipamentos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total de Equipamentos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#10b981' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-green-600 dark:text-green-400">
             <CountUp
               end={equipamentoStats.ativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Ativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#ef4444' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-red-600 dark:text-red-400">
             <CountUp
               end={equipamentoStats.inativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Inativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Inativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#f59e0b' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-amber-600 dark:text-amber-400">
             <CountUp
               end={equipamentoStats.manutencaoVencida}
               duration={1.4}
               separator="."
             />
           </StatValue>
-          <StatLabel>Manutenção Vencida</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manutenção Vencida</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#3b82f6' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             <CountUp
               end={equipamentoStats.manutencaoProxima}
               duration={1.6}
               separator="."
             />
           </StatValue>
-          <StatLabel>Manutenção Próxima</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manutenção Próxima</StatLabel>
         </StatCard>
       </StatsContainer>
 
       {/* Filtros */}
-      <FilterSection>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <FilterSection className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex gap-2 flex-wrap">
           <FilterButton
             $active={!filters.setorId && filters.ativo === undefined}
             onClick={clearFilters}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Todos
           </FilterButton>
@@ -492,6 +468,7 @@ export default function EquipamentosPage() {
               key={setor.id}
               $active={filters.setorId === setor.id}
               onClick={() => filterBySetor(setor.id)}
+              className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {setor.nome}
             </FilterButton>
@@ -499,19 +476,21 @@ export default function EquipamentosPage() {
           <FilterButton
             $active={filters.ativo === true}
             onClick={() => filterByStatus(true)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Apenas Ativos
           </FilterButton>
           <FilterButton
             $active={filters.ativo === false}
             onClick={() => filterByStatus(false)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Apenas Inativos
           </FilterButton>
         </div>
 
         {selectedEquipamentos.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="flex gap-2">
             <Button
               variant="danger"
               size="small"

@@ -2,22 +2,6 @@ import React from 'react';
 import { TextareaContainer, StyledTextarea, HelperText, CharacterCount } from './styles';
 import type { TextareaProps } from './types';
 
-/**
- * Componente atômico Textarea
- * Campo de texto multilinha reutilizável
- * Segue padrão Atomic Design - Atom
- * 
- * @example
- * ```tsx
- * <Textarea
- *   value={description}
- *   onChange={setDescription}
- *   placeholder="Digite a descrição"
- *   rows={4}
- *   maxLength={500}
- * />
- * ```
- */
 export default function Textarea({
   value,
   onChange,
@@ -40,7 +24,7 @@ export default function Textarea({
   const currentLength = value.length;
 
   return (
-    <TextareaContainer className={className}>
+    <TextareaContainer className="flex flex-col w-full">
       <StyledTextarea
         id={id}
         name={name}
@@ -53,18 +37,33 @@ export default function Textarea({
         maxLength={maxLength}
         $error={error}
         $disabled={disabled}
+        className={`
+          w-full min-h-[80px] p-3
+          text-sm font-normal leading-relaxed
+          border-2 rounded-lg
+          ${error ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}
+          ${disabled 
+            ? 'bg-slate-50 text-slate-500 cursor-not-allowed focus:border-slate-200 focus:shadow-none' 
+            : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200'}
+          focus:outline-none focus:ring-2 focus:ring-opacity-50 
+          ${error ? 'focus:ring-red-300 focus:border-red-500' : 'focus:ring-blue-300 focus:border-blue-500'}
+          placeholder:text-slate-400
+          transition-all duration-200 shadow-sm
+          resize-vertical
+          ${className || ''}
+        `}
       />
       
       {(helperText || showCharacterCount) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="flex justify-between items-center mt-2 text-xs">
           {helperText && (
-            <HelperText $error={error}>
+            <HelperText className={`${error ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'}`}>
               {helperText}
             </HelperText>
           )}
           
           {showCharacterCount && (
-            <CharacterCount>
+            <CharacterCount className="text-slate-500 dark:text-slate-400 text-right">
               {currentLength}/{maxLength}
             </CharacterCount>
           )}

@@ -6,7 +6,7 @@ import { useAuth } from '@/context/auth';
 import { useSetores } from '@/hooks/useSetores';
 import { DataTable } from '@/components/molecules';
 import { SetorModal } from '@/components/molecules';
-import { Button, PageHeader } from '@/components/atoms';
+import { Button, PageHeader, ToggleSwitch } from '@/components/atoms';
 import type { Setor, TableColumn, TableAction, CreateSetorData, UpdateSetorData } from '@/types';
 import { PerfilUsuario, CATEGORIAS_CIENTIFICAS } from '@/utils/enums';
 import { 
@@ -16,9 +16,7 @@ import {
   StatsContainer,
   StatCard,
   StatValue,
-  StatLabel,
-  ClickableStatus,
-  StatusDot
+  StatLabel
 } from './styles';
 import { useMetadata } from '@/hooks/useMetadata';
 
@@ -158,17 +156,7 @@ export default function SetoresPage() {
         const categoria = value as string;
         
         return (
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '4px 8px',
-            borderRadius: '12px',
-            fontSize: '0.75rem',
-            fontWeight: '500',
-            backgroundColor: '#f1f5f9',
-            color: '#475569',
-            border: '1px solid #e2e8f0'
-          }}>
+          <span className="inline-flex items-center px-2 py-1 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
             {categoria}
           </span>
         );
@@ -182,7 +170,7 @@ export default function SetoresPage() {
       align: 'center',
       hideOnMobile: true,
       render: (value: unknown) => (
-        <span style={{ fontWeight: '500' }}>
+        <span className="font-medium">
           {value as number}
         </span>
       )
@@ -202,35 +190,19 @@ export default function SetoresPage() {
       width: '13%',
       align: 'center',
       render: (_, setor: Setor) => (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          justifyContent: 'center'
-        }}>
-          <input
-            type="checkbox"
+        <div className="flex items-center gap-3 justify-center">
+          <ToggleSwitch
             checked={setor.ativo}
             onChange={() => handleToggleSetorStatus(setor)}
             disabled={!hasManagePermission}
-            style={{
-              width: '16px',
-              height: '16px',
-              cursor: hasManagePermission ? 'pointer' : 'not-allowed'
-            }}
+            size="small"
+            data-testid={`setor-toggle-${setor.id}`}
           />
-          <ClickableStatus
-            onClick={hasManagePermission ? () => handleToggleSetorStatus(setor) : undefined}
-            $isActive={setor.ativo}
-            $isClickable={hasManagePermission}
-            title={hasManagePermission ? 
-              `Clique para ${setor.ativo ? 'desativar' : 'ativar'} o setor` : 
-              'Status do setor'
-            }
-          >
-            <StatusDot $isActive={setor.ativo} />
+          <span className={`text-sm font-medium ${
+            setor.ativo ? 'text-green-600' : 'text-red-600'
+          }`}>
             {setor.ativo ? 'Ativo' : 'Inativo'}
-          </ClickableStatus>
+          </span>
         </div>
       )
     }
@@ -326,12 +298,8 @@ export default function SetoresPage() {
   // Verificar permissões de acesso
   if (!hasManagePermission) {
     return (
-      <SetoresPageContainer>
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '60px 20px',
-          color: '#64748b'
-        }}>
+      <SetoresPageContainer className="p-6 max-w-[95vw] mx-auto space-y-6">
+        <div className="text-center py-16 px-5 text-gray-500 dark:text-gray-400">
           <h2>Acesso Negado</h2>
           <p>Você não tem permissão para acessar esta página.</p>
           <p>Apenas usuários com perfil de Gestão podem gerenciar setores.</p>
@@ -341,7 +309,7 @@ export default function SetoresPage() {
   }
 
   return (
-    <SetoresPageContainer>
+    <SetoresPageContainer className="p-6 max-w-[95vw] mx-auto space-y-6">
       {/* Header da página */}
       <PageHeader
         title="Gestão de Setores"
@@ -355,39 +323,39 @@ export default function SetoresPage() {
       />
 
       {/* Estatísticas */}
-      <StatsContainer>
-        <StatCard>
-          <StatValue>
+      <StatsContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               end={setorStats.total}
               duration={1.2}
               separator="."
             />
           </StatValue>
-          <StatLabel>Total de Setores</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total de Setores</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#10b981' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-green-600 dark:text-green-400">
             <CountUp
               end={setorStats.ativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Ativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue style={{ color: '#ef4444' }}>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-red-600 dark:text-red-400">
             <CountUp
               end={setorStats.inativos}
               duration={1.0}
               separator="."
             />
           </StatValue>
-          <StatLabel>Inativos</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Inativos</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               end={(setorStats as any).Biologia || 0}
@@ -395,10 +363,10 @@ export default function SetoresPage() {
               separator="."
             />
           </StatValue>
-          <StatLabel>Biologia</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Biologia</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               end={(setorStats as any).Meteorologia || 0}
@@ -406,10 +374,10 @@ export default function SetoresPage() {
               separator="."
             />
           </StatValue>
-          <StatLabel>Meteorologia</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Meteorologia</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>
+        <StatCard className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <StatValue className="text-2xl font-bold text-gray-900 dark:text-white">
             <CountUp
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               end={(setorStats as any).Medicina || 0}
@@ -417,16 +385,17 @@ export default function SetoresPage() {
               separator="."
             />
           </StatValue>
-          <StatLabel>Medicina</StatLabel>
+          <StatLabel className="text-sm text-gray-500 dark:text-gray-400 mt-1">Medicina</StatLabel>
         </StatCard>
       </StatsContainer>
 
       {/* Filtros */}
-      <FilterSection>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <FilterSection className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex gap-2 flex-wrap">
           <FilterButton
             $active={!filters.categoria}
             onClick={clearFilters}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Todos
           </FilterButton>
@@ -435,6 +404,7 @@ export default function SetoresPage() {
               key={categoria}
               $active={filters.categoria === categoria}
               onClick={() => filterByCategoria(categoria)}
+              className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {categoria}
             </FilterButton>
@@ -442,19 +412,21 @@ export default function SetoresPage() {
           <FilterButton
             $active={filters.ativo === true}
             onClick={() => filterByStatus(true)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Apenas Ativos
           </FilterButton>
           <FilterButton
             $active={filters.ativo === false}
             onClick={() => filterByStatus(false)}
+            className="px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Apenas Inativos
           </FilterButton>
         </div>
 
         {selectedSetores.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="flex gap-2">
             <Button
               variant="danger"
               size="small"

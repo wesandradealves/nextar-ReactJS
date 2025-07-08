@@ -12,9 +12,6 @@ import { PermissionMap } from '@/types';
  * Centraliza todos os valores de enumeração e constantes relacionadas
  */
 
-// ========================================
-// ENUMERAÇÕES PRINCIPAIS
-// ========================================
 
 /**
  * Status possíveis para chamados de manutenção
@@ -66,9 +63,6 @@ export enum PerfilUsuario {
   GESTAO = 'gestao'
 }
 
-// ========================================
-// CONFIGURAÇÕES E PERMISSÕES
-// ========================================
 
 /**
  * Mapeamento de permissões por perfil de usuário
@@ -85,7 +79,7 @@ export const PERMISSIONS: PermissionMap = {
     'update_chamados'
   ],
   [PerfilUsuario.GESTAO]: [
-    'all' // Gestor tem acesso total
+    'all'
   ]
 };
 
@@ -106,9 +100,6 @@ export const CATEGORIAS_CIENTIFICAS = [
   'Logística'
 ] as const;
 
-// ========================================
-// LABELS E MAPEAMENTOS VISUAIS
-// ========================================
 
 /**
  * Labels legíveis para exibição na interface
@@ -149,7 +140,7 @@ export const LABELS = {
 export const STATUS_WORKFLOW: Record<ChamadoStatus, ChamadoStatus[]> = {
   [ChamadoStatus.ABERTO]: [ChamadoStatus.EM_PROGRESSO],
   [ChamadoStatus.EM_PROGRESSO]: [ChamadoStatus.CONCLUIDO],
-  [ChamadoStatus.CONCLUIDO]: [] // Estado final - não pode ser alterado
+  [ChamadoStatus.CONCLUIDO]: []
 };
 
 /**
@@ -167,9 +158,9 @@ export const STATUS_LABELS = {
  * @constant
  */
 export const STATUS_COLORS = {
-  [ChamadoStatus.ABERTO]: '#ef4444', // Vermelho
-  [ChamadoStatus.EM_PROGRESSO]: '#f97316', // Laranja
-  [ChamadoStatus.CONCLUIDO]: '#22c55e' // Verde
+  [ChamadoStatus.ABERTO]: '#ef4444',
+  [ChamadoStatus.EM_PROGRESSO]: '#f97316',
+  [ChamadoStatus.CONCLUIDO]: '#22c55e'
 } as const;
 
 /**

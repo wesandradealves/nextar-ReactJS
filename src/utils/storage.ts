@@ -17,9 +17,6 @@ const RESOURCES_DIR = path.join(process.cwd(), 'public', 'api', 'resources');
  * Funções para ler e escrever arquivos JSON dos recursos da aplicação
  */
 
-// ========================================
-// OPERAÇÕES COM USUÁRIOS
-// ========================================
 
 /**
  * Lê dados dos usuários do arquivo JSON
@@ -42,9 +39,6 @@ export const saveUsersData = (users: User[]): void => {
   fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
 };
 
-// ========================================
-// OPERAÇÕES COM SETORES
-// ========================================
 
 /**
  * Lê dados dos setores do arquivo JSON
@@ -67,9 +61,6 @@ export const saveSetoresData = (setores: Setor[]): void => {
   fs.writeFileSync(filePath, JSON.stringify(setores, null, 2));
 };
 
-// ========================================
-// OPERAÇÕES COM EQUIPAMENTOS
-// ========================================
 
 /**
  * Lê dados dos equipamentos do arquivo JSON
@@ -92,9 +83,6 @@ export const saveEquipamentosData = (equipamentos: Equipamento[]): void => {
   fs.writeFileSync(filePath, JSON.stringify(equipamentos, null, 2));
 };
 
-// ========================================
-// OPERAÇÕES COM CHAMADOS
-// ========================================
 
 /**
  * Lê dados dos chamados do arquivo JSON
@@ -117,9 +105,6 @@ export const saveChamadosData = (chamados: Chamado[]): void => {
   fs.writeFileSync(filePath, JSON.stringify(chamados, null, 2));
 };
 
-// ========================================
-// UTILITÁRIOS AUXILIARES
-// ========================================
 
 /**
  * Gera um ID único sequencial para novos registros
