@@ -5,6 +5,94 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [5.0.0] - 2025-01-08
+
+### Adicionado
+- **Modernização Completa de UI/UX dos Modais**
+  - EquipamentoModal: hierarquia visual com ícones temáticos e seções organizadas
+  - SetorModal: FormSelection com categorias científicas e ícones específicos
+  - UserModal: grid responsivo e gestão contextual de senhas
+  - ChamadoModal: seções expandidas com validações condicionais e workflow inteligente
+  - Espaçamento profissional padronizado (space-y-8, space-y-6, space-y-4)
+  - Labels descritivas com hints explicativos
+  - Gradientes contextuais por tipo de seção
+  - Contadores de caracteres visuais
+  - Boxes informativos com dicas e orientações
+
+- **Componente ToggleSwitch Profissional**
+  - Novo componente em atoms/ com 3 tamanhos (small/medium/large)
+  - Gradientes contextuais (verde ativo, vermelho inativo, cinza desabilitado)
+  - Animações suaves (hover/active effects)
+  - data-testid para automação de testes
+  - Substituição completa dos checkboxes antigos nas DataTables
+
+- **Integração shadcn/ui e Bibliotecas Modernas**
+  - Configuração completa do shadcn/ui para componentes base
+  - hamburger-react para menu mobile com animação profissional (≡ ↔ X)
+  - react-spinners para múltiplas variantes de loading
+  - @radix-ui/* para componentes acessíveis
+  - clsx e tailwind-merge para utilitários de classe
+
+### Melhorado
+- **Componentes Base Modernizados**
+  - FormModal, FormSelection, FormList: estrutura para reutilização
+  - Badge, Button, Select, Textarea, PageHeader: padrão híbrido Tailwind + styled-components
+  - Conversão sistemática de inline styles para classes Tailwind (19 conversões)
+  - Typography unificada e espaçamento consistente
+
+- **Header e Navigation Profissionais**
+  - Hamburger profissional com 5 funcionalidades UX (scroll, resize, click-outside, ESC, auto-close)
+  - Menu mobile com ícones temáticos (📊📞👥🏢🔧📋)
+  - Z-index hierarchy correta e header fixo responsivo
+  - Dark mode support aprimorado
+
+- **Spinner Modernizado**
+  - 4 variantes profissionais: circle, dots, pulse, ring
+  - Redução de 83.7% no código (74→12 linhas)
+  - Performance otimizada com biblioteca especializada
+
+- **DataTables com Toggles Modernos**
+  - Substituição completa dos checkboxes por ToggleSwitch
+  - Layout otimizado (gap-3, typography consistente)
+  - Estados visuais claros em Usuários, Setores e Equipamentos
+
+- **Dashboard e Páginas Otimizadas**
+  - Containers expandidos para tabelas (max-w-7xl → max-w-[95vw])
+  - Aproveitamento de 95% da tela em monitores grandes
+  - Badges padronizados e layout flex consistente
+
+### Refatorado
+- **Limpeza Completa de Código**
+  - Remoção de comentários desnecessários e código morto
+  - Eliminação de 100+ comentários óbvios
+  - Remoção de 72 linhas de interfaces não utilizadas
+  - Otimização de imports e styled-components
+  - TAILWIND_GUIDE.md migrado para documentação principal
+
+- **Atomic Design Consistente**
+  - FieldGroup e SectionTitle exportados para reutilização
+  - Padrão unificado em todos os modais
+  - Estrutura escalável para futuras expansões
+
+### Técnico
+- **Build e Performance**
+  - Compilação otimizada em 10s
+  - Bundle ligeiramente reduzido nas páginas
+  - Apenas 1 warning esperado mantido
+  - Lint limpo em todo o codebase
+
+- **Padrão Visual Estabelecido**
+  - Sistema de cores unificado
+  - Gradientes e animações consistentes
+  - Responsividade mobile-first
+  - Acessibilidade aprimorada
+
+### Quebras de Compatibilidade
+- **Componentes Styled**
+  - ClickableStatus e StatusDot removidos das DataTables
+  - Migração obrigatória para ToggleSwitch
+  - Novos imports necessários para componentes modernizados
+
 ## [4.1.0] - 2025-07-15
 
 ### Adicionado
