@@ -13,4 +13,6 @@ export interface SpinnerProps {
   className?: string;
   /** Se o spinner está visível */
   visible?: boolean;
+  /** Tipo de spinner a ser usado */
+  variant?: 'circle' | 'dots' | 'pulse' | 'ring';
 }
