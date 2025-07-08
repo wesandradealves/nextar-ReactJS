@@ -87,7 +87,7 @@ export const SearchBox = ({
   }, [handleSearch]);
   
   return (
-    <SearchContainer className={`${className || ''} relative flex w-full max-w-md`}>
+    <SearchContainer className={`${className || ''} relative flex w-full`}>
       <SearchInput className="flex-1 relative">
         <Input
           id={id}
