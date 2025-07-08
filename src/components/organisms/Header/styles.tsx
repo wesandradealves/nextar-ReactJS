@@ -48,12 +48,6 @@ export const MenuItem = styled.button<{ disabled?: boolean }>`
 export const MobileMenuButton = styled.button<{ disabled?: boolean; $isOpen?: boolean }>`
   opacity: ${({ disabled }) => disabled ? 0.6 : 1};
   color: ${({ $isOpen }) => $isOpen ? '#667eea' : '#64748b'};
-  
-  ${mediaDown.md(`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `)}
 `;
 
 export const MenuIcon = styled.span`
